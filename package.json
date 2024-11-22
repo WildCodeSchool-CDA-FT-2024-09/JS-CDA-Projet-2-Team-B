@@ -58,7 +58,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
-    "lint": "npm run lint --prefix server && npm run lint --prefix client"
+    "lint": "lint-staged"
   },
   "author": "",
   "license": "ISC",
@@ -69,13 +69,12 @@
     "prettier": "^3.3.3"
   },
   "lint-staged": {
-    "server/**/*.{js,jsx,ts,tsx}": [
-      "npm run format --prefix server",
-      "npm run lint --prefix server"
+    "*.{js,ts}": [
+      "eslint --fix",
+      "prettier --write --ignore-unknown"
     ],
-    "client/**/*.{js,jsx,ts,tsx}": [
-      "npm run format --prefix client",
-      "npm run lint --prefix client"
+    "*.{json}": [
+      "prettier --write --ignore-unknown"
     ]
   }
 }
