@@ -1,0 +1,52 @@
+services:
+  db:
+    image: postgres
+    env_file: .env
+    restart: always
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: adminer
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
+
+  produit:
+    build: ./api/produit
+    command: npm run full
+    restart: always
+    env_file: .env
+    volumes:
+      - ./api/produit:/app/produit
+    depends_on:
+      db:
+        condition: service_healthy
+
+  uploadimage:
+    build: ./api/uploadimage
+    command: npm run full
+    restart: always
+    env_file: .env
+    volumes:
+      - ./api/uploadimage:/app/uploadimage
+    depends_on:
+      db:
+        condition: service_healthy
+
+  client:
+    build: ./client
+    command: npm run dev
+    restart: always
+    environment:
+      - VITE_API_URL=http://localhost:5000/graph
+    volumes:
+      - ./client:/app/
+      - /app/node_modules
