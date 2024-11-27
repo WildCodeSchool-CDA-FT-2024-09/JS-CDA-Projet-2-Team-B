@@ -19,24 +19,15 @@ services:
       db:
         condition: service_healthy
 
-  produit:
-    build: ./api/produit
-    command: npm run full
+  product:
+    build: ./api/product
+    ports:
+      - 4000:4000
+    command: npm run dev
     restart: always
     env_file: .env
     volumes:
-      - ./api/produit:/app/produit
-    depends_on:
-      db:
-        condition: service_healthy
-
-  uploadimage:
-    build: ./api/uploadimage
-    command: npm run full
-    restart: always
-    env_file: .env
-    volumes:
-      - ./api/uploadimage:/app/uploadimage
+      - ./api/product:/app/product
     depends_on:
       db:
         condition: service_healthy
@@ -45,6 +36,8 @@ services:
     build: ./client
     command: npm run dev
     restart: always
+    ports:
+      - 5173:5173
     environment:
       - VITE_API_URL=http://localhost:5000/graph
     volumes:
