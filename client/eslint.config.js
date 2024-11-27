@@ -8,35 +8,35 @@ import tsPlugin from '@typescript-eslint/eslint-plugin';
 
 export default [
   {
-    ignores: ['dist'] // Ignorer les fichiers ou dossiers spécifiques
+    ignores: ['dist']
   },
-  js.configs.recommended, // Configuration recommandée pour JavaScript
+  js.configs.recommended,
   {
-    files: ['**/*.{js,jsx,ts,tsx}'], // Cible les fichiers pertinents
+    files: ['**/*.{js,jsx,ts,tsx}'],
     languageOptions: {
       ecmaVersion: 2020,
       globals: globals.browser,
-      parser: tsParser, // Utilisation du parser TypeScript
+      parser: tsParser,
       parserOptions: {
         sourceType: 'module',
         ecmaFeatures: {
-          jsx: true // Activer le support JSX
+          jsx: true
         }
       }
     },
     plugins: {
-      react, // Plugin React
-      'react-hooks': reactHooks, // Plugin React Hooks
-      'react-refresh': reactRefresh, // Plugin React Refresh
-      '@typescript-eslint': tsPlugin // Plugin TypeScript
+      react,
+      'react-hooks': reactHooks,
+      'react-refresh': reactRefresh,
+      '@typescript-eslint': tsPlugin
     },
     rules: {
-      ...reactHooks.configs.recommended.rules, // Règles recommandées pour React Hooks
+      ...reactHooks.configs.recommended.rules,
       'react-refresh/only-export-components': [
         'warn',
         { allowConstantExport: true }
       ],
-      'no-console': ['error', { allow: ['warn', 'error', 'info'] }] // Limiter l'usage de console
+      'no-console': ['error', { allow: ['warn', 'error', 'info'] }]
     }
   }
 ];

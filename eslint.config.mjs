@@ -17,7 +17,7 @@ export default [
   ...compat.extends(
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
-    'plugin:prettier/recommended' // Utiliser la config recommandée par Prettier
+    'plugin:prettier/recommended',
   ),
   {
     plugins: {
