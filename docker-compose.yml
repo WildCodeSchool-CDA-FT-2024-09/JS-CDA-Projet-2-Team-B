@@ -45,6 +45,19 @@ services:
       db:
         condition: service_healthy
 
+  auth:
+    build: ./api/auth
+    ports:
+      - 6000:6000
+    command: npm run dev
+    restart: always
+    env_file: ./api/auth/.env
+    volumes:
+      - ./api/auth:/app/auth
+    depends_on:
+      db:
+        condition: service_healthy
+
   client:
     build: ./client
     command: npm run dev
