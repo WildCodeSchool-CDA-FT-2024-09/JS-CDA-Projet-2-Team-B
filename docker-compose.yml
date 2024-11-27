@@ -58,6 +58,19 @@ services:
       db:
         condition: service_healthy
 
+  mail:
+    build: ./api/mail
+    ports:
+      - 8000:8000
+    command: npm run dev
+    restart: always
+    env_file: ./api/mail/.env
+    volumes:
+      - ./api/mail:/app/mail
+    depends_on:
+      db:
+        condition: service_healthy
+
   client:
     build: ./client
     command: npm run dev
