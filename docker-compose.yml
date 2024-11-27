@@ -25,9 +25,22 @@ services:
       - 4000:4000
     command: npm run dev
     restart: always
-    env_file: .env
+    env_file: ./api/product/.env
     volumes:
       - ./api/product:/app/product
+    depends_on:
+      db:
+        condition: service_healthy
+
+  uploadimage:
+    build: ./api/uploadimage
+    ports:
+      - 3000:3000
+    command: npm run dev
+    restart: always
+    env_file: ./api/uploadimage/.env
+    volumes:
+      - ./api/uploadimage:/app/uploadimage
     depends_on:
       db:
         condition: service_healthy
