@@ -1,11 +1,11 @@
+import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
 import { ApolloServer } from '@apollo/server';
-import 'reflect-metadata';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { AppDataSource } from './data-source';
 import ProductResolver from './resolvers/product.resolvers';
 
-const PORT = process.env.PORT;
+const { PORT } = process.env;
 
 (async () => {
   await AppDataSource.initialize();
@@ -17,7 +17,7 @@ const PORT = process.env.PORT;
   const server = new ApolloServer({ schema });
 
   const { url } = await startStandaloneServer(server, {
-    listen: { port: Number(parseInt(PORT || '4000', 10)) }
+    listen: { port: Number(PORT) }
   });
 
   console.info(`🚀  Server ready at: ${url}`);
