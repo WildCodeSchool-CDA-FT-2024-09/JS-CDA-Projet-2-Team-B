@@ -36,7 +36,7 @@ jobs:
           key: ${{ runner.os }}-${{  hashfiles('**/package-lock.json')}}
 
       - name: Install package dependence
-        run: npm run fullinstall
+        run: npm run install && npm run fulltest
 
       - name: Run linters
         run: npx lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
