@@ -1,9 +1,9 @@
-import product from '../entity/product.entities';
+import { Product } from '../entity/product.entities';
 import { Resolver, Query } from 'type-graphql';
 
-@Resolver(product)
+@Resolver(Product)
 export default class ProductResolver {
-  @Query(() => [product])
+  @Query(() => [Product])
   async getAllProducts() {
     return [];
   }
