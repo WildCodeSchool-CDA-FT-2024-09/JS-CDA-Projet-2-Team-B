@@ -1,7 +1,7 @@
 import type { Config } from 'jest';
 
 const config: Config = {
-  rootDir: './',
+  rootDir: './api/product',
   preset: 'ts-jest',
   testEnvironment: 'node',
   testMatch: ['<rootDir>/tests/**/*.test.ts'],
