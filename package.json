@@ -25,7 +25,8 @@
     "prepare": "husky",
     "lint": "lint-staged",
     "test-client": "cd ./client && npm run test",
-    "test-product": "cd ./product && npm run test"
+    "test-product": "cd ./product && npm run test",
+    "fullinstall": "npm install && cd ./client && npm install  && cd ../api/product && npm install && cd ../auth && npm install && cd ../email && npm install && cd ../uploadimage && npm install"
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
