@@ -19,7 +19,6 @@ services:
     command:
       - |
         npm run test
-    restart: always
     environment:
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=db

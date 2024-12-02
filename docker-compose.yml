@@ -25,7 +25,7 @@ services:
     restart: always
     env_file: ./api/product/.env
     volumes:
-      - ./api/product:/app/product
+      - ./api/product:/app
     depends_on:
       db:
         condition: service_healthy
