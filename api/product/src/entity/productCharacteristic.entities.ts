@@ -6,8 +6,8 @@ import {
   ManyToOne
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-import { Product } from './Product';
-import { CharacteristicDefinition } from './CharacteristicDefinition';
+import { Product } from './product.entities';
+import { CharacteristicDefinition } from './characteristicDefinition.entities';
 
 @ObjectType()
 @Entity('productCharacteristics')

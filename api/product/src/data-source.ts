@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import { Product } from './entity/product.entities';
 import { Brand } from './entity/brand.entities';
-import { ProductImage } from './entity/image.entities';
+import { Image } from './entity/image.entities';
 import { Category } from './entity/category.entities';
 import { Tag } from './entity/tag.entities';
 import { CharacteristicDefinition } from './entity/characteristicDefinition.entities';
@@ -23,7 +23,7 @@ export const AppDataSource = new DataSource({
   entities: [
     Brand,
     Product,
-    ProductImage,
+    Image,
     Category,
     Tag,
     CharacteristicDefinition,

@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Length } from 'class-validator';
-import { History } from './History';
+import { History } from './history.entities';
 
 @ObjectType()
 @Entity('actions')

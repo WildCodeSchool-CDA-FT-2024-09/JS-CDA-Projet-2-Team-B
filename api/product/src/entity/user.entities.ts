@@ -10,8 +10,8 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Length, IsEmail } from 'class-validator';
-import { History } from './History';
-import { Exchange } from './Exchange';
+import { History } from './history.entities';
+import { Exchange } from './exchange.entities';
 
 @ObjectType()
 @Entity('users')

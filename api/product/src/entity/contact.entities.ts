@@ -9,8 +9,8 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { IsEmail } from 'class-validator';
-import { Brand } from './Brand';
-import { Product } from './Product';
+import { Brand } from './brand.entities';
+import { Product } from './product.entities';
 
 @ObjectType()
 @Entity('contacts')

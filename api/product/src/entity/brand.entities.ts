@@ -10,10 +10,10 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Length } from 'class-validator';
-import { Product } from './Product';
-import { Contact } from './Contact';
-import { Exchange } from './Exchange';
-import { History } from './History';
+import { Product } from './product.entities';
+import { Contact } from './contact.entities';
+import { Exchange } from './exchange.entities';
+import { History } from './history.entities';
 
 @ObjectType()
 @Entity('brands')

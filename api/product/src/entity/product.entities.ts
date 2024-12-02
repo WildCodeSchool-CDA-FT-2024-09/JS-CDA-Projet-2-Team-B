@@ -13,12 +13,12 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID, Float } from 'type-graphql';
 import { Length, Min } from 'class-validator';
-import { Brand } from './Brand';
-import { Image } from './Image';
-import { Contact } from './Contact';
-import { Tag } from './Tag';
-import { Category } from './Category';
-import { ProductCharacteristic } from './ProductCharacteristic';
+import { Brand } from './brand.entities';
+import { Image } from './image.entities';
+import { Contact } from './contact.entities';
+import { Tag } from './tag.entities';
+import { Category } from './category.entities';
+import { ProductCharacteristic } from './productCharacteristic.entities';
 
 @ObjectType()
 @Entity('products')

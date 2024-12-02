@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Length } from 'class-validator';
-import { ProductCharacteristic } from './ProductCharacteristic';
+import { ProductCharacteristic } from './productCharacteristic.entities';
 
 @ObjectType()
 @Entity('characteristicDefinitions')

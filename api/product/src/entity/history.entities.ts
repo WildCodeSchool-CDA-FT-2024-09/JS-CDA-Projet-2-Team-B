@@ -7,10 +7,10 @@ import {
   CreateDateColumn
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
-import { User } from './User';
-import { Action } from './Action';
-import { Product } from './Product';
-import { Brand } from './Brand';
+import { User } from './user.entities';
+import { Action } from './action.entities';
+import { Product } from './product.entities';
+import { Brand } from './brand.entities';
 
 @ObjectType()
 @Entity('history')

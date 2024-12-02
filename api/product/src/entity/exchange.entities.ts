@@ -8,9 +8,14 @@ import {
   UpdateDateColumn
 } from 'typeorm';
 import { ObjectType, Field, ID, registerEnumType } from 'type-graphql';
-import { User } from './User';
-import { Brand } from './Brand';
-import { ExchangeStatus } from './enums/ExchangeStatus';
+import { User } from './user.entities';
+import { Brand } from './brand.entities';
+
+enum ExchangeStatus {
+  OPEN = 'OPEN',
+  CLOSED = 'CLOSED',
+  PENDING = 'PENDING'
+}
 
 registerEnumType(ExchangeStatus, {
   name: 'ExchangeStatus'
@@ -61,3 +66,5 @@ export class Exchange extends BaseEntity {
   @UpdateDateColumn()
   updatedAt: Date;
 }
+
+export { ExchangeStatus };

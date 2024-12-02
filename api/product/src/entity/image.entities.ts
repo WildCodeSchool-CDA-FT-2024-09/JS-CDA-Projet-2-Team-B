@@ -7,7 +7,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Length } from 'class-validator';
-import { Product } from './Product';
+import { Product } from './product.entities';
 
 @ObjectType()
 @Entity('images')
