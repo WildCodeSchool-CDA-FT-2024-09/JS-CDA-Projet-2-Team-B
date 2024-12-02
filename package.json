@@ -24,7 +24,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
     "lint": "lint-staged",
-    "fulltest": "concurrently \"cd ./api/auth && npm run test\" \"cd ./api/email && npm run test\" \"cd ./api/product && npm run test\" \"cd ./api/uploadimage && npm run test\""
+    "fullinstall": "concurrently \"cd ./api/auth && npm run test\" \"cd ./api/email && npm run test\" \"cd ./api/product && npm run test\" \"cd ./api/uploadimage && npm run test\""
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx}": [
