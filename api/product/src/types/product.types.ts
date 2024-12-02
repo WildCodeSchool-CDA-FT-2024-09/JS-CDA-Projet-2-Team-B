@@ -4,6 +4,9 @@ import { Field, InputType } from 'type-graphql';
 @InputType()
 export class ProductUpdateInput implements Partial<Product> {
   @Field()
+  id: number;
+
+  @Field()
   reference: string;
 
   @Field()
