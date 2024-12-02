@@ -25,7 +25,7 @@ services:
     restart: always
     env_file: ./api/product/.env
     volumes:
-      - ./api/product:/app/product
+      - ./api/product:/app
     depends_on:
       db:
         condition: service_healthy
@@ -36,7 +36,7 @@ services:
     restart: always
     env_file: ./api/uploadimage/.env
     volumes:
-      - ./api/uploadimage:/app/uploadimage
+      - ./api/uploadimage:/app
     depends_on:
       db:
         condition: service_healthy
@@ -47,7 +47,7 @@ services:
     restart: always
     env_file: ./api/auth/.env
     volumes:
-      - ./api/auth:/app/auth
+      - ./api/auth:/app
     depends_on:
       db:
         condition: service_healthy
@@ -58,7 +58,7 @@ services:
     restart: always
     env_file: ./api/email/.env
     volumes:
-      - ./api/email:/app/email
+      - ./api/email:/app
     depends_on:
       db:
         condition: service_healthy
@@ -75,7 +75,7 @@ services:
 
   gateway:
     image: nginx
-    ports: 
+    ports:
       - 5050:80
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf
