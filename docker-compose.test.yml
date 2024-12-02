@@ -13,9 +13,9 @@ services:
       timeout: 5s
       retries: 5
 
-  api:
+  product:
     build: ./api/product
-    entrypoint: ["/bin/sh", "-c"]
+    entrypoint: ['/bin/sh', '-c']
     command:
       - |
         npm run test
@@ -26,4 +26,49 @@ services:
       - POSTGRES_HOST=db
     depends_on:
       db:
-        condition: service_healthy      
+        condition: service_healthy
+
+  auth:
+    build: ./api/auth
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        npm run test
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  email:
+    build: ./api/email
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        npm run test
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
+
+  uploadimage:
+    build: ./api/uploadimage
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - |
+        npm run test
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_HOST=db
+    depends_on:
+      db:
+        condition: service_healthy
