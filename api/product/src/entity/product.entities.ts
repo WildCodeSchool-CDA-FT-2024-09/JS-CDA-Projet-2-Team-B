@@ -1,20 +1,34 @@
-import { Field, ObjectType } from 'type-graphql';
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { ObjectType, Field, ID, Float } from 'type-graphql';
+import { Length, Min } from 'class-validator';
 
 @ObjectType()
-@Entity()
+@Entity('products')
 export class Product extends BaseEntity {
-  @Field()
+  @Field(() => ID)
   @PrimaryGeneratedColumn()
   id: number;
 
   @Field()
-  @Column()
+  @Column({ unique: true, length: 50 })
+  @Length(1, 50)
+  reference: string;
+
+  @Field()
+  @Column({ length: 255 })
+  @Length(1, 255)
   name: string;
 
   @Field()
-  @Column()
-  description: string;
-}
+  @Column('text')
+  shortDescription: string;
 
-export default Product;
+  @Field()
+  @Column('text')
+  description: string;
+
+  @Field(() => Float)
+  @Column('decimal', { precision: 10, scale: 2 })
+  @Min(0)
+  price: number;
+}
