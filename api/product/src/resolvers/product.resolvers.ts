@@ -4,7 +4,9 @@ import { Resolver, Query } from 'type-graphql';
 @Resolver(product)
 export default class ProductResolver {
   @Query(() => [product])
-  async getAllProducts() {
-    return [];
+  async products(): Promise<product[]> {
+    return product.find({
+      relations: ['brand', 'images', 'characteristics']
+    });
   }
 }
