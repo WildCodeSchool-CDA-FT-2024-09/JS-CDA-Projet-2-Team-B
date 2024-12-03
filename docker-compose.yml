@@ -28,7 +28,7 @@ services:
     restart: always
     env_file: ./api/product/.env
     volumes:
-      - ./api/product:/app
+      - ./api/product/src:/app/src
     depends_on:
       db:
         condition: service_healthy
@@ -39,7 +39,7 @@ services:
     restart: always
     env_file: ./api/uploadimage/.env
     volumes:
-      - ./api/uploadimage:/app
+      - ./api/uploadimage/src:/app/src
     depends_on:
       db:
         condition: service_healthy
@@ -50,7 +50,7 @@ services:
     restart: always
     env_file: ./api/auth/.env
     volumes:
-      - ./api/auth:/app
+      - ./api/auth/src:/app/src
     depends_on:
       db:
         condition: service_healthy
@@ -61,7 +61,7 @@ services:
     restart: always
     env_file: ./api/email/.env
     volumes:
-      - ./api/email:/app
+      - ./api/email/src:/app/src
     depends_on:
       db:
         condition: service_healthy
@@ -73,8 +73,7 @@ services:
     environment:
       - VITE_API_URL=http://localhost:5050/graph
     volumes:
-      - ./client:/app/
-      - /app/node_modules
+      - ./client/src:/app/src
 
   gateway:
     image: nginx
