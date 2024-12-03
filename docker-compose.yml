@@ -9,15 +9,15 @@ services:
       timeout: 5s
       retries: 5
 
-  #adminer:
-    #image: adminer
-    #ports:
-     # - 8080:8080
-    #container_name: adminer
-    #restart: always
-    #depends_on:
-     # db:
-      #  condition: service_healthy
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: adminer
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
 
   product:
     build: ./api/product
