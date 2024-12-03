@@ -9,7 +9,8 @@
     "lint": "eslint \"*/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"*/**/*.{js,jsx,ts,tsx}\"",
     "preview": "vite preview",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "codegen": "graphql-codegen --config codegen.ts"
   },
   "dependencies": {
     "@apollo/client": "^3.11.10",
