@@ -6,6 +6,11 @@ import { Category } from './entity/category.entities';
 import { Tag } from './entity/tag.entities';
 import { CharacteristicDefinition } from './entity/characteristicDefinition.entities';
 import { ProductCharacteristic } from './entity/productCharacteristic.entities';
+import { Contact } from './entity/contact.entities';
+import { Action } from './entity/action.entities';
+import { Exchange } from './entity/exchange.entities';
+import { History } from './entity/history.entities';
+import { User } from './entity/user.entities';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -20,6 +25,7 @@ export const AppDataSource = new DataSource({
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
   synchronize: true,
+  // logging: true,
   entities: [
     Brand,
     Product,
@@ -27,6 +33,11 @@ export const AppDataSource = new DataSource({
     Category,
     Tag,
     CharacteristicDefinition,
-    ProductCharacteristic
+    ProductCharacteristic,
+    Contact,
+    Action,
+    Exchange,
+    History,
+    User
   ]
 });

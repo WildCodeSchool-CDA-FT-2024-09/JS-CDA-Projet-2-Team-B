@@ -1,11 +1,11 @@
-import product from '../entity/product.entities';
+import { Product } from '../entity/product.entities';
 import { Resolver, Query } from 'type-graphql';
 
-@Resolver(product)
+@Resolver(Product)
 export default class ProductResolver {
-  @Query(() => [product])
-  async products(): Promise<product[]> {
-    return product.find({
+  @Query(() => [Product])
+  async products(): Promise<Product[]> {
+    return Product.find({
       relations: ['brand', 'images', 'characteristics']
     });
   }

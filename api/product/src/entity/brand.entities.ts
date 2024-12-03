@@ -3,10 +3,7 @@ import {
   BaseEntity,
   PrimaryGeneratedColumn,
   Column,
-  OneToMany,
-  CreateDateColumn,
-  UpdateDateColumn,
-  DeleteDateColumn
+  OneToMany
 } from 'typeorm';
 import { ObjectType, Field, ID } from 'type-graphql';
 import { Length } from 'class-validator';
@@ -50,16 +47,4 @@ export class Brand extends BaseEntity {
   @Field(() => [History], { nullable: true })
   @OneToMany(() => History, (history) => history.brand)
   histories?: History[];
-
-  @Field()
-  @CreateDateColumn()
-  createdAt: Date;
-
-  @Field()
-  @UpdateDateColumn()
-  updatedAt: Date;
-
-  @Field({ nullable: true })
-  @DeleteDateColumn()
-  deletedAt?: Date;
 }
