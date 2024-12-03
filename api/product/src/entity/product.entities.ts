@@ -22,6 +22,7 @@ import { ProductCharacteristic } from './productCharacteristic.entities';
 
 @ObjectType()
 @Entity('products')
+@Entity('products')
 export class Product extends BaseEntity {
   @Field(() => ID)
   @PrimaryGeneratedColumn()
