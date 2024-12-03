@@ -8,6 +8,7 @@ export default function Catalog() {
         <Button variant="text">Text</Button>
         <Button variant="contained">Contained</Button>
         <Button variant="outlined">Outlined</Button>
+        <h1>Pedro, youpii</h1>
       </Stack>
     </div>
   );
