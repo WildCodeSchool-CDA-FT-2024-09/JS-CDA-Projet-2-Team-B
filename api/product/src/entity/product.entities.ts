@@ -42,9 +42,9 @@ export class Product extends BaseEntity {
   @Column('text', { nullable: true })
   shortDescription: string;
 
-  @Field()
-  @Column({ nullable: true })
-  description: string;
+  @Field({ nullable: true })
+  @Column('text', { nullable: true })
+  description?: string;
 
   @Field(() => Float)
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
