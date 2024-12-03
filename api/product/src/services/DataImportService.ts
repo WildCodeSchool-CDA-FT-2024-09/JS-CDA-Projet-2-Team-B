@@ -116,22 +116,32 @@ export class DataImportService {
           }
 
           // Caractéristiques
-          if (data.property_1_label && data.property_1_text) {
-            let definition = await CharacteristicDefinition.findOne({
-              where: { name: data.property_1_label }
-            });
+          const characteristics = [
+            { label: data.property_1_label, value: data.property_1_text },
+            { label: data.property_2_label, value: data.property_2_text },
+            { label: data.property_3_label, value: data.property_3_text },
+            { label: data.property_4_label, value: data.property_4_text },
+            { label: data.property_5_label, value: data.property_5_text }
+          ];
 
-            if (!definition) {
-              definition = await CharacteristicDefinition.create({
-                name: data.property_1_label
+          for (const char of characteristics) {
+            if (char.label && char.value) {
+              let definition = await CharacteristicDefinition.findOne({
+                where: { name: char.label }
+              });
+
+              if (!definition) {
+                definition = await CharacteristicDefinition.create({
+                  name: char.label
+                }).save();
+              }
+
+              await ProductCharacteristic.create({
+                value: char.value,
+                product: product,
+                definition: definition
               }).save();
             }
-
-            await ProductCharacteristic.create({
-              value: data.property_1_text,
-              product: product,
-              definition: definition
-            }).save();
           }
         }
       }
