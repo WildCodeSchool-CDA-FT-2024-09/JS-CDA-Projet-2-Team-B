@@ -39,7 +39,6 @@ export class ProductResolver {
 
   @Query(() => Product, { nullable: true })
   async product(id: number): Promise<Product | null> {
-    // Récupère un produit spécifique avec ses relations
     return await Product.findOne({
       where: { id },
       relations: {
