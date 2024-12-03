@@ -1,93 +1,90 @@
 services:
- db:
-   image: postgres
-   env_file: .env
-   ports:
-     - 5433:5432
-   restart: always
-   volumes:
-      # - ./api/product/src/db/postgres_data:/var/lib/postgresql/data
-      # - ./api/product/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
+  db:
+    image: postgres
+    env_file: .env
+    restart: always
+    volumes:
+    # - ./api/product/src/db/init.sql:/docker-entrypoint-initdb.d/init.sql
       - ./api/product/src/db/products.csv:/docker-entrypoint-initdb.d/products.csv
-   healthcheck:
-     test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}']
-     interval: 5s
-     timeout: 5s
-     retries: 5
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
- product:
-   build: ./api/product
-   command: npm run dev
-   restart: always
-   env_file: ./api/product/.env
-   volumes:
-     - ./api/product/src:/app/src
-   depends_on:
-     db:
-       condition: service_healthy
-   healthcheck:
-     test: ["CMD", "node", "-e", "console.log('health check')"]
-     interval: 10s
-     timeout: 5s
-     retries: 5
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: adminer
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy
 
- adminer:
-   image: adminer
-   ports:
-     - 8080:8080
-   restart: always
-   depends_on:
-     db:
-       condition: service_healthy
+  product:
+    build: ./api/product
+    command: npm run dev
+    restart: always
+    env_file: ./api/product/.env
+    volumes:
+      - ./api/product:/app
+    depends_on:
+      db:
+        condition: service_healthy
 
- uploadimage:
-   build: ./api/uploadimage
-   command: npm run dev
-   env_file: ./api/uploadimage/.env
-   volumes:
-     - ./api/uploadimage/src:/app/src
-   depends_on:
-     db:
-       condition: service_healthy
+  uploadimage:
+    build: ./api/uploadimage
+    command: npm run dev
+    restart: always
+    env_file: ./api/uploadimage/.env
+    volumes:
+      - ./api/uploadimage:/app
+    depends_on:
+      db:
+        condition: service_healthy
 
- auth:
-   build: ./api/auth
-   command: npm run dev
-   env_file: ./api/auth/.env
-   volumes:
-     - ./api/auth/src:/app
-   depends_on:
-     db:
-       condition: service_healthy
+  auth:
+    build: ./api/auth
+    command: npm run dev
+    restart: always
+    env_file: ./api/auth/.env
+    volumes:
+      - ./api/auth:/app
+    depends_on:
+      db:
+        condition: service_healthy
 
- email:
-   build: ./api/email
-   command: npm run dev
-   env_file: ./api/email/.env
-   volumes:
-     - ./api/email/src:/app/src
-   depends_on:
-     db:
-       condition: service_healthy
+  email:
+    build: ./api/email
+    command: npm run dev
+    restart: always
+    env_file: ./api/email/.env
+    volumes:
+      - ./api/email:/app
+    depends_on:
+      db:
+        condition: service_healthy
 
- client:
-   build: ./client
-   command: npm run dev
-   restart: always
-   environment:
-     - VITE_API_URL=http://localhost:5050/graph
-   volumes:
-     - ./client/src:/app/src
+  client:
+    build: ./client
+    command: npm run dev
+    restart: always
+    environment:
+      - VITE_API_URL=http://localhost:5050/graph
+    volumes:
+      - ./client:/app/
+      - /app/node_modules
 
- gateway:
-   image: nginx
-   ports:
-     - 5050:80
-   volumes:
-     - ./nginx.conf:/etc/nginx/nginx.conf
-   depends_on:
-     - product
-     - uploadimage
-     - auth
-     - email
-     - client
+  gateway:
+    image: nginx
+    ports:
+      - 5050:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - product
+      - uploadimage
+      - auth
+      - email
+      - client

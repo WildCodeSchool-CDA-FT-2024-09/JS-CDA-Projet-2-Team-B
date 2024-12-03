@@ -27,13 +27,14 @@ export class ProductCharacteristic extends BaseEntity {
   @Column()
   productId: number;
 
-  @Field(() => CharacteristicDefinition)
+  @Field(() => CharacteristicDefinition, { nullable: true })
   @ManyToOne(
     () => CharacteristicDefinition,
-    (definition) => definition.characteristics
+    (definition) => definition.characteristics,
+    { nullable: true }
   )
-  definition: CharacteristicDefinition;
+  definition?: CharacteristicDefinition;
 
-  @Column()
+  @Column({ nullable: true })
   definitionId: number;
 }
