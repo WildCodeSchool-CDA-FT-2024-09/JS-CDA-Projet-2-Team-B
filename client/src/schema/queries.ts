@@ -11,4 +11,11 @@ export const GET_PRODUCT = gql`
       price
     }
   }
+
+  query GetCategories {
+    categories {
+      id
+      name
+    }
+  }
 `;
