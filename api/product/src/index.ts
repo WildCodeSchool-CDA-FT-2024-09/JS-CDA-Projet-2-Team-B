@@ -4,6 +4,7 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { AppDataSource } from './data-source';
 import ProductResolver from './resolvers/product.resolvers';
+import Characteristic from './resolvers/characteristic.resolvers';
 
 const { PORT } = process.env;
 
@@ -11,7 +12,7 @@ const { PORT } = process.env;
   await AppDataSource.initialize();
 
   const schema = await buildSchema({
-    resolvers: [ProductResolver]
+    resolvers: [ProductResolver, Characteristic]
   });
 
   const server = new ApolloServer({ schema });
