@@ -1,7 +1,8 @@
 import Card from '@mui/material/Card';
+import { Link as RouterLink } from 'react-router-dom';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
+import { Link as MUILink } from '@mui/material';
 import { Grid } from '@mui/system';
 
 const styleButton = {
@@ -15,16 +16,18 @@ const styleButton = {
 };
 
 type Products = {
-  nom: string;
+  name: string;
+  price: number;
   reference: string;
-  categorie: string;
+  shortDescription: string;
   description: string;
 };
 
 export default function CardProduct({
-  nom,
+  name,
+  price,
   reference,
-  categorie,
+  shortDescription,
   description
 }: Products) {
   return (
@@ -40,19 +43,28 @@ export default function CardProduct({
     >
       <CardContent>
         <Typography variant="h6" sx={{ marginBottom: 1 }}>
-          {nom}
+          {name}
         </Typography>
         <Typography variant="body2"> {reference}</Typography>
-        <Typography variant="body2"> {categorie}</Typography>
+        <Typography variant="body2"> {price}</Typography>
+        <Typography variant="body2"> {shortDescription}</Typography>
         <Typography variant="body2"> {description}</Typography>
       </CardContent>
       <Grid sx={{ display: 'flex', justifyContent: 'end', marginRight: 1 }}>
-        <Link href="/" sx={{ ...styleButton, backgroundColor: 'green' }}>
+        <MUILink
+          component={RouterLink}
+          to="/"
+          sx={{ ...styleButton, backgroundColor: 'green' }}
+        >
           Modifier
-        </Link>
-        <Link href="/" sx={{ ...styleButton, backgroundColor: 'info.main' }}>
+        </MUILink>
+        <MUILink
+          component={RouterLink}
+          to="/"
+          sx={{ ...styleButton, backgroundColor: 'info.main' }}
+        >
           Activer
-        </Link>
+        </MUILink>
       </Grid>
     </Card>
   );
