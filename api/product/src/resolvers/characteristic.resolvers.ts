@@ -30,10 +30,9 @@ export default class CharacteristicResolver {
       );
     }
 
-    const characteristic = Characteristic.create({
-      name: newCharacteristic.name,
-      value: newCharacteristic.value
-    });
+    const characteristic = new Characteristic();
+    characteristic.name = newCharacteristic.name;
+    characteristic.value = newCharacteristic.value;
 
     await characteristic.save();
     return characteristic;
