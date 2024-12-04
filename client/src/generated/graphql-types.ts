@@ -30,9 +30,26 @@ export type Scalars = {
   Float: { input: number; output: number };
 };
 
+export type Characteristic = {
+  __typename?: 'Characteristic';
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
+export type CharacteristicInput = {
+  name: Scalars['String']['input'];
+  value: Scalars['String']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  createNewCharacteristic: Characteristic;
   createNewProduct: Product;
+};
+
+export type MutationCreateNewCharacteristicArgs = {
+  characteristic: CharacteristicInput;
 };
 
 export type MutationCreateNewProductArgs = {
@@ -59,6 +76,7 @@ export type ProductInput = {
 
 export type Query = {
   __typename?: 'Query';
+  getAllCharacteristic: Array<Characteristic>;
   getAllProducts: Array<Product>;
   getProductById?: Maybe<Product>;
 };
@@ -97,6 +115,20 @@ export type GetProductByIdQuery = {
     description: string;
     price: number;
   } | null;
+};
+
+export type GetAllCharacteristicQueryVariables = Exact<{
+  [key: string]: never;
+}>;
+
+export type GetAllCharacteristicQuery = {
+  __typename?: 'Query';
+  getAllCharacteristic: Array<{
+    __typename?: 'Characteristic';
+    id: string;
+    name: string;
+    value: string;
+  }>;
 };
 
 export const GetAllProductsDocument = gql`
@@ -267,4 +299,83 @@ export type GetProductByIdSuspenseQueryHookResult = ReturnType<
 export type GetProductByIdQueryResult = Apollo.QueryResult<
   GetProductByIdQuery,
   GetProductByIdQueryVariables
+>;
+export const GetAllCharacteristicDocument = gql`
+  query GetAllCharacteristic {
+    getAllCharacteristic {
+      id
+      name
+      value
+    }
+  }
+`;
+
+/**
+ * __useGetAllCharacteristicQuery__
+ *
+ * To run a query within a React component, call `useGetAllCharacteristicQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllCharacteristicQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllCharacteristicQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllCharacteristicQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllCharacteristicQuery,
+    GetAllCharacteristicQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<
+    GetAllCharacteristicQuery,
+    GetAllCharacteristicQueryVariables
+  >(GetAllCharacteristicDocument, options);
+}
+export function useGetAllCharacteristicLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllCharacteristicQuery,
+    GetAllCharacteristicQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetAllCharacteristicQuery,
+    GetAllCharacteristicQueryVariables
+  >(GetAllCharacteristicDocument, options);
+}
+export function useGetAllCharacteristicSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetAllCharacteristicQuery,
+        GetAllCharacteristicQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetAllCharacteristicQuery,
+    GetAllCharacteristicQueryVariables
+  >(GetAllCharacteristicDocument, options);
+}
+export type GetAllCharacteristicQueryHookResult = ReturnType<
+  typeof useGetAllCharacteristicQuery
+>;
+export type GetAllCharacteristicLazyQueryHookResult = ReturnType<
+  typeof useGetAllCharacteristicLazyQuery
+>;
+export type GetAllCharacteristicSuspenseQueryHookResult = ReturnType<
+  typeof useGetAllCharacteristicSuspenseQuery
+>;
+export type GetAllCharacteristicQueryResult = Apollo.QueryResult<
+  GetAllCharacteristicQuery,
+  GetAllCharacteristicQueryVariables
 >;

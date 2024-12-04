@@ -25,3 +25,13 @@ export const GET_PRODUCT_BY_ID = gql`
     }
   }
 `;
+
+export const GET_CHARACTERISTIC = gql`
+  query GetAllCharacteristic {
+    getAllCharacteristic {
+      id
+      name
+      value
+    }
+  }
+`;
