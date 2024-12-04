@@ -50,4 +50,9 @@ export default class ProductResolver {
     await product.save();
     return product;
   }
+
+  @Query(() => Product, { nullable: true })
+  async getProductById(@Arg('id', () => Number) id: number) {
+    return await Product.findOne({ where: { id } });
+  }
 }

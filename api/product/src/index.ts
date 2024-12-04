@@ -1,19 +1,15 @@
 import 'reflect-metadata';
-import { buildSchema } from 'type-graphql';
 import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { AppDataSource } from './data-source';
-import ProductResolver from './resolvers/product.resolvers';
-import Characteristic from './resolvers/characteristic.resolvers';
+import getSchema from './schema';
 
 const { PORT } = process.env;
 
 (async () => {
   await AppDataSource.initialize();
 
-  const schema = await buildSchema({
-    resolvers: [ProductResolver, Characteristic]
-  });
+  const schema = await getSchema();
 
   const server = new ApolloServer({ schema });
 
