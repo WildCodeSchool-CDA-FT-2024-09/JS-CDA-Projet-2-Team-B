@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-tag';
 
 export const GET_PRODUCT = gql`
   query GetAllProducts {
@@ -24,4 +24,4 @@ export const GET_PRODUCT_BY_ID = gql`
       price
     }
   }
-`
+`;
