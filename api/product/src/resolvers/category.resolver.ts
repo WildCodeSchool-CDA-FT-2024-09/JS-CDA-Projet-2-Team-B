@@ -7,9 +7,6 @@ export class CreateCategoryInput {
   @Field()
   @Length(1, 50)
   name: string;
-
-  @Field({ nullable: true })
-  description?: string;
 }
 
 @Resolver()
@@ -32,11 +29,8 @@ export default class CategoryResolver {
         throw new Error('Une catégorie avec ce nom existe déjà');
       }
 
-      const category = Category.create({
-        name: input.name,
-        description: input.description
-      });
-
+      const category = new Category();
+      category.name = input.name;
       await category.save();
 
       return category;
