@@ -8,9 +8,6 @@ export default defineConfig({
     watch: {
       usePolling: false
     },
-    host: true,
-    hmr: {
-      port: 5050
-    }
+    host: true
   }
 });

@@ -53,6 +53,11 @@ export default class ProductResolver {
     return product;
   }
 
+  @Query(() => Product, { nullable: true })
+  async getProductById(@Arg('id', () => Number) id: number) {
+    return await Product.findOne({ where: { id } });
+  }
+
   @Mutation(() => Product)
   async updateProduct(
     @Arg('data') newDataProduct: ProductUpdateInput

@@ -1,10 +1,11 @@
-import 'reflect-metadata';
 import { buildSchema } from 'type-graphql';
-import ProductResolver from '../src/resolvers/product.resolvers';
+import ProductResolver from './resolvers/product.resolvers';
+import CharacteristicResolver from './resolvers/characteristic.resolvers';
+import CategoryResolver from './resolvers/category.resolver';
 
 const getSchema = async () => {
   return await buildSchema({
-    resolvers: [ProductResolver]
+    resolvers: [ProductResolver, CharacteristicResolver, CategoryResolver]
   });
 };
 

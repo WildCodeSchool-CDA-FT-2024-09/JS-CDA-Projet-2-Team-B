@@ -1,4 +1,4 @@
-import { gql } from '@apollo/client';
+import { gql } from 'graphql-tag';
 
 export const GET_PRODUCT = gql`
   query GetAllProducts {
@@ -9,13 +9,6 @@ export const GET_PRODUCT = gql`
       shortDescription
       description
       price
-    }
-  }
-
-  query GetCategories {
-    categories {
-      id
-      name
     }
   }
 `;
@@ -29,16 +22,6 @@ export const GET_PRODUCT_BY_ID = gql`
       shortDescription
       description
       price
-    }
-  }
-`;
-
-export const GET_CHARACTERISTIC = gql`
-  query GetAllCharacteristic {
-    getAllCharacteristic {
-      id
-      name
-      value
     }
   }
 `;
