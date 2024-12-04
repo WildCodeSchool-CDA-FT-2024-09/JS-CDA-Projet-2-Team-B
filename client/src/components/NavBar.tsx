@@ -5,10 +5,18 @@ import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
+import { Link as MUILink } from '@mui/material';
+import { Link as RouterLink } from 'react-router-dom';
+//import Button from '@mui/material/Button';
+
 import Tooltip from '@mui/material/Tooltip';
 
-const pages = ['Gestion', 'Produits', 'Marques', 'Ajout Produit'];
+const pages = [
+  { content: 'Gestion', to: '/' },
+  { content: 'Produits', to: '/product' },
+  { content: 'Marque', to: '/' },
+  { content: 'Ajout Produit', to: '/' }
+];
 
 export default function NavBAr() {
   return (
@@ -35,18 +43,23 @@ export default function NavBAr() {
 
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'right' }}>
             {pages.map((page) => (
-              <Button
-                key={page}
+              <MUILink
+                to={page.to}
+                key={page.content}
+                component={RouterLink}
                 sx={{
                   my: 2,
                   color: 'black',
                   display: 'block',
                   marginRight: 3,
-                  fontSize: 15
+                  textTransform: 'uppercase',
+                  textDecoration: 'none',
+                  fontSize: 15,
+                  fontFamily: 'Roboto'
                 }}
               >
-                {page}
-              </Button>
+                {page.content}
+              </MUILink>
             ))}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
