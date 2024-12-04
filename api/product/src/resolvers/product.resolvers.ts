@@ -1,5 +1,5 @@
+import { Resolver, Query, InputType, Field, Mutation, Arg } from 'type-graphql';
 import { Product } from '../entity/product.entities';
-import { Resolver, Query, Mutation, Arg, InputType, Field } from 'type-graphql';
 
 @InputType()
 class ProductInput {
@@ -20,10 +20,33 @@ class ProductInput {
 }
 
 @Resolver(Product)
-export default class ProductResolver {
+export class ProductResolver {
   @Query(() => [Product])
-  async getAllProducts(): Promise<Product[]> {
-    return Product.find();
+  async products(): Promise<Product[]> {
+    return await Product.find({
+      relations: {
+        brand: true,
+        contacts: true,
+        characteristics: {
+          definition: true
+        },
+        tags: true,
+        categories: true,
+        images: true
+      }
+    });
+  }
+
+  @Query(() => Product, { nullable: true })
+  async product(id: number): Promise<Product | null> {
+    return await Product.findOne({
+      where: { id },
+      relations: {
+        brand: true,
+        images: true,
+        characteristics: true
+      }
+    });
   }
 
   @Mutation(() => Product)
@@ -51,3 +74,5 @@ export default class ProductResolver {
     return product;
   }
 }
+
+export default ProductResolver;

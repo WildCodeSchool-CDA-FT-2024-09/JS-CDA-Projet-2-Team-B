@@ -4,11 +4,17 @@ import { ApolloServer } from '@apollo/server';
 import { startStandaloneServer } from '@apollo/server/standalone';
 import { AppDataSource } from './data-source';
 import ProductResolver from './resolvers/product.resolvers';
-
+import { DataImportService } from './services/DataImportService';
 const { PORT } = process.env;
 
 (async () => {
   await AppDataSource.initialize();
+
+  console.info('✅ Database initialized');
+
+  const importService = new DataImportService();
+  await importService.importData();
+  console.info('✅ Development data imported successfully');
 
   const schema = await buildSchema({
     resolvers: [ProductResolver]

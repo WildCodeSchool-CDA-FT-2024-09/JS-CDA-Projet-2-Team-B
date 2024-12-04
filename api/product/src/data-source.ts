@@ -1,5 +1,16 @@
 import { DataSource } from 'typeorm';
 import { Product } from './entity/product.entities';
+import { Brand } from './entity/brand.entities';
+import { Image } from './entity/image.entities';
+import { Category } from './entity/category.entities';
+import { Tag } from './entity/tag.entities';
+import { CharacteristicDefinition } from './entity/characteristicDefinition.entities';
+import { ProductCharacteristic } from './entity/productCharacteristic.entities';
+import { Contact } from './entity/contact.entities';
+import { Action } from './entity/action.entities';
+import { Exchange } from './entity/exchange.entities';
+import { History } from './entity/history.entities';
+import { User } from './entity/user.entities';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,6 +24,20 @@ export const AppDataSource = new DataSource({
   username: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
-  entities: [Product],
-  synchronize: true
+  synchronize: true,
+  // logging: true,
+  entities: [
+    Brand,
+    Product,
+    Image,
+    Category,
+    Tag,
+    CharacteristicDefinition,
+    ProductCharacteristic,
+    Contact,
+    Action,
+    Exchange,
+    History,
+    User
+  ]
 });
