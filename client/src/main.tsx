@@ -18,12 +18,12 @@ const router = createBrowserRouter([
         element: <Catalog />
       },
       {
-        path: '/product/:id/edit',
-        element: <ProductDetails />
-      },
-      {
         path: '/managementProduct',
         element: <ManagementProduct />
+      },
+      {
+        path: '/product/:id/edit',
+        element: <ProductDetails />
       }
     ]
   }
