@@ -5,6 +5,7 @@ import { ApolloProvider } from '@apollo/client';
 import client from './services/connexion.ts';
 import App from './App.tsx';
 import Catalog from './pages/Catalog.tsx';
+import ManagementProduct from './pages/ManagementProduct.tsx';
 
 const router = createBrowserRouter([
   {
@@ -14,6 +15,10 @@ const router = createBrowserRouter([
       {
         path: '/catalog',
         element: <Catalog />
+      },
+      {
+        path: '/managementProduct',
+        element: <ManagementProduct />
       }
     ]
   }
