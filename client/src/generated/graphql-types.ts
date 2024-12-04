@@ -23,6 +23,18 @@ export type Category = {
   name: Scalars['String']['output'];
 };
 
+export type Characteristic = {
+  __typename?: 'Characteristic';
+  id: Scalars['ID']['output'];
+  name: Scalars['String']['output'];
+  value: Scalars['String']['output'];
+};
+
+export type CharacteristicInput = {
+  name: Scalars['String']['input'];
+  value: Scalars['String']['input'];
+};
+
 export type CreateCategoryInput = {
   name: Scalars['String']['input'];
 };
@@ -30,12 +42,18 @@ export type CreateCategoryInput = {
 export type Mutation = {
   __typename?: 'Mutation';
   createCategory: Category;
+  createNewCharacteristic: Characteristic;
   createNewProduct: Product;
 };
 
 
 export type MutationCreateCategoryArgs = {
   input: CreateCategoryInput;
+};
+
+
+export type MutationCreateNewCharacteristicArgs = {
+  characteristic: CharacteristicInput;
 };
 
 
@@ -64,7 +82,14 @@ export type ProductInput = {
 export type Query = {
   __typename?: 'Query';
   categories: Array<Category>;
+  getAllCharacteristic: Array<Characteristic>;
   getAllProducts: Array<Product>;
+  getProductById?: Maybe<Product>;
+};
+
+
+export type QueryGetProductByIdArgs = {
+  id: Scalars['Float']['input'];
 };
 
 export type CreateCategoryMutationVariables = Exact<{
@@ -83,6 +108,13 @@ export type GetCategoriesQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type GetCategoriesQuery = { __typename?: 'Query', categories: Array<{ __typename?: 'Category', id: string, name: string }> };
+
+export type GetProductByIdQueryVariables = Exact<{
+  getProductByIdId: Scalars['Float']['input'];
+}>;
+
+
+export type GetProductByIdQuery = { __typename?: 'Query', getProductById?: { __typename?: 'Product', id: string, reference: string, name: string, shortDescription: string, description: string, price: number } | null };
 
 
 export const CreateCategoryDocument = gql`
@@ -203,3 +235,48 @@ export type GetCategoriesQueryHookResult = ReturnType<typeof useGetCategoriesQue
 export type GetCategoriesLazyQueryHookResult = ReturnType<typeof useGetCategoriesLazyQuery>;
 export type GetCategoriesSuspenseQueryHookResult = ReturnType<typeof useGetCategoriesSuspenseQuery>;
 export type GetCategoriesQueryResult = Apollo.QueryResult<GetCategoriesQuery, GetCategoriesQueryVariables>;
+export const GetProductByIdDocument = gql`
+    query getProductById($getProductByIdId: Float!) {
+  getProductById(id: $getProductByIdId) {
+    id
+    reference
+    name
+    shortDescription
+    description
+    price
+  }
+}
+    `;
+
+/**
+ * __useGetProductByIdQuery__
+ *
+ * To run a query within a React component, call `useGetProductByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetProductByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetProductByIdQuery({
+ *   variables: {
+ *      getProductByIdId: // value for 'getProductByIdId'
+ *   },
+ * });
+ */
+export function useGetProductByIdQuery(baseOptions: Apollo.QueryHookOptions<GetProductByIdQuery, GetProductByIdQueryVariables> & ({ variables: GetProductByIdQueryVariables; skip?: boolean; } | { skip: boolean; }) ) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<GetProductByIdQuery, GetProductByIdQueryVariables>(GetProductByIdDocument, options);
+      }
+export function useGetProductByIdLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<GetProductByIdQuery, GetProductByIdQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<GetProductByIdQuery, GetProductByIdQueryVariables>(GetProductByIdDocument, options);
+        }
+export function useGetProductByIdSuspenseQuery(baseOptions?: Apollo.SkipToken | Apollo.SuspenseQueryHookOptions<GetProductByIdQuery, GetProductByIdQueryVariables>) {
+          const options = baseOptions === Apollo.skipToken ? baseOptions : {...defaultOptions, ...baseOptions}
+          return Apollo.useSuspenseQuery<GetProductByIdQuery, GetProductByIdQueryVariables>(GetProductByIdDocument, options);
+        }
+export type GetProductByIdQueryHookResult = ReturnType<typeof useGetProductByIdQuery>;
+export type GetProductByIdLazyQueryHookResult = ReturnType<typeof useGetProductByIdLazyQuery>;
+export type GetProductByIdSuspenseQueryHookResult = ReturnType<typeof useGetProductByIdSuspenseQuery>;
+export type GetProductByIdQueryResult = Apollo.QueryResult<GetProductByIdQuery, GetProductByIdQueryVariables>;

@@ -6,6 +6,7 @@ import client from './services/connexion.ts';
 import App from './App.tsx';
 import Catalog from './pages/Catalog.tsx';
 import ManagementProduct from './pages/ManagementProduct.tsx';
+import ProductDetails from './components/ProductDetails.tsx';
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,10 @@ const router = createBrowserRouter([
       {
         path: '/managementProduct',
         element: <ManagementProduct />
+      },
+      {
+        path: '/product/:id/edit',
+        element: <ProductDetails />
       }
     ]
   }
