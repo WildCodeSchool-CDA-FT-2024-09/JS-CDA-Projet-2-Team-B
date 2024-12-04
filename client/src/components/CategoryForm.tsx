@@ -22,7 +22,6 @@ const CategoryForm = () => {
   const [createCategory] = useCreateCategoryMutation();
 
   const handleSubmit = async () => {
-    console.info('Tentative de création avec:', categoryName);
     try {
       await createCategory({
         variables: {
