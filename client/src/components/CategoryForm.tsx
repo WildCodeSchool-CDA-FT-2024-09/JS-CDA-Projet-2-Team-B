@@ -38,7 +38,6 @@ const CategoryForm = () => {
   return (
     <Card
       sx={{
-        maxWidth: 600,
         margin: 1,
         display: 'flex',
         flexDirection: 'column',
@@ -62,7 +61,7 @@ const CategoryForm = () => {
             Ajouter une catégorie :
           </Typography>
           <TextField
-            fullWidth
+            sx={{ maxWidth: '300px' }}
             variant="outlined"
             size="small"
             value={categoryName}
