@@ -11,6 +11,13 @@ export const GET_PRODUCT = gql`
       price
     }
   }
+
+  query GetCategories {
+    categories {
+      id
+      name
+    }
+  }
 `;
 
 export const GET_PRODUCT_BY_ID = gql`

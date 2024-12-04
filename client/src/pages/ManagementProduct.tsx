@@ -1,3 +1,9 @@
+import CategoryForm from '../components/CategoryForm';
+
 export default function ManagementProduct() {
-  return <p> Management </p>;
+  return (
+    <div>
+      <CategoryForm />
+    </div>
+  );
 }
