@@ -24,14 +24,13 @@ const CategoryForm = () => {
   const handleSubmit = async () => {
     console.info('Tentative de création avec:', categoryName);
     try {
-      const result = await createCategory({
+      await createCategory({
         variables: {
           input: {
             name: categoryName
           }
         }
       });
-      console.log('Succès:', result);
     } catch (err) {
       console.error('Erreur:', err);
     }
