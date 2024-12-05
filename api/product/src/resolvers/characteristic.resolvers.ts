@@ -6,8 +6,8 @@ class CharacteristicInput {
   @Field()
   name: string;
 
-  @Field()
-  value: string;
+  @Field({ nullable: true })
+  value?: string;
 }
 
 @Resolver(Characteristic)
@@ -21,18 +21,20 @@ export default class CharacteristicResolver {
   async createNewCharacteristic(
     @Arg('characteristic') newCharacteristic: CharacteristicInput
   ) {
-    const existingCharacteristic = await Characteristic.findOne({
-      where: { value: newCharacteristic.value }
-    });
-    if (existingCharacteristic) {
-      throw new Error(
-        `This characteristic : "${newCharacteristic.value}" already exists`
-      );
+    if (newCharacteristic.value) {
+      const existingCharacteristic = await Characteristic.findOne({
+        where: { value: newCharacteristic.value }
+      });
+      if (existingCharacteristic) {
+        throw new Error(
+          `This characteristic : "${newCharacteristic.value}" already exists`
+        );
+      }
     }
 
     const characteristic = new Characteristic();
     characteristic.name = newCharacteristic.name;
-    characteristic.value = newCharacteristic.value;
+    characteristic.value = newCharacteristic.value || '';
 
     await characteristic.save();
     return characteristic;

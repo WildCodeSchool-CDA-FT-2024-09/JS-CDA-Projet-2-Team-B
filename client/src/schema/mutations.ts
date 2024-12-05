@@ -8,3 +8,13 @@ export const CREATE_CATEGORY = gql`
     }
   }
 `;
+
+export const CREATE_CHARACTERISTIC = gql`
+  mutation CreateNewCharacteristic($characteristic: CharacteristicInput!) {
+    createNewCharacteristic(characteristic: $characteristic) {
+      id
+      name
+      value
+    }
+  }
+`;

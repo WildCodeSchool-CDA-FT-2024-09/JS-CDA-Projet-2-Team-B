@@ -45,7 +45,7 @@ export type Characteristic = {
 
 export type CharacteristicInput = {
   name: Scalars['String']['input'];
-  value: Scalars['String']['input'];
+  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateCategoryInput = {
@@ -108,6 +108,20 @@ export type CreateCategoryMutationVariables = Exact<{
 export type CreateCategoryMutation = {
   __typename?: 'Mutation';
   createCategory: { __typename?: 'Category'; id: string; name: string };
+};
+
+export type CreateNewCharacteristicMutationVariables = Exact<{
+  characteristic: CharacteristicInput;
+}>;
+
+export type CreateNewCharacteristicMutation = {
+  __typename?: 'Mutation';
+  createNewCharacteristic: {
+    __typename?: 'Characteristic';
+    id: string;
+    name: string;
+    value: string;
+  };
 };
 
 export type GetAllProductsQueryVariables = Exact<{ [key: string]: never }>;
@@ -213,6 +227,58 @@ export type CreateCategoryMutationResult =
 export type CreateCategoryMutationOptions = Apollo.BaseMutationOptions<
   CreateCategoryMutation,
   CreateCategoryMutationVariables
+>;
+export const CreateNewCharacteristicDocument = gql`
+  mutation CreateNewCharacteristic($characteristic: CharacteristicInput!) {
+    createNewCharacteristic(characteristic: $characteristic) {
+      id
+      name
+      value
+    }
+  }
+`;
+export type CreateNewCharacteristicMutationFn = Apollo.MutationFunction<
+  CreateNewCharacteristicMutation,
+  CreateNewCharacteristicMutationVariables
+>;
+
+/**
+ * __useCreateNewCharacteristicMutation__
+ *
+ * To run a mutation, you first call `useCreateNewCharacteristicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNewCharacteristicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createNewCharacteristicMutation, { data, loading, error }] = useCreateNewCharacteristicMutation({
+ *   variables: {
+ *      characteristic: // value for 'characteristic'
+ *   },
+ * });
+ */
+export function useCreateNewCharacteristicMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateNewCharacteristicMutation,
+    CreateNewCharacteristicMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateNewCharacteristicMutation,
+    CreateNewCharacteristicMutationVariables
+  >(CreateNewCharacteristicDocument, options);
+}
+export type CreateNewCharacteristicMutationHookResult = ReturnType<
+  typeof useCreateNewCharacteristicMutation
+>;
+export type CreateNewCharacteristicMutationResult =
+  Apollo.MutationResult<CreateNewCharacteristicMutation>;
+export type CreateNewCharacteristicMutationOptions = Apollo.BaseMutationOptions<
+  CreateNewCharacteristicMutation,
+  CreateNewCharacteristicMutationVariables
 >;
 export const GetAllProductsDocument = gql`
   query GetAllProducts {

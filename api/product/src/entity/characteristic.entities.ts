@@ -13,6 +13,6 @@ export class Characteristic extends BaseEntity {
   name: string;
 
   @Field()
-  @Column({ type: 'varchar', unique: true, length: 100 })
-  value: string;
+  @Column({ type: 'varchar', length: 100, nullable: true })
+  value?: string;
 }
