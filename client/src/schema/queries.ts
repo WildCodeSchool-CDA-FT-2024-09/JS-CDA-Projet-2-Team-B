@@ -36,12 +36,30 @@ export const GET_IMAGES = gql`
   }
 `;
 
+export const GET_CHARACTERISTIC = gql`
+  query GetAllCharacteristic {
+    getAllCharacteristic {
+      id
+      name
+    }
+  }
+`;
+
 export const ADD_IMAGE = gql`
   mutation addImage($data: ImageInput!) {
     addImage(data: $data) {
       id
       url
       isMain
+    }
+  }
+`;
+
+export const GET_CATEGORY = gql`
+  query GetAllCategories {
+    getAllCategories {
+      id
+      name
     }
   }
 `;
