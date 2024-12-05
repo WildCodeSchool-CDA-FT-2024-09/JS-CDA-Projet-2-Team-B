@@ -1,5 +1,7 @@
 import { DataSource } from 'typeorm';
 import { Product } from './entity/product.entities';
+import { Category } from './entity/category.entities';
+import { Characteristic } from './entity/characteristic.entities';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
@@ -13,6 +15,6 @@ export const AppDataSource = new DataSource({
   username: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
-  entities: [Product],
+  entities: [Product, Category, Characteristic],
   synchronize: true
 });

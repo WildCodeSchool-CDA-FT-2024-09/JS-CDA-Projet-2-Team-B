@@ -4,7 +4,9 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import client from './services/connexion.ts';
 import App from './App.tsx';
-import Catalog from './pages/catalog.ts';
+import Catalog from './pages/Catalog.tsx';
+import ManagementProduct from './pages/ManagementProduct.tsx';
+import ProductDetails from './components/ProductDetails.tsx';
 
 const router = createBrowserRouter([
   {
@@ -12,8 +14,16 @@ const router = createBrowserRouter([
     element: <App />,
     children: [
       {
-        path: '/product',
+        path: '/catalog',
         element: <Catalog />
+      },
+      {
+        path: '/managementProduct',
+        element: <ManagementProduct />
+      },
+      {
+        path: '/product/:id/edit',
+        element: <ProductDetails />
       }
     ]
   }
