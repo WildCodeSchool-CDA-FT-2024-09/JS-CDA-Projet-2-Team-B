@@ -1,11 +1,11 @@
 import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
-import { ObjectType, Field, ID, Float } from 'type-graphql';
+import { ObjectType, Field, Float } from 'type-graphql';
 import { Length, Min } from 'class-validator';
 
 @ObjectType()
 @Entity('products')
 export class Product extends BaseEntity {
-  @Field(() => ID)
+  @Field()
   @PrimaryGeneratedColumn()
   id: number;
 

@@ -20,15 +20,13 @@ app.use(cors(corsOptions));
 
 const PORT = process.env.PORT;
 
-// Configuration du stockage des fichiers
+// Configuration de Multer pour le stockage des fichiers
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    const uploadPath = path.join(__dirname, '../uploads'); // Dossier de stockage des images
-    fs.mkdirSync(uploadPath, { recursive: true }); // Crée le dossier s'il n'existe pas
-    cb(null, uploadPath);
+  destination: (req, file, cb) => {
+    cb(null, path.join(__dirname, '../uploads')); // Chemin vers le dossier "uploads"
   },
-  filename: function (req, file, cb) {
-    cb(null, Date.now() + '-' + file.originalname); // Nom unique pour chaque fichier
+  filename: (req, file, cb) => {
+    cb(null, `${Date.now()}-${file.originalname}`); // Nom unique pour le fichier
   }
 });
 const upload = multer({ storage });
@@ -42,8 +40,11 @@ app.get('/upload', (_: Request, res: Response) => {
 app.post(
   '/upload',
   upload.single('image'),
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
+    console.info('Headers:', req.headers);
+    console.info('Body:', req.body);
     console.info('Received file:', req.file);
+
     if (!req.file) {
       res.status(400).json({ error: 'No file uploaded' });
       return;
@@ -52,48 +53,42 @@ app.post(
     const filePath = `http://localhost:3000/uploads/${req.file.filename}`; // URL publique de l'image
 
     try {
-      // Lecture du fichier pour vérifier son existence
-      fs.readFile(req.file.path, async (err) => {
-        if (err) {
-          console.error('Error reading file:', err);
-          return res.status(500).json({ error: 'Error reading file' });
-        }
+      // Vérifiez l'existence du fichier avec fs.promises
+      await fs.promises.access(req.file.path);
 
-        // Appel de l'API GraphQL dans le service `product` pour enregistrer l'image
-        try {
-          const response = await axios.post('http://product:4000/graphql', {
-            query: `
-            mutation {
-              addImage(data: {url: "${filePath}", isMain: false}) {
-                id
-                url
-                isMain
-              }
-            }
-          `
-          });
-
-          if (response.data.errors) {
-            console.error('GraphQL errors:', response.data.errors);
-            res.status(500).json({ error: 'Failed to save image in database' });
-            return;
+      // Appel de l'API GraphQL pour enregistrer l'image
+      const response = await axios.post('http://product:4000/graphql', {
+        query: `
+        mutation {
+          addImage(data: {url: "${filePath}", isMain: false}) {
+            id
+            url
+            isMain
           }
-
-          // Réponse en cas de succès
-          res.status(200).json({
-            status: 'success',
-            data: response.data.data.addImage
-          });
-        } catch (apiError) {
-          console.error('Error while calling product service:', apiError);
-          res
-            .status(500)
-            .json({ error: 'Error while calling product service' });
         }
+      `
       });
+
+      if (response.data.errors) {
+        console.error('GraphQL errors:', response.data.errors);
+        res.status(500).json({ error: 'Failed to save image in database' });
+        return;
+      }
+
+      // Réponse en cas de succès
+      res.status(200).json({
+        status: 'success',
+        data: response.data.data.addImage
+      });
+      return;
     } catch (error) {
-      console.error('Unexpected error:', error);
+      if (error instanceof Error) {
+        console.error('Error:', error.message);
+      } else {
+        console.error('Error:', error);
+      }
       res.status(500).json({ error: 'Internal Server Error' });
+      return;
     }
   }
 );
