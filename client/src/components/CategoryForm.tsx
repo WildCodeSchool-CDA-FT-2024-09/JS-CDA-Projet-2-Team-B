@@ -247,7 +247,7 @@ const CategoryForm = () => {
         <Grid sx={{ display: 'flex', justifyContent: 'flex-end' }}>
           <Button
             variant="contained"
-            sx={{ ...styleButton, backgroundColor: 'primary.main' }}
+            sx={{ ...styleButton, backgroundColor: 'green' }}
             onClick={handleSubmit}
           >
             Enregistrer
