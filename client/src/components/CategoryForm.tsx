@@ -28,7 +28,6 @@ const styleButton = {
 };
 
 const CategoryForm = () => {
-  // État séparé pour le nouveau nom et la modification
   const [newCategoryName, setNewCategoryName] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(
     null
