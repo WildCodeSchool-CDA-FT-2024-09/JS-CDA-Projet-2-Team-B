@@ -72,9 +72,11 @@ export type Mutation = {
   updateProduct: Product;
 };
 
+
 export type MutationAddImageArgs = {
   data: ImageInput;
 };
+
 
 export type MutationCreateCategoryArgs = {
   input: CreateCategoryInput;
@@ -91,7 +93,6 @@ export type MutationCreateNewProductArgs = {
 export type MutationUpdateCategoryArgs = {
   input: UpdateCategoryInput;
 };
-
 
 export type MutationUpdateProductArgs = {
   data: ProductUpdateInput;
@@ -155,8 +156,18 @@ export type UpdateProductMutationVariables = Exact<{
   data: ProductUpdateInput;
 }>;
 
-
-export type UpdateProductMutation = { __typename?: 'Mutation', updateProduct: { __typename?: 'Product', id: number, reference: string, name: string, shortDescription: string, description: string, price: number } };
+export type UpdateProductMutation = {
+  __typename?: 'Mutation';
+  updateProduct: {
+    __typename?: 'Product';
+    id: number;
+    reference: string;
+    name: string;
+    shortDescription: string;
+    description: string;
+    price: number;
+  };
+};
 
 export type CreateNewCharacteristicMutationVariables = Exact<{
   characteristic: CharacteristicInput;
@@ -179,6 +190,7 @@ export type UpdateCategoryMutation = {
   __typename?: 'Mutation';
   updateCategory: { __typename?: 'Category'; id: number; name: string };
 };
+
 
 export type AddImageMutationVariables = Exact<{
   data: ImageInput;
@@ -222,8 +234,6 @@ export type GetProductByIdQuery = {
     price: number;
   } | null;
 };
-
-
 
 export type GetProductByIdQuery = { __typename?: 'Query', getProductById?: { __typename?: 'Product', id: number, reference: string, name: string, shortDescription: string, description: string, price: number } | null };
 
@@ -296,26 +306,44 @@ export type CreateCategoryMutationFn = Apollo.MutationFunction<
  * });
  */
 
-export function useCreateCategoryMutation(baseOptions?: Apollo.MutationHookOptions<CreateCategoryMutation, CreateCategoryMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<CreateCategoryMutation, CreateCategoryMutationVariables>(CreateCategoryDocument, options);
-      }
-export type CreateCategoryMutationHookResult = ReturnType<typeof useCreateCategoryMutation>;
-export type CreateCategoryMutationResult = Apollo.MutationResult<CreateCategoryMutation>;
-export type CreateCategoryMutationOptions = Apollo.BaseMutationOptions<CreateCategoryMutation, CreateCategoryMutationVariables>;
-export const UpdateProductDocument = gql`
-    mutation UpdateProduct($data: ProductUpdateInput!) {
-  updateProduct(data: $data) {
-    id
-    reference
-    name
-    shortDescription
-    description
-    price
-  }
+export function useCreateCategoryMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateCategoryMutation,
+    CreateCategoryMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateCategoryMutation,
+    CreateCategoryMutationVariables
+  >(CreateCategoryDocument, options);
 }
-    `;
-export type UpdateProductMutationFn = Apollo.MutationFunction<UpdateProductMutation, UpdateProductMutationVariables>;
+export type CreateCategoryMutationHookResult = ReturnType<
+  typeof useCreateCategoryMutation
+>;
+export type CreateCategoryMutationResult =
+  Apollo.MutationResult<CreateCategoryMutation>;
+export type CreateCategoryMutationOptions = Apollo.BaseMutationOptions<
+  CreateCategoryMutation,
+  CreateCategoryMutationVariables
+>;
+
+export const UpdateProductDocument = gql`
+  mutation UpdateProduct($data: ProductUpdateInput!) {
+    updateProduct(data: $data) {
+      id
+      reference
+      name
+      shortDescription
+      description
+      price
+    }
+  }
+`;
+export type UpdateProductMutationFn = Apollo.MutationFunction<
+  UpdateProductMutation,
+  UpdateProductMutationVariables
+>;
 
 /**
  * __useUpdateProductMutation__
@@ -334,13 +362,27 @@ export type UpdateProductMutationFn = Apollo.MutationFunction<UpdateProductMutat
  *   },
  * });
  */
-export function useUpdateProductMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProductMutation, UpdateProductMutationVariables>) {
-        const options = {...defaultOptions, ...baseOptions}
-        return Apollo.useMutation<UpdateProductMutation, UpdateProductMutationVariables>(UpdateProductDocument, options);
-      }
-export type UpdateProductMutationHookResult = ReturnType<typeof useUpdateProductMutation>;
-export type UpdateProductMutationResult = Apollo.MutationResult<UpdateProductMutation>;
-export type UpdateProductMutationOptions = Apollo.BaseMutationOptions<UpdateProductMutation, UpdateProductMutationVariables>;
+export function useUpdateProductMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateProductMutation,
+    UpdateProductMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    UpdateProductMutation,
+    UpdateProductMutationVariables
+  >(UpdateProductDocument, options);
+}
+export type UpdateProductMutationHookResult = ReturnType<
+  typeof useUpdateProductMutation
+>;
+export type UpdateProductMutationResult =
+  Apollo.MutationResult<UpdateProductMutation>;
+export type UpdateProductMutationOptions = Apollo.BaseMutationOptions<
+  UpdateProductMutation,
+  UpdateProductMutationVariables
+>;
 export const CreateNewCharacteristicDocument = gql`
   mutation CreateNewCharacteristic($characteristic: CharacteristicInput!) {
     createNewCharacteristic(characteristic: $characteristic) {
@@ -443,6 +485,7 @@ export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<
   UpdateCategoryMutation,
   UpdateCategoryMutationVariables
 >;
+
 export const AddImageDocument = gql`
   mutation addImage($data: ImageInput!) {
     addImage(data: $data) {
@@ -504,6 +547,7 @@ export const GetAllProductsDocument = gql`
     }
   }
 `;
+
 
 /**
  * __useGetAllProductsQuery__
@@ -575,14 +619,15 @@ export type GetAllProductsQueryResult = Apollo.QueryResult<
   GetAllProductsQueryVariables
 >;
 export const GetProductByIdDocument = gql`
-    query getProductById($getProductByIdId: Int!) {
-  getProductById(id: $getProductByIdId) {
-    id
-    reference
-    name
-    shortDescription
-    description
-    price
+  query getProductById($getProductByIdId: Int!) {
+    getProductById(id: $getProductByIdId) {
+      id
+      reference
+      name
+      shortDescription
+      description
+      price
+    }
   }
 `;
 
@@ -660,6 +705,7 @@ export type GetProductByIdQueryResult = Apollo.QueryResult<
   GetProductByIdQuery,
   GetProductByIdQueryVariables
 >;
+
 export const GetAllImagesDocument = gql`
   query getAllImages {
     getAllImages {
