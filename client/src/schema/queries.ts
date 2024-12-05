@@ -11,13 +11,6 @@ export const GET_PRODUCT = gql`
       price
     }
   }
-
-  query GetCategories {
-    categories {
-      id
-      name
-    }
-  }
 `;
 
 export const GET_PRODUCT_BY_ID = gql`
@@ -36,6 +29,15 @@ export const GET_PRODUCT_BY_ID = gql`
 export const GET_CHARACTERISTIC = gql`
   query GetAllCharacteristic {
     getAllCharacteristic {
+      id
+      name
+    }
+  }
+`;
+
+export const GET_CATEGORY = gql`
+  query GetAllCategories {
+    getAllCategories {
       id
       name
     }

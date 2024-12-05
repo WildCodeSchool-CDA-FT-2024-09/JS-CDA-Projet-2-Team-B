@@ -85,6 +85,7 @@ export default function CharacteristicForm() {
       </Card>
       {uniqueCharacteristic.map((c) => (
         <Chip
+          key={c}
           label={c}
           variant="outlined"
           onClick={handleClick}
