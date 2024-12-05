@@ -40,7 +40,7 @@ export type Category = {
 
 export type Characteristic = {
   __typename?: 'Characteristic';
-  id: Scalars['ID']['output'];
+  id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
 };
 
@@ -52,8 +52,21 @@ export type CreateCategoryInput = {
   name: Scalars['String']['input'];
 };
 
+export type Image = {
+  __typename?: 'Image';
+  id: Scalars['Float']['output'];
+  isMain: Scalars['Boolean']['output'];
+  url: Scalars['String']['output'];
+};
+
+export type ImageInput = {
+  isMain: Scalars['Boolean']['input'];
+  url: Scalars['String']['input'];
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
+  addImage: Image;
   createCategory: Category;
   createNewCharacteristic: Characteristic;
   createNewProduct: Product;
@@ -61,6 +74,10 @@ export type Mutation = {
   restoreCategory: Scalars['Boolean']['output'];
   updateCategory: Category;
   updateProduct: Product;
+};
+
+export type MutationAddImageArgs = {
+  data: ImageInput;
 };
 
 export type MutationCreateCategoryArgs = {
@@ -122,6 +139,7 @@ export type Query = {
   __typename?: 'Query';
   getAllCategories: Array<Category>;
   getAllCharacteristic: Array<Characteristic>;
+  getAllImages: Array<Image>;
   getAllProducts: Array<Product>;
   getProductById?: Maybe<Product>;
 };
@@ -173,7 +191,7 @@ export type CreateNewCharacteristicMutation = {
   __typename?: 'Mutation';
   createNewCharacteristic: {
     __typename?: 'Characteristic';
-    id: string;
+    id: number;
     name: string;
   };
 };
@@ -196,6 +214,15 @@ export type UpdateCategoryMutationVariables = Exact<{
 export type UpdateCategoryMutation = {
   __typename?: 'Mutation';
   updateCategory: { __typename?: 'Category'; id: number; name: string };
+};
+
+export type AddImageMutationVariables = Exact<{
+  data: ImageInput;
+}>;
+
+export type AddImageMutation = {
+  __typename?: 'Mutation';
+  addImage: { __typename?: 'Image'; id: number; url: string; isMain: boolean };
 };
 
 export type DeleteCategoryMutationVariables = Exact<{
@@ -239,6 +266,18 @@ export type GetProductByIdQuery = {
   } | null;
 };
 
+export type GetAllImagesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllImagesQuery = {
+  __typename?: 'Query';
+  getAllImages: Array<{
+    __typename?: 'Image';
+    id: number;
+    url: string;
+    isMain: boolean;
+  }>;
+};
+
 export type GetAllCharacteristicQueryVariables = Exact<{
   [key: string]: never;
 }>;
@@ -247,7 +286,7 @@ export type GetAllCharacteristicQuery = {
   __typename?: 'Query';
   getAllCharacteristic: Array<{
     __typename?: 'Characteristic';
-    id: string;
+    id: number;
     name: string;
   }>;
 };
@@ -538,6 +577,55 @@ export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<
   UpdateCategoryMutation,
   UpdateCategoryMutationVariables
 >;
+export const AddImageDocument = gql`
+  mutation addImage($data: ImageInput!) {
+    addImage(data: $data) {
+      id
+      url
+      isMain
+    }
+  }
+`;
+export type AddImageMutationFn = Apollo.MutationFunction<
+  AddImageMutation,
+  AddImageMutationVariables
+>;
+
+/**
+ * __useAddImageMutation__
+ *
+ * To run a mutation, you first call `useAddImageMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useAddImageMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [addImageMutation, { data, loading, error }] = useAddImageMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useAddImageMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    AddImageMutation,
+    AddImageMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<AddImageMutation, AddImageMutationVariables>(
+    AddImageDocument,
+    options
+  );
+}
+export type AddImageMutationHookResult = ReturnType<typeof useAddImageMutation>;
+export type AddImageMutationResult = Apollo.MutationResult<AddImageMutation>;
+export type AddImageMutationOptions = Apollo.BaseMutationOptions<
+  AddImageMutation,
+  AddImageMutationVariables
+>;
 export const DeleteCategoryDocument = gql`
   mutation DeleteCategory($id: Int!) {
     deleteCategory(id: $id)
@@ -754,6 +842,85 @@ export type GetProductByIdSuspenseQueryHookResult = ReturnType<
 export type GetProductByIdQueryResult = Apollo.QueryResult<
   GetProductByIdQuery,
   GetProductByIdQueryVariables
+>;
+export const GetAllImagesDocument = gql`
+  query getAllImages {
+    getAllImages {
+      id
+      url
+      isMain
+    }
+  }
+`;
+
+/**
+ * __useGetAllImagesQuery__
+ *
+ * To run a query within a React component, call `useGetAllImagesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllImagesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllImagesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllImagesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllImagesQuery,
+    GetAllImagesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAllImagesQuery, GetAllImagesQueryVariables>(
+    GetAllImagesDocument,
+    options
+  );
+}
+export function useGetAllImagesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllImagesQuery,
+    GetAllImagesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAllImagesQuery, GetAllImagesQueryVariables>(
+    GetAllImagesDocument,
+    options
+  );
+}
+export function useGetAllImagesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetAllImagesQuery,
+        GetAllImagesQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetAllImagesQuery, GetAllImagesQueryVariables>(
+    GetAllImagesDocument,
+    options
+  );
+}
+export type GetAllImagesQueryHookResult = ReturnType<
+  typeof useGetAllImagesQuery
+>;
+export type GetAllImagesLazyQueryHookResult = ReturnType<
+  typeof useGetAllImagesLazyQuery
+>;
+export type GetAllImagesSuspenseQueryHookResult = ReturnType<
+  typeof useGetAllImagesSuspenseQuery
+>;
+export type GetAllImagesQueryResult = Apollo.QueryResult<
+  GetAllImagesQuery,
+  GetAllImagesQueryVariables
 >;
 export const GetAllCharacteristicDocument = gql`
   query GetAllCharacteristic {

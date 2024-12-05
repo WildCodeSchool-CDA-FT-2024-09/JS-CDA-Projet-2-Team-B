@@ -26,6 +26,16 @@ export const GET_PRODUCT_BY_ID = gql`
   }
 `;
 
+export const GET_IMAGES = gql`
+  query getAllImages {
+    getAllImages {
+      id
+      url
+      isMain
+    }
+  }
+`;
+
 export const GET_CHARACTERISTIC = gql`
   query GetAllCharacteristic {
     getAllCharacteristic {

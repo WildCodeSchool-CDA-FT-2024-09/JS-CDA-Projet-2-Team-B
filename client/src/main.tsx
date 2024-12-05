@@ -7,6 +7,7 @@ import App from './App.tsx';
 import Catalog from './pages/Catalog.tsx';
 import ManagementProduct from './pages/ManagementProduct.tsx';
 import ProductDetails from './components/ProductDetails.tsx';
+import AddImage from './pages/Addimage.tsx';
 
 const router = createBrowserRouter([
   {
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
       {
         path: '/product/:id/edit',
         element: <ProductDetails />
+      },
+      {
+        path: '/addimage',
+        element: <AddImage />
       }
     ]
   }
