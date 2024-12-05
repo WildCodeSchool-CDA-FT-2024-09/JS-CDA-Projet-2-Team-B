@@ -18,11 +18,26 @@ export const CREATE_CHARACTERISTIC = gql`
   }
 `;
 
+export const GET_ALL_CATEGORIES = gql`
+  query GetAllCategories {
+    getAllCategories {
+      id
+      name
+    }
+  }
+`;
+
 export const UPDATE_CATEGORY = gql`
   mutation UpdateCategory($input: UpdateCategoryInput!) {
     updateCategory(input: $input) {
       id
       name
     }
+  }
+`;
+
+export const DELETE_CATEGORY = gql`
+  mutation DeleteCategory($id: Int!) {
+    deleteCategory(id: $id)
   }
 `;

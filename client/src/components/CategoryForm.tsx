@@ -8,6 +8,7 @@ import Box from '@mui/material/Box';
 import { useEffect, useState } from 'react';
 import {
   useCreateCategoryMutation,
+  useDeleteCategoryMutation,
   useGetAllCategoriesQuery,
   useUpdateCategoryMutation
 } from '../generated/graphql-types';
@@ -33,6 +34,10 @@ const CategoryForm = () => {
     null
   );
   const [editCategoryName, setEditCategoryName] = useState('');
+  const [categoryToDelete, setCategoryToDelete] = useState<Category | null>(
+    null
+  );
+  const [deleteCategory] = useDeleteCategoryMutation();
 
   const { data, loading, error, refetch } = useGetAllCategoriesQuery();
   const [createCategory] = useCreateCategoryMutation();
@@ -50,7 +55,15 @@ const CategoryForm = () => {
     e.preventDefault();
 
     try {
-      if (selectedCategory) {
+      if (categoryToDelete) {
+        const response = await deleteCategory({
+          variables: { id: categoryToDelete.id }
+        });
+        if (response.data?.deleteCategory) {
+          setCategoryToDelete(null);
+          await refetch();
+        }
+      } else if (selectedCategory) {
         const response = await updateCategory({
           variables: {
             input: {
@@ -110,7 +123,8 @@ const CategoryForm = () => {
             Ajouter une catégorie :
           </Typography>
           <TextField
-            sx={{ maxWidth: '300px' }}
+            sx={{ maxWidth: '300px', marginLeft: '25px' }}
+            placeholder="Nom"
             variant="outlined"
             size="small"
             value={newCategoryName}
@@ -148,6 +162,7 @@ const CategoryForm = () => {
               sx={{
                 maxWidth: '300px',
                 flex: 1,
+                marginLeft: '17px',
                 height: '40px',
                 '.MuiSelect-select': {
                   padding: '8px 14px'
@@ -167,7 +182,7 @@ const CategoryForm = () => {
           <Box
             sx={{
               marginTop: 2,
-              marginLeft: '186px',
+              marginLeft: '204px',
               maxWidth: '300px'
             }}
           >
@@ -179,6 +194,54 @@ const CategoryForm = () => {
               value={editCategoryName}
               onChange={(e) => setEditCategoryName(e.target.value)}
             />
+          </Box>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'flex-start',
+            marginTop: 4
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              width: '100%'
+            }}
+          >
+            <Typography sx={{ minWidth: 'fit-content' }}>
+              Supprimer une catégorie :
+            </Typography>
+            <Select
+              value={categoryToDelete?.id || ''}
+              onChange={(e) => {
+                const category = data?.getAllCategories.find(
+                  (cat) => cat.id === e.target.value
+                );
+                setCategoryToDelete(category || null);
+              }}
+              displayEmpty
+              sx={{
+                maxWidth: '300px',
+                flex: 1,
+                height: '40px',
+                '.MuiSelect-select': {
+                  padding: '8px 14px'
+                }
+              }}
+            >
+              <MenuItem value="" disabled>
+                Sélectionnez une catégorie
+              </MenuItem>
+              {data?.getAllCategories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
           </Box>
         </Box>
         <Grid sx={{ display: 'flex', justifyContent: 'flex-end' }}>
