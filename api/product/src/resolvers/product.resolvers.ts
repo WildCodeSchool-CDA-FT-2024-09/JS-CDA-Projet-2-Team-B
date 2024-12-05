@@ -1,7 +1,14 @@
-import { Resolver, Query, Mutation, Arg } from 'type-graphql';
 import { ProductUpdateInput } from '../types/product.types';
 import { Product } from '../entity/product.entities';
-import { Resolver, Query, Mutation, Arg, InputType, Field } from 'type-graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Arg,
+  InputType,
+  Field,
+  Int
+} from 'type-graphql';
 
 @InputType()
 class ProductInput {
@@ -41,20 +48,20 @@ export default class ProductResolver {
       );
     }
 
-    const product = Product.create({
-      reference: newProduct.reference,
-      name: newProduct.name,
-      shortDescription: newProduct.shortDescription,
-      description: newProduct.description,
-      price: newProduct.price
-    });
+    const product = new Product();
+    product.reference = newProduct.reference;
+    product.name = newProduct.name;
+    product.shortDescription = newProduct.shortDescription;
+    product.description = newProduct.description;
+    product.price = newProduct.price;
 
-    await product.save();
-    return product;
+    return await product.save();
   }
 
   @Query(() => Product, { nullable: true })
-  async getProductById(@Arg('id', () => Number) id: number) {
+  async getProductById(
+    @Arg('id', () => Int) id: number
+  ): Promise<Product | null> {
     return await Product.findOne({ where: { id } });
   }
 
@@ -75,16 +82,6 @@ export default class ProductResolver {
     // Using assign method from Object to assign new data to the found product.
     Object.assign(product, newDataProduct);
 
-    await product.save();
-
-    const updatedProduct = await Product.findOne({
-      where: { id }
-    });
-
-    if (!updatedProduct) {
-      throw new Error('Product not found');
-    }
-
-    return updatedProduct;
+    return await product.save();
   }
 }
