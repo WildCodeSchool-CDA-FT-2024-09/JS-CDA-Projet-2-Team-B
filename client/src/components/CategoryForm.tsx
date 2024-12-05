@@ -51,7 +51,7 @@ const CategoryForm = () => {
 
     try {
       if (selectedCategory) {
-        await updateCategory({
+        const response = await updateCategory({
           variables: {
             input: {
               id: selectedCategory.id,
@@ -59,16 +59,21 @@ const CategoryForm = () => {
             }
           }
         });
-        setSelectedCategory(null);
-        setEditCategoryName('');
+        if (response.data?.updateCategory) {
+          setSelectedCategory(null);
+          setEditCategoryName('');
+          await refetch();
+        }
       } else if (newCategoryName.trim()) {
-        await createCategory({
+        const response = await createCategory({
           variables: {
             input: { name: newCategoryName.trim() }
           }
         });
-        setNewCategoryName('');
-        await refetch();
+        if (response.data?.createCategory) {
+          setNewCategoryName('');
+          await refetch();
+        }
       }
     } catch (err) {
       console.error('Error:', err);
