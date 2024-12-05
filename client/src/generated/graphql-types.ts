@@ -40,12 +40,10 @@ export type Characteristic = {
   __typename?: 'Characteristic';
   id: Scalars['ID']['output'];
   name: Scalars['String']['output'];
-  value: Scalars['String']['output'];
 };
 
 export type CharacteristicInput = {
   name: Scalars['String']['input'];
-  value?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type CreateCategoryInput = {
@@ -120,7 +118,6 @@ export type CreateNewCharacteristicMutation = {
     __typename?: 'Characteristic';
     id: string;
     name: string;
-    value: string;
   };
 };
 
@@ -173,7 +170,6 @@ export type GetAllCharacteristicQuery = {
     __typename?: 'Characteristic';
     id: string;
     name: string;
-    value: string;
   }>;
 };
 
@@ -233,7 +229,6 @@ export const CreateNewCharacteristicDocument = gql`
     createNewCharacteristic(characteristic: $characteristic) {
       id
       name
-      value
     }
   }
 `;
@@ -532,7 +527,6 @@ export const GetAllCharacteristicDocument = gql`
     getAllCharacteristic {
       id
       name
-      value
     }
   }
 `;

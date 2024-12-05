@@ -14,7 +14,6 @@ export const CREATE_CHARACTERISTIC = gql`
     createNewCharacteristic(characteristic: $characteristic) {
       id
       name
-      value
     }
   }
 `;

@@ -38,7 +38,6 @@ export const GET_CHARACTERISTIC = gql`
     getAllCharacteristic {
       id
       name
-      value
     }
   }
 `;
