@@ -111,7 +111,7 @@ export default function ProductDetails() {
         marginLeft: '2px',
         fontWeight: 'bold'
       }}>
-        Reference
+        Nom
       </Typography>
       <TextField
         required
@@ -125,7 +125,7 @@ export default function ProductDetails() {
         marginLeft: '2px',
         fontWeight: 'bold'
       }}>
-        Nom
+        Reference
       </Typography>      
       <TextField
         required
