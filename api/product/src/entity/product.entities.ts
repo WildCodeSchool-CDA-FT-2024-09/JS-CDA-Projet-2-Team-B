@@ -6,7 +6,7 @@ import { Length, Min } from 'class-validator';
 @Entity('products')
 export class Product extends BaseEntity {
   @Field()
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn({ type: 'int' })
   id: number;
 
   @Field()

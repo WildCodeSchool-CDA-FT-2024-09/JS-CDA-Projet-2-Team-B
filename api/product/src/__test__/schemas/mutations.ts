@@ -12,3 +12,16 @@ export const POST_PRODUCT = gql`
     }
   }
 `;
+
+export const PUT_PRODUCT = gql`
+  mutation UpdateProduct($data: ProductUpdateInput!) {
+    updateProduct(data: $data) {
+      id
+      reference
+      name
+      shortDescription
+      description
+      price
+    }
+  }
+`;

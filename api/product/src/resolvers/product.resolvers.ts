@@ -1,5 +1,14 @@
+import { ProductUpdateInput } from '../types/product.types';
 import { Product } from '../entity/product.entities';
-import { Resolver, Query, Mutation, Arg, InputType, Field } from 'type-graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Arg,
+  InputType,
+  Field,
+  Int
+} from 'type-graphql';
 
 @InputType()
 class ProductInput {
@@ -46,12 +55,33 @@ export default class ProductResolver {
     product.description = newProduct.description;
     product.price = newProduct.price;
 
-    await product.save();
-    return product;
+    return await product.save();
   }
 
   @Query(() => Product, { nullable: true })
-  async getProductById(@Arg('id', () => Number) id: number) {
+  async getProductById(
+    @Arg('id', () => Int) id: number
+  ): Promise<Product | null> {
     return await Product.findOne({ where: { id } });
+  }
+
+  @Mutation(() => Product)
+  async updateProduct(
+    @Arg('data') newDataProduct: ProductUpdateInput
+  ): Promise<Product> {
+    const { id } = newDataProduct;
+
+    const product = await Product.findOne({
+      where: { id }
+    });
+
+    if (!product) {
+      throw new Error('Product not found');
+    }
+
+    // Using assign method from Object to assign new data to the found product.
+    Object.assign(product, newDataProduct);
+
+    return await product.save();
   }
 }

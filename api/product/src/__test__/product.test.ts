@@ -1,9 +1,10 @@
 import { GET_PRODUCT, GET_PRODUCT_BY_ID } from './schemas/queries';
-import { POST_PRODUCT } from './schemas/mutations';
+import { POST_PRODUCT, PUT_PRODUCT } from './schemas/mutations';
 import { graphql, GraphQLSchema, print } from 'graphql';
 import { AppDataSource } from '../../src/data-source';
 import { Product } from 'src/entity/product.entities';
 import getSchema from '../../src/schema';
+import { ProductUpdateInput } from 'src/types/product.types';
 
 describe('Product resolvers tests', () => {
   let schema: GraphQLSchema;
@@ -80,18 +81,45 @@ describe('Product resolvers tests', () => {
       schema: schema,
       source: print(POST_PRODUCT),
       variableValues: { data: productOne }
-    })) as { data: { createNewProduct: { id: string } } };
+    })) as { data: { createNewProduct: Product } };
 
-    const productId = parseInt(resultOne.data?.createNewProduct.id, 10);
+    const productId = resultOne.data?.createNewProduct.id;
 
     const resultTwo = (await graphql({
       schema: schema,
       source: print(GET_PRODUCT_BY_ID),
       variableValues: { getProductByIdId: productId }
-    })) as { data: { getProductById: { id: string } } };
+    })) as { data: { getProductById: Product } };
 
     expect(resultTwo.data?.getProductById.id).toEqual(
       resultOne.data?.createNewProduct.id
     );
+  });
+
+  it('creates and updates a product', async () => {
+    const resultOne = (await graphql({
+      schema: schema,
+      source: print(POST_PRODUCT),
+      variableValues: { data: productOne }
+    })) as { data: { createNewProduct: Product } };
+
+    const productId = resultOne.data?.createNewProduct.id;
+
+    const updateData: ProductUpdateInput = {
+      id: productId,
+      reference: '123456789012345',
+      name: 'Updated product',
+      shortDescription: 'Updated short description',
+      description: 'Updated description',
+      price: 150.0
+    };
+
+    const resultTwo = await graphql({
+      schema,
+      source: print(PUT_PRODUCT),
+      variableValues: { data: updateData }
+    });
+
+    expect(resultTwo.data?.updateProduct).toEqual(updateData);
   });
 });
