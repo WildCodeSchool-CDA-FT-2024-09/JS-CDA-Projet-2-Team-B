@@ -27,7 +27,7 @@ export const GET_PRODUCT_BY_ID = gql`
 `;
 
 export const GET_IMAGES = gql`
-  query getAllImages($productId: Float!) {
+  query getAllImages {
     getAllImages {
       id
       url
@@ -41,16 +41,6 @@ export const GET_CHARACTERISTIC = gql`
     getAllCharacteristic {
       id
       name
-    }
-  }
-`;
-
-export const ADD_IMAGE = gql`
-  mutation addImage($data: ImageInput!) {
-    addImage(data: $data) {
-      id
-      url
-      isMain
     }
   }
 `;

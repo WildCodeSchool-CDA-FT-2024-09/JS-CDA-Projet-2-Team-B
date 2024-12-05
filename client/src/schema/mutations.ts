@@ -26,3 +26,13 @@ export const UPDATE_CATEGORY = gql`
     }
   }
 `;
+
+export const ADD_IMAGE = gql`
+  mutation addImage($data: ImageInput!) {
+    addImage(data: $data) {
+      id
+      url
+      isMain
+    }
+  }
+`;
