@@ -14,7 +14,7 @@ import {
 import { MenuItem, Select } from '@mui/material';
 
 interface Category {
-  id: string;
+  id: number;
   name: string;
 }
 
@@ -54,7 +54,7 @@ const CategoryForm = () => {
         await updateCategory({
           variables: {
             input: {
-              id: parseInt(selectedCategory.id),
+              id: selectedCategory.id,
               name: editCategoryName.trim()
             }
           }
