@@ -98,7 +98,7 @@ export default class CategoryResolver {
   }
 
   @Mutation(() => Boolean)
-  async deleteCategory(@Arg('id') id: number): Promise<boolean> {
+  async deleteCategory(@Arg('id', () => Int) id: number): Promise<boolean> {
     try {
       const category = await Category.findOne({
         where: { id }
