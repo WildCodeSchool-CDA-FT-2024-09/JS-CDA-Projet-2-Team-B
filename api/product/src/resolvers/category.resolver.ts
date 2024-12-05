@@ -66,7 +66,7 @@ export default class CategoryResolver {
         where: { name: input.name }
       });
 
-      if (existingCategory && existingCategory.id !== input.id) {
+      if (existingCategory) {
         throw new Error('Une autre catégorie avec ce nom existe déjà');
       }
 
