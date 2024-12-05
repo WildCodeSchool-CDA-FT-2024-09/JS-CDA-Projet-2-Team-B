@@ -39,13 +39,12 @@ export default class ProductResolver {
       );
     }
 
-    const product = Product.create({
-      reference: newProduct.reference,
-      name: newProduct.name,
-      shortDescription: newProduct.shortDescription,
-      description: newProduct.description,
-      price: newProduct.price
-    });
+    const product = new Product();
+    product.reference = newProduct.reference;
+    product.name = newProduct.name;
+    product.shortDescription = newProduct.shortDescription;
+    product.description = newProduct.description;
+    product.price = newProduct.price;
 
     await product.save();
     return product;
