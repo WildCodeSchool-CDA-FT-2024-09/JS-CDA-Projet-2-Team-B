@@ -8,3 +8,16 @@ export const CREATE_CATEGORY = gql`
     }
   }
 `;
+
+export const PUT_PRODUCT = gql`
+  mutation UpdateProduct($data: ProductUpdateInput!) {
+    updateProduct(data: $data) {
+      id
+      reference
+      name
+      shortDescription
+      description
+      price
+    }
+  }
+`;
