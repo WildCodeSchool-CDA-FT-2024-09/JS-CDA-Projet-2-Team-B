@@ -14,7 +14,7 @@ export const GET_PRODUCT = gql`
 `;
 
 export const GET_PRODUCT_BY_ID = gql`
-  query getProductById($getProductByIdId: Float!) {
+  query getProductById($getProductByIdId: Int!) {
     getProductById(id: $getProductByIdId) {
       id
       reference

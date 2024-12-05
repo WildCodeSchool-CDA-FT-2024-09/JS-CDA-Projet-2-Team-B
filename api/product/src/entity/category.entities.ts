@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field } from 'type-graphql';
 import { Length } from 'class-validator';
+import { GraphQLDateTime } from 'graphql-scalars';
 
 @ObjectType()
 @Entity('categories')
@@ -20,7 +21,7 @@ export class Category extends BaseEntity {
   @Length(1, 50)
   name: string;
 
-  @Field({ nullable: true })
+  @Field(() => GraphQLDateTime, { nullable: true })
   @DeleteDateColumn()
   deletedAt?: Date;
 }
