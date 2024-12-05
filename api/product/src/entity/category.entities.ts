@@ -1,4 +1,10 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  DeleteDateColumn
+} from 'typeorm';
 import { ObjectType, Field } from 'type-graphql';
 import { Length } from 'class-validator';
 
@@ -13,4 +19,8 @@ export class Category extends BaseEntity {
   @Column({ unique: true, length: 50 })
   @Length(1, 50)
   name: string;
+
+  @Field({ nullable: true })
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }
