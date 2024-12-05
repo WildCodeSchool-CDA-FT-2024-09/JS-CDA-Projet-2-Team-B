@@ -5,9 +5,6 @@ import { Characteristic } from '../entity/characteristic.entities';
 class CharacteristicInput {
   @Field()
   name: string;
-
-  @Field()
-  value: string;
 }
 
 @Resolver(Characteristic)
@@ -22,17 +19,16 @@ export default class CharacteristicResolver {
     @Arg('characteristic') newCharacteristic: CharacteristicInput
   ) {
     const existingCharacteristic = await Characteristic.findOne({
-      where: { value: newCharacteristic.value }
+      where: { name: newCharacteristic.name }
     });
     if (existingCharacteristic) {
       throw new Error(
-        `This characteristic : "${newCharacteristic.value}" already exists`
+        `This characteristic : "${newCharacteristic.name}" already exists`
       );
     }
 
     const characteristic = new Characteristic();
     characteristic.name = newCharacteristic.name;
-    characteristic.value = newCharacteristic.value;
 
     await characteristic.save();
     return characteristic;
