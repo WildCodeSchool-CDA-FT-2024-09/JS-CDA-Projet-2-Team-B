@@ -21,6 +21,7 @@ export default function Catalog() {
         data.getAllProducts.map((produit) => (
           <CardProduct
             key={produit.id}
+            id={produit.id}
             name={produit.name}
             price={produit.price}
             reference={produit.reference}
