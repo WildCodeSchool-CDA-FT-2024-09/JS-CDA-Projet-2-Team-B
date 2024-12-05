@@ -38,11 +38,12 @@ export type Category = {
 
 export type Characteristic = {
   __typename?: 'Characteristic';
-  id: Scalars['ID']['output'];
+  id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
 };
 
 export type CharacteristicInput = {
+  id?: InputMaybe<Scalars['Float']['input']>;
   name: Scalars['String']['input'];
 };
 
@@ -55,6 +56,7 @@ export type Mutation = {
   createCategory: Category;
   createNewCharacteristic: Characteristic;
   createNewProduct: Product;
+  editCharacteristic: Characteristic;
 };
 
 export type MutationCreateCategoryArgs = {
@@ -67,6 +69,10 @@ export type MutationCreateNewCharacteristicArgs = {
 
 export type MutationCreateNewProductArgs = {
   data: ProductInput;
+};
+
+export type MutationEditCharacteristicArgs = {
+  characteristic: CharacteristicInput;
 };
 
 export type Product = {
@@ -116,7 +122,20 @@ export type CreateNewCharacteristicMutation = {
   __typename?: 'Mutation';
   createNewCharacteristic: {
     __typename?: 'Characteristic';
-    id: string;
+    id: number;
+    name: string;
+  };
+};
+
+export type EditCharacteristicMutationVariables = Exact<{
+  characteristic: CharacteristicInput;
+}>;
+
+export type EditCharacteristicMutation = {
+  __typename?: 'Mutation';
+  editCharacteristic: {
+    __typename?: 'Characteristic';
+    id: number;
     name: string;
   };
 };
@@ -168,7 +187,7 @@ export type GetAllCharacteristicQuery = {
   __typename?: 'Query';
   getAllCharacteristic: Array<{
     __typename?: 'Characteristic';
-    id: string;
+    id: number;
     name: string;
   }>;
 };
@@ -274,6 +293,57 @@ export type CreateNewCharacteristicMutationResult =
 export type CreateNewCharacteristicMutationOptions = Apollo.BaseMutationOptions<
   CreateNewCharacteristicMutation,
   CreateNewCharacteristicMutationVariables
+>;
+export const EditCharacteristicDocument = gql`
+  mutation EditCharacteristic($characteristic: CharacteristicInput!) {
+    editCharacteristic(characteristic: $characteristic) {
+      id
+      name
+    }
+  }
+`;
+export type EditCharacteristicMutationFn = Apollo.MutationFunction<
+  EditCharacteristicMutation,
+  EditCharacteristicMutationVariables
+>;
+
+/**
+ * __useEditCharacteristicMutation__
+ *
+ * To run a mutation, you first call `useEditCharacteristicMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditCharacteristicMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editCharacteristicMutation, { data, loading, error }] = useEditCharacteristicMutation({
+ *   variables: {
+ *      characteristic: // value for 'characteristic'
+ *   },
+ * });
+ */
+export function useEditCharacteristicMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    EditCharacteristicMutation,
+    EditCharacteristicMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    EditCharacteristicMutation,
+    EditCharacteristicMutationVariables
+  >(EditCharacteristicDocument, options);
+}
+export type EditCharacteristicMutationHookResult = ReturnType<
+  typeof useEditCharacteristicMutation
+>;
+export type EditCharacteristicMutationResult =
+  Apollo.MutationResult<EditCharacteristicMutation>;
+export type EditCharacteristicMutationOptions = Apollo.BaseMutationOptions<
+  EditCharacteristicMutation,
+  EditCharacteristicMutationVariables
 >;
 export const GetAllProductsDocument = gql`
   query GetAllProducts {

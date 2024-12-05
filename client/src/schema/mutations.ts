@@ -17,3 +17,12 @@ export const CREATE_CHARACTERISTIC = gql`
     }
   }
 `;
+
+export const UPDATE_CHARACTERISTIC = gql`
+  mutation EditCharacteristic($characteristic: CharacteristicInput!) {
+    editCharacteristic(characteristic: $characteristic) {
+      id
+      name
+    }
+  }
+`;
