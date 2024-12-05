@@ -96,7 +96,7 @@ describe('Product resolvers tests', () => {
     );
   });
 
-  it.only('creates, fetches and updates a product', async () => {
+  it('creates and updates a product', async () => {
     const resultOne = (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
