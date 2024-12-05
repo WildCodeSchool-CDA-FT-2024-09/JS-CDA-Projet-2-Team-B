@@ -1,7 +1,10 @@
 import { Box, TextField, Button, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useGetProductByIdQuery, useUpdateProductMutation } from '../generated/graphql-types';
+import {
+  useGetProductByIdQuery,
+  useUpdateProductMutation
+} from '../generated/graphql-types';
 
 interface ProductDetailsReq {
   name: string;
@@ -22,11 +25,16 @@ export default function ProductDetails() {
     price: 0
   });
 
-  const { loading, error: fetchError, data } = useGetProductByIdQuery({
+  const {
+    loading,
+    error: fetchError,
+    data
+  } = useGetProductByIdQuery({
     variables: { getProductByIdId: parseInt(id!) }
   });
 
-  const [updateProduct, { loading: updateLoading }] = useUpdateProductMutation();
+  const [updateProduct, { loading: updateLoading }] =
+    useUpdateProductMutation();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -35,7 +43,7 @@ export default function ProductDetails() {
     setProduct((prev) => ({
       ...prev,
       [name]:
-        type === "checkbox" && e.target instanceof HTMLInputElement
+        type === 'checkbox' && e.target instanceof HTMLInputElement
           ? e.target.checked
           : value
     }));
@@ -58,7 +66,7 @@ export default function ProductDetails() {
             reference: product.reference,
             shortDescription: product.shortDescription,
             description: product.description,
-            price: product.price,
+            price: product.price
           }
         }
       });
@@ -67,11 +75,10 @@ export default function ProductDetails() {
         setProduct(data.updateProduct);
         setError(null);
       }
-
-    } catch (err: any) {
-      console.error(err.message);
+    } catch (err) {
+      console.error(err);
     }
-  }
+  };
 
   useEffect(() => {
     if (data?.getProductById) {
@@ -84,7 +91,7 @@ export default function ProductDetails() {
       });
     } else if (fetchError) {
       setError(fetchError.message);
-    } 
+    }
   }, [data, fetchError]);
 
   if (loading) return <h1>Loading...</h1>;
@@ -94,9 +101,9 @@ export default function ProductDetails() {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{ 
-        m: 1, 
-        width: '60ch', 
+      sx={{
+        m: 1,
+        width: '60ch',
         fontWeight: 'bold',
         display: 'flex',
         flexDirection: 'column',
@@ -106,11 +113,13 @@ export default function ProductDetails() {
       }}
       noValidate
       autoComplete="off"
+    >
+      <Typography
+        sx={{
+          marginLeft: '2px',
+          fontWeight: 'bold'
+        }}
       >
-      <Typography sx={{
-        marginLeft: '2px',
-        fontWeight: 'bold'
-      }}>
         Nom
       </Typography>
       <TextField
@@ -120,13 +129,15 @@ export default function ProductDetails() {
         value={product.name}
         onChange={handleChange}
         placeholder="Nom"
-        />
-      <Typography sx={{
-        marginLeft: '2px',
-        fontWeight: 'bold'
-      }}>
+      />
+      <Typography
+        sx={{
+          marginLeft: '2px',
+          fontWeight: 'bold'
+        }}
+      >
         Reference
-      </Typography>      
+      </Typography>
       <TextField
         required
         id="outlined-required"
@@ -135,46 +146,52 @@ export default function ProductDetails() {
         onChange={handleChange}
         placeholder="Reference"
       />
-      <Typography sx={{
-        marginLeft: '2px',
-        fontWeight: 'bold'
-      }}>
+      <Typography
+        sx={{
+          marginLeft: '2px',
+          fontWeight: 'bold'
+        }}
+      >
         Courte description
-      </Typography>      
+      </Typography>
       <TextField
         name="shortDescription"
         value={product.shortDescription}
         onChange={handleChange}
         placeholder="Courte description"
       />
-      <Typography sx={{
-        marginLeft: '2px',
-        fontWeight: 'bold'
-      }}>
+      <Typography
+        sx={{
+          marginLeft: '2px',
+          fontWeight: 'bold'
+        }}
+      >
         Description
-      </Typography>      
+      </Typography>
       <TextField
         name="description"
         value={product.description}
         onChange={handleChange}
         placeholder="Description"
       />
-      <Typography sx={{
-        marginLeft: '2px',
-        fontWeight: 'bold'
-      }}>
+      <Typography
+        sx={{
+          marginLeft: '2px',
+          fontWeight: 'bold'
+        }}
+      >
         Prix
-      </Typography>      
+      </Typography>
       <TextField
         name="price"
         value={product.price}
         onChange={handleChange}
         placeholder="Prix"
       />
-      <Button 
+      <Button
         variant="contained"
         disabled={updateLoading}
-        color="primary" 
+        color="primary"
         type="submit"
         sx={{
           width: '20ch',
