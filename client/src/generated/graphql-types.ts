@@ -43,6 +43,7 @@ export type Mutation = {
   createNewCharacteristic: Characteristic;
   createNewProduct: Product;
   updateCategory: Category;
+  updateProduct: Product;
 };
 
 
@@ -65,10 +66,15 @@ export type MutationUpdateCategoryArgs = {
   input: UpdateCategoryInput;
 };
 
+
+export type MutationUpdateProductArgs = {
+  data: ProductUpdateInput;
+};
+
 export type Product = {
   __typename?: 'Product';
   description: Scalars['String']['output'];
-  id: Scalars['ID']['output'];
+  id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
   price: Scalars['Float']['output'];
   reference: Scalars['String']['output'];
@@ -77,6 +83,15 @@ export type Product = {
 
 export type ProductInput = {
   description: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+  price: Scalars['Float']['input'];
+  reference: Scalars['String']['input'];
+  shortDescription: Scalars['String']['input'];
+};
+
+export type ProductUpdateInput = {
+  description: Scalars['String']['input'];
+  id: Scalars['Float']['input'];
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
@@ -93,7 +108,7 @@ export type Query = {
 
 
 export type QueryGetProductByIdArgs = {
-  id: Scalars['Float']['input'];
+  id: Scalars['Int']['input'];
 };
 
 export type UpdateCategoryInput = {
@@ -107,6 +122,13 @@ export type CreateCategoryMutationVariables = Exact<{
 
 
 export type CreateCategoryMutation = { __typename?: 'Mutation', createCategory: { __typename?: 'Category', id: number, name: string } };
+
+export type UpdateProductMutationVariables = Exact<{
+  data: ProductUpdateInput;
+}>;
+
+
+export type UpdateProductMutation = { __typename?: 'Mutation', updateProduct: { __typename?: 'Product', id: number, reference: string, name: string, shortDescription: string, description: string, price: number } };
 
 export type CreateNewCharacteristicMutationVariables = Exact<{
   characteristic: CharacteristicInput;
@@ -125,14 +147,14 @@ export type UpdateCategoryMutation = { __typename?: 'Mutation', updateCategory: 
 export type GetAllProductsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type GetAllProductsQuery = { __typename?: 'Query', getAllProducts: Array<{ __typename?: 'Product', id: string, reference: string, name: string, shortDescription: string, description: string, price: number }> };
+export type GetAllProductsQuery = { __typename?: 'Query', getAllProducts: Array<{ __typename?: 'Product', id: number, reference: string, name: string, shortDescription: string, description: string, price: number }> };
 
 export type GetProductByIdQueryVariables = Exact<{
-  getProductByIdId: Scalars['Float']['input'];
+  getProductByIdId: Scalars['Int']['input'];
 }>;
 
 
-export type GetProductByIdQuery = { __typename?: 'Query', getProductById?: { __typename?: 'Product', id: string, reference: string, name: string, shortDescription: string, description: string, price: number } | null };
+export type GetProductByIdQuery = { __typename?: 'Query', getProductById?: { __typename?: 'Product', id: number, reference: string, name: string, shortDescription: string, description: string, price: number } | null };
 
 export type GetAllCharacteristicQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -179,6 +201,44 @@ export function useCreateCategoryMutation(baseOptions?: Apollo.MutationHookOptio
 export type CreateCategoryMutationHookResult = ReturnType<typeof useCreateCategoryMutation>;
 export type CreateCategoryMutationResult = Apollo.MutationResult<CreateCategoryMutation>;
 export type CreateCategoryMutationOptions = Apollo.BaseMutationOptions<CreateCategoryMutation, CreateCategoryMutationVariables>;
+export const UpdateProductDocument = gql`
+    mutation UpdateProduct($data: ProductUpdateInput!) {
+  updateProduct(data: $data) {
+    id
+    reference
+    name
+    shortDescription
+    description
+    price
+  }
+}
+    `;
+export type UpdateProductMutationFn = Apollo.MutationFunction<UpdateProductMutation, UpdateProductMutationVariables>;
+
+/**
+ * __useUpdateProductMutation__
+ *
+ * To run a mutation, you first call `useUpdateProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateProductMutation, { data, loading, error }] = useUpdateProductMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateProductMutation(baseOptions?: Apollo.MutationHookOptions<UpdateProductMutation, UpdateProductMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateProductMutation, UpdateProductMutationVariables>(UpdateProductDocument, options);
+      }
+export type UpdateProductMutationHookResult = ReturnType<typeof useUpdateProductMutation>;
+export type UpdateProductMutationResult = Apollo.MutationResult<UpdateProductMutation>;
+export type UpdateProductMutationOptions = Apollo.BaseMutationOptions<UpdateProductMutation, UpdateProductMutationVariables>;
 export const CreateNewCharacteristicDocument = gql`
     mutation CreateNewCharacteristic($characteristic: CharacteristicInput!) {
   createNewCharacteristic(characteristic: $characteristic) {
@@ -292,7 +352,7 @@ export type GetAllProductsLazyQueryHookResult = ReturnType<typeof useGetAllProdu
 export type GetAllProductsSuspenseQueryHookResult = ReturnType<typeof useGetAllProductsSuspenseQuery>;
 export type GetAllProductsQueryResult = Apollo.QueryResult<GetAllProductsQuery, GetAllProductsQueryVariables>;
 export const GetProductByIdDocument = gql`
-    query getProductById($getProductByIdId: Float!) {
+    query getProductById($getProductByIdId: Int!) {
   getProductById(id: $getProductByIdId) {
     id
     reference
