@@ -58,7 +58,6 @@ const TagForm = () => {
           <Button
             variant="contained"
             type="submit"
-            onClick={handleSubmit}
             sx={{
               padding: '4px 10px',
               borderRadius: '5px',
