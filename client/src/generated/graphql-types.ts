@@ -53,6 +53,10 @@ export type CreateCategoryInput = {
   name: Scalars['String']['input'];
 };
 
+export type CreateTagInput = {
+  name: Scalars['String']['input'];
+};
+
 export type Image = {
   __typename?: 'Image';
   id: Scalars['Float']['output'];
@@ -71,6 +75,7 @@ export type Mutation = {
   createCategory: Category;
   createNewCharacteristic: Characteristic;
   createNewProduct: Product;
+  createTag: Tag;
   deleteCategory: Scalars['Boolean']['output'];
   editCharacteristic: Characteristic;
   restoreCategory: Scalars['Boolean']['output'];
@@ -92,6 +97,10 @@ export type MutationCreateNewCharacteristicArgs = {
 
 export type MutationCreateNewProductArgs = {
   data: ProductInput;
+};
+
+export type MutationCreateTagArgs = {
+  input: CreateTagInput;
 };
 
 export type MutationDeleteCategoryArgs = {
@@ -147,6 +156,7 @@ export type Query = {
   getAllCharacteristic: Array<Characteristic>;
   getAllImages: Array<Image>;
   getAllProducts: Array<Product>;
+  getAllTags: Array<Tag>;
   getProductById?: Maybe<Product>;
 };
 
@@ -160,6 +170,12 @@ export type QueryGetAllProductsArgs = {
 
 export type QueryGetProductByIdArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type Tag = {
+  __typename?: 'Tag';
+  id: Scalars['Float']['output'];
+  name: Scalars['String']['output'];
 };
 
 export type UpdateCategoryInput = {
@@ -259,6 +275,15 @@ export type DeleteCategoryMutationVariables = Exact<{
 export type DeleteCategoryMutation = {
   __typename?: 'Mutation';
   deleteCategory: boolean;
+};
+
+export type CreateTagMutationVariables = Exact<{
+  input: CreateTagInput;
+}>;
+
+export type CreateTagMutation = {
+  __typename?: 'Mutation';
+  createTag: { __typename?: 'Tag'; id: number; name: string };
 };
 
 export type GetAllProductsQueryVariables = Exact<{
@@ -758,56 +783,55 @@ export type DeleteCategoryMutationOptions = Apollo.BaseMutationOptions<
   DeleteCategoryMutation,
   DeleteCategoryMutationVariables
 >;
-export const EditCharacteristicDocument = gql`
-  mutation EditCharacteristic($characteristic: CharacteristicInput!) {
-    editCharacteristic(characteristic: $characteristic) {
+export const CreateTagDocument = gql`
+  mutation CreateTag($input: CreateTagInput!) {
+    createTag(input: $input) {
       id
       name
     }
   }
 `;
-export type EditCharacteristicMutationFn = Apollo.MutationFunction<
-  EditCharacteristicMutation,
-  EditCharacteristicMutationVariables
+export type CreateTagMutationFn = Apollo.MutationFunction<
+  CreateTagMutation,
+  CreateTagMutationVariables
 >;
 
 /**
- * __useEditCharacteristicMutation__
+ * __useCreateTagMutation__
  *
- * To run a mutation, you first call `useEditCharacteristicMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useEditCharacteristicMutation` returns a tuple that includes:
+ * To run a mutation, you first call `useCreateTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateTagMutation` returns a tuple that includes:
  * - A mutate function that you can call at any time to execute the mutation
  * - An object with fields that represent the current status of the mutation's execution
  *
  * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
  *
  * @example
- * const [editCharacteristicMutation, { data, loading, error }] = useEditCharacteristicMutation({
+ * const [createTagMutation, { data, loading, error }] = useCreateTagMutation({
  *   variables: {
- *      characteristic: // value for 'characteristic'
+ *      input: // value for 'input'
  *   },
  * });
  */
-export function useEditCharacteristicMutation(
+export function useCreateTagMutation(
   baseOptions?: Apollo.MutationHookOptions<
-    EditCharacteristicMutation,
-    EditCharacteristicMutationVariables
+    CreateTagMutation,
+    CreateTagMutationVariables
   >
 ) {
   const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<
-    EditCharacteristicMutation,
-    EditCharacteristicMutationVariables
-  >(EditCharacteristicDocument, options);
+  return Apollo.useMutation<CreateTagMutation, CreateTagMutationVariables>(
+    CreateTagDocument,
+    options
+  );
 }
-export type EditCharacteristicMutationHookResult = ReturnType<
-  typeof useEditCharacteristicMutation
+export type CreateTagMutationHookResult = ReturnType<
+  typeof useCreateTagMutation
 >;
-export type EditCharacteristicMutationResult =
-  Apollo.MutationResult<EditCharacteristicMutation>;
-export type EditCharacteristicMutationOptions = Apollo.BaseMutationOptions<
-  EditCharacteristicMutation,
-  EditCharacteristicMutationVariables
+export type CreateTagMutationResult = Apollo.MutationResult<CreateTagMutation>;
+export type CreateTagMutationOptions = Apollo.BaseMutationOptions<
+  CreateTagMutation,
+  CreateTagMutationVariables
 >;
 export const GetAllProductsDocument = gql`
   query GetAllProducts($search: String) {
