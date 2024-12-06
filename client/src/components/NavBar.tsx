@@ -12,7 +12,7 @@ const pages = [
   { content: 'Gestion', to: '/managementProduct' },
   { content: 'Produits', to: '/catalog' },
   { content: 'Marque', to: '/brand' },
-  { content: 'Ajout Produit', to: '/' }
+  { content: 'Ajout Produit', to: '/addProduct' }
 ];
 
 export default function NavBAr() {
