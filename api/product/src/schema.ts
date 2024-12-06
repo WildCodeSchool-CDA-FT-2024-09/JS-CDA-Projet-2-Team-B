@@ -3,6 +3,7 @@ import ProductResolver from './resolvers/product.resolvers';
 import CharacteristicResolver from './resolvers/characteristic.resolvers';
 import CategoryResolver from './resolvers/category.resolver';
 import ImageResolver from './resolvers/image.resolvers';
+import TagResolver from './resolvers/tag.resolver';
 
 const getSchema = async () => {
   return await buildSchema({
@@ -10,7 +11,8 @@ const getSchema = async () => {
       ProductResolver,
       CharacteristicResolver,
       CategoryResolver,
-      ImageResolver
+      ImageResolver,
+      TagResolver
     ]
   });
 };
