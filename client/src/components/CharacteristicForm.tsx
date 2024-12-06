@@ -2,16 +2,20 @@ import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
 import { TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
-import AddIcon from '@mui/icons-material/Add';
 import {
   useGetAllCharacteristicQuery,
-  useCreateNewCharacteristicMutation
+  useCreateNewCharacteristicMutation,
+  useEditCharacteristicMutation
 } from '../generated/graphql-types';
 import { useState } from 'react';
 
 export default function CharacteristicForm() {
   const [characteristic, setCaracteristic] = useState('');
   const [createNewCharacteristic] = useCreateNewCharacteristicMutation();
+
+  const [editCharacteristic] = useEditCharacteristicMutation();
+  const [selectId, setSelectId] = useState<number | null>(null);
+  const [editName, setEditName] = useState<string>('');
 
   const handleAdd = async () => {
     try {
@@ -33,13 +37,28 @@ export default function CharacteristicForm() {
   if (loading) return <p> Loading </p>;
   if (error) return <p> Error : </p>;
 
-  // Elimine les doublons et crée un nouveau tableau
-  const uniqueCharacteristic = [
-    ...new Set(data?.getAllCharacteristic.map((c) => c.name))
-  ];
+  const handleClickChip = (id: number, name: string) => {
+    setSelectId(id);
+    setEditName(name);
+  };
 
-  const handleClick = () => {
-    console.info('You clicked the Chip.');
+  const handleSaveEdit = async () => {
+    if (editName) {
+      try {
+        await editCharacteristic({
+          variables: {
+            characteristic: {
+              id: selectId,
+              name: editName
+            }
+          }
+        });
+        setSelectId(null);
+        setEditName('');
+      } catch (err) {
+        console.error(err);
+      }
+    }
   };
 
   return (
@@ -77,21 +96,45 @@ export default function CharacteristicForm() {
         <Button
           onClick={handleAdd}
           variant="contained"
-          endIcon={<AddIcon />}
           sx={{ backgroundColor: 'green', color: 'white' }}
         >
           Ajouter
         </Button>
       </Card>
-      {uniqueCharacteristic.map((c) => (
-        <Chip
-          key={c}
-          label={c}
-          variant="outlined"
-          onClick={handleClick}
-          sx={{ padding: 2, marginLeft: 2, marginTop: 5 }}
-        />
-      ))}
+
+      <div style={{ marginTop: 10 }}>
+        <Typography sx={{ marginTop: 5, marginBottom: 4 }}>
+          Modifier une caractéristique en cliquant dessus :
+        </Typography>
+        {data?.getAllCharacteristic.map((c) => (
+          <div key={c.id} style={{ display: 'inline-block', marginTop: 10 }}>
+            {selectId === c.id ? (
+              <TextField
+                value={editName}
+                onChange={(e) => setEditName(e.target.value)}
+                onBlur={handleSaveEdit}
+                variant="outlined"
+                sx={{
+                  height: 37,
+                  width: 200,
+                  '& .MuiOutlinedInput-root': {
+                    height: '100%',
+                    borderRadius: '16px',
+                    border: '1px solid #ddd'
+                  }
+                }}
+              />
+            ) : (
+              <Chip
+                label={c.name}
+                variant="outlined"
+                onClick={() => handleClickChip(c.id, c.name)}
+                sx={{ padding: 2, marginLeft: 2, marginBottom: 5 }}
+              />
+            )}
+          </div>
+        ))}
+      </div>
     </Card>
   );
 }

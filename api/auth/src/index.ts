@@ -9,7 +9,7 @@ app.use(json());
 
 const corsOptions = {
   credentials: true,
-  origin: 'http://localhost:5173',
+  origin: 'http://localhost:5173'
 };
 
 app.use(cors(corsOptions));

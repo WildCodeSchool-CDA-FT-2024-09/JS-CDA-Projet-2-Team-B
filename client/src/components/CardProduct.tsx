@@ -16,6 +16,7 @@ const styleButton = {
 };
 
 type Products = {
+  id: number;
   name: string;
   price: number;
   reference: string;
@@ -24,6 +25,7 @@ type Products = {
 };
 
 export default function CardProduct({
+  id,
   name,
   price,
   reference,
@@ -53,7 +55,7 @@ export default function CardProduct({
       <Grid sx={{ display: 'flex', justifyContent: 'end', marginRight: 1 }}>
         <MUILink
           component={RouterLink}
-          to="/"
+          to={`/product/${id}/edit`}
           sx={{ ...styleButton, backgroundColor: 'green' }}
         >
           Modifier
