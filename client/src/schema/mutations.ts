@@ -77,3 +77,12 @@ export const DELETE_CATEGORY = gql`
     deleteCategory(id: $id)
   }
 `;
+
+export const CREATE_TAG = gql`
+  mutation CreateTag($input: CreateTagInput!) {
+    createTag(input: $input) {
+      id
+      name
+    }
+  }
+`;
