@@ -31,8 +31,18 @@ class ProductInput {
 @Resolver(Product)
 export default class ProductResolver {
   @Query(() => [Product])
-  async getAllProducts(): Promise<Product[]> {
-    return Product.find();
+  async getAllProducts(
+    @Arg('search', { nullable: true }) search: string
+  ): Promise<Product[]> {
+    const queryBuilder = Product.createQueryBuilder('product');
+
+    if (search) {
+      queryBuilder.where('LOWER(product.name) LIKE :search', {
+        search: `%${search.toLowerCase()}%`
+      });
+    }
+
+    return queryBuilder.getMany();
   }
 
   @Mutation(() => Product)
