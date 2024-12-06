@@ -148,6 +148,10 @@ export type QueryGetAllCategoriesArgs = {
   includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
+export type QueryGetAllProductsArgs = {
+  search?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type QueryGetProductByIdArgs = {
   id: Scalars['Int']['input'];
 };
@@ -155,6 +159,23 @@ export type QueryGetProductByIdArgs = {
 export type UpdateCategoryInput = {
   id: Scalars['Float']['input'];
   name: Scalars['String']['input'];
+};
+
+export type CreateNewProductMutationVariables = Exact<{
+  data: ProductInput;
+}>;
+
+export type CreateNewProductMutation = {
+  __typename?: 'Mutation';
+  createNewProduct: {
+    __typename?: 'Product';
+    id: number;
+    reference: string;
+    name: string;
+    shortDescription: string;
+    description: string;
+    price: number;
+  };
 };
 
 export type CreateCategoryMutationVariables = Exact<{
@@ -234,18 +255,20 @@ export type DeleteCategoryMutation = {
   deleteCategory: boolean;
 };
 
-export type GetAllProductsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetAllProductsQueryVariables = Exact<{
+  search?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 export type GetAllProductsQuery = {
   __typename?: 'Query';
   getAllProducts: Array<{
     __typename?: 'Product';
     id: number;
-    reference: string;
     name: string;
+    price: number;
+    reference: string;
     shortDescription: string;
     description: string;
-    price: number;
   }>;
 };
 
@@ -291,6 +314,61 @@ export type GetAllCharacteristicQuery = {
   }>;
 };
 
+export const CreateNewProductDocument = gql`
+  mutation CreateNewProduct($data: ProductInput!) {
+    createNewProduct(data: $data) {
+      id
+      reference
+      name
+      shortDescription
+      description
+      price
+    }
+  }
+`;
+export type CreateNewProductMutationFn = Apollo.MutationFunction<
+  CreateNewProductMutation,
+  CreateNewProductMutationVariables
+>;
+
+/**
+ * __useCreateNewProductMutation__
+ *
+ * To run a mutation, you first call `useCreateNewProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateNewProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createNewProductMutation, { data, loading, error }] = useCreateNewProductMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateNewProductMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateNewProductMutation,
+    CreateNewProductMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    CreateNewProductMutation,
+    CreateNewProductMutationVariables
+  >(CreateNewProductDocument, options);
+}
+export type CreateNewProductMutationHookResult = ReturnType<
+  typeof useCreateNewProductMutation
+>;
+export type CreateNewProductMutationResult =
+  Apollo.MutationResult<CreateNewProductMutation>;
+export type CreateNewProductMutationOptions = Apollo.BaseMutationOptions<
+  CreateNewProductMutation,
+  CreateNewProductMutationVariables
+>;
 export const CreateCategoryDocument = gql`
   mutation CreateCategory($input: CreateCategoryInput!) {
     createCategory(input: $input) {
@@ -675,14 +753,14 @@ export type DeleteCategoryMutationOptions = Apollo.BaseMutationOptions<
   DeleteCategoryMutationVariables
 >;
 export const GetAllProductsDocument = gql`
-  query GetAllProducts {
-    getAllProducts {
+  query GetAllProducts($search: String) {
+    getAllProducts(search: $search) {
       id
-      reference
       name
+      price
+      reference
       shortDescription
       description
-      price
     }
   }
 `;
@@ -699,6 +777,7 @@ export const GetAllProductsDocument = gql`
  * @example
  * const { data, loading, error } = useGetAllProductsQuery({
  *   variables: {
+ *      search: // value for 'search'
  *   },
  * });
  */

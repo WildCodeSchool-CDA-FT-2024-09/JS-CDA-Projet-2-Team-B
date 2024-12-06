@@ -8,6 +8,7 @@ import Catalog from './pages/Catalog.tsx';
 import ManagementProduct from './pages/ManagementProduct.tsx';
 import ProductDetails from './components/ProductDetails.tsx';
 import AddImage from './pages/Addimage.tsx';
+import AddProduct from './pages/AddProduct.tsx';
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: '/managementProduct',
         element: <ManagementProduct />
+      },
+      {
+        path: '/addProduct',
+        element: <AddProduct />
       },
       {
         path: '/product/:id/edit',
