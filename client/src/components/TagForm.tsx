@@ -35,6 +35,8 @@ const TagForm = () => {
           Tags
         </Typography>
         <Box
+          component="form"
+          onSubmit={handleSubmit}
           sx={{
             display: 'flex',
             alignItems: 'center',
@@ -55,6 +57,7 @@ const TagForm = () => {
           />
           <Button
             variant="contained"
+            type="submit"
             onClick={handleSubmit}
             sx={{
               padding: '4px 10px',
