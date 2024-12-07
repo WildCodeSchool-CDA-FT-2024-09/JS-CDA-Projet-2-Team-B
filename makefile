@@ -8,4 +8,7 @@ test:
 	docker compose -f docker-compose.test.yml up --build
 
 dev:
-	docker compose -f docker-compose.dev.yml up --build -d
+	docker compose -f docker-compose.yml up --build 
+
+pierre:
+	docker compose -f docker-compose-pierre.yml up --build

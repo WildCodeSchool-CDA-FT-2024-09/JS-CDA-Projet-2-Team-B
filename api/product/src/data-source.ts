@@ -3,6 +3,8 @@ import { Product } from './entity/product.entities';
 import { Category } from './entity/category.entities';
 import { Characteristic } from './entity/characteristic.entities';
 import * as dotenv from 'dotenv';
+import { Image } from './entity/image.entities';
+import { Tag } from './entity/tag.entities';
 
 dotenv.config();
 const { POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_USER, POSTGRES_HOST } =
@@ -15,6 +17,6 @@ export const AppDataSource = new DataSource({
   username: POSTGRES_USER,
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
-  entities: [Product, Category, Characteristic],
+  entities: [Product, Category, Characteristic, Image, Tag],
   synchronize: true
 });
