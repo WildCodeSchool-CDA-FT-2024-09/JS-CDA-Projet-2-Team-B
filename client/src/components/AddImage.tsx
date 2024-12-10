@@ -75,7 +75,7 @@ const AddImage: React.FC = () => {
       )}
       {data && (
         <Typography color="primary" sx={{ marginTop: 2 }}>
-          Image ajoutée avec l'ID: {data.id}
+          Image ajoutée avec succès: {data.id}
         </Typography>
       )}
     </Card>
