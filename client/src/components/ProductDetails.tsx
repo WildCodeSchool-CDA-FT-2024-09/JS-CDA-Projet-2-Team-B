@@ -39,13 +39,10 @@ export default function ProductDetails() {
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    const { name, value, type } = e.target;
+    const { name, value } = e.target;
     setProduct((prev) => ({
       ...prev,
-      [name]:
-        type === 'checkbox' && e.target instanceof HTMLInputElement
-          ? e.target.checked
-          : value
+      [name]: name === 'price' ? parseFloat(value) || 0 : value
     }));
   };
 
