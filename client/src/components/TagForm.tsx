@@ -6,12 +6,16 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
 import { useCreateTagMutation } from '../generated/graphql-types';
+import { useGetAllTagsQuery } from '../generated/graphql-types';
+import TagItem from './TagItem';
 
 const TagForm = () => {
   const [newTagName, setNewTagName] = useState('');
   const [createTag] = useCreateTagMutation();
+  const { data, loading, refetch } = useGetAllTagsQuery();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
     try {
       if (newTagName.trim()) {
         const response = await createTag({
@@ -21,6 +25,7 @@ const TagForm = () => {
         });
         if (response.data?.createTag) {
           setNewTagName('');
+          await refetch();
         }
       }
     } catch (err) {
@@ -66,6 +71,26 @@ const TagForm = () => {
           >
             Ajouter +
           </Button>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 1,
+            marginTop: 3
+          }}
+        >
+          {loading ? (
+            <Typography>Chargement...</Typography>
+          ) : (
+            data?.getAllTags.map((tag) => (
+              <TagItem
+                key={tag.id}
+                name={tag.name}
+                onDelete={() => console.info('Delete tag:', tag.name)}
+              />
+            ))
+          )}
         </Box>
       </CardContent>
     </Card>
