@@ -26,7 +26,7 @@ const TagItem = ({ name, onDelete }: TagItemProps) => {
         transform: isEditing ? 'scale(1.2)' : 'scale(1)',
         cursor: 'pointer'
       }}
-      onClick={() => !isEditing && setIsEditing(true)}
+      onClick={() => setIsEditing(true)}
     >
       {isEditing ? (
         <TextField
