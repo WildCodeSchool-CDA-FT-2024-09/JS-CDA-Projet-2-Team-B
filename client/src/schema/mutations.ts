@@ -94,3 +94,12 @@ export const CREATE_TAG = gql`
     }
   }
 `;
+
+export const UPDATE_TAG = gql`
+  mutation UpdateTag($input: UpdateTagInput!) {
+    updateTag(input: $input) {
+      id
+      name
+    }
+  }
+`;

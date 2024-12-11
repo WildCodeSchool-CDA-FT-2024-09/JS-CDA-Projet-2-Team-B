@@ -5,27 +5,39 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
-import { useCreateTagMutation } from '../generated/graphql-types';
+import {
+  useCreateTagMutation,
+  useGetAllTagsQuery
+} from '../generated/graphql-types';
+import TagItem from './TagItem';
 
 const TagForm = () => {
   const [newTagName, setNewTagName] = useState('');
   const [createTag] = useCreateTagMutation();
+  const { data, loading, refetch } = useGetAllTagsQuery();
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    const newName = newTagName.trim();
     try {
-      if (newTagName.trim()) {
+      if (newName) {
         const response = await createTag({
           variables: {
-            input: { name: newTagName.trim() }
+            input: { name: newName }
           }
         });
         if (response.data?.createTag) {
           setNewTagName('');
+          await refetch();
         }
       }
     } catch (err) {
       console.error('Error:', err);
     }
+  };
+
+  const handleRefetch = async () => {
+    await refetch();
   };
 
   return (
@@ -66,6 +78,28 @@ const TagForm = () => {
           >
             Ajouter +
           </Button>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 1,
+            marginTop: 3
+          }}
+        >
+          {loading ? (
+            <Typography>Chargement...</Typography>
+          ) : (
+            data?.getAllTags.map((tag) => (
+              <TagItem
+                key={tag.id}
+                id={tag.id}
+                name={tag.name}
+                onDelete={() => console.info('Delete tag:', tag.name)}
+                onRefetch={handleRefetch}
+              />
+            ))
+          )}
         </Box>
       </CardContent>
     </Card>

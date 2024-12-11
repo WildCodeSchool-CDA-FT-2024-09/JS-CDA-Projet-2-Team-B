@@ -53,3 +53,12 @@ export const GET_CATEGORY = gql`
     }
   }
 `;
+
+export const GET_ALL_TAGS = gql`
+  query GetAllTags {
+    getAllTags {
+      id
+      name
+    }
+  }
+`;
