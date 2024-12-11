@@ -76,7 +76,9 @@ export type Mutation = {
   createNewProduct: Product;
   createTag: Tag;
   deleteCategory: Scalars['Boolean']['output'];
+  deleteTag: Scalars['Boolean']['output'];
   restoreCategory: Scalars['Boolean']['output'];
+  restoreTag: Scalars['Boolean']['output'];
   updateCategory: Category;
   updateProduct: Product;
   updateTag: Tag;
@@ -106,7 +108,15 @@ export type MutationDeleteCategoryArgs = {
   id: Scalars['Int']['input'];
 };
 
+export type MutationDeleteTagArgs = {
+  id: Scalars['Int']['input'];
+};
+
 export type MutationRestoreCategoryArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type MutationRestoreTagArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -167,12 +177,17 @@ export type QueryGetAllProductsArgs = {
   search?: InputMaybe<Scalars['String']['input']>;
 };
 
+export type QueryGetAllTagsArgs = {
+  includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
 export type QueryGetProductByIdArgs = {
   id: Scalars['Int']['input'];
 };
 
 export type Tag = {
   __typename?: 'Tag';
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
 };
@@ -290,6 +305,13 @@ export type CreateTagMutation = {
   createTag: { __typename?: 'Tag'; id: number; name: string };
 };
 
+export type GetAllTagsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllTagsQuery = {
+  __typename?: 'Query';
+  getAllTags: Array<{ __typename?: 'Tag'; id: number; name: string }>;
+};
+
 export type UpdateTagMutationVariables = Exact<{
   input: UpdateTagInput;
 }>;
@@ -298,6 +320,12 @@ export type UpdateTagMutation = {
   __typename?: 'Mutation';
   updateTag: { __typename?: 'Tag'; id: number; name: string };
 };
+
+export type DeleteTagMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+export type DeleteTagMutation = { __typename?: 'Mutation'; deleteTag: boolean };
 
 export type GetAllProductsQueryVariables = Exact<{
   search?: InputMaybe<Scalars['String']['input']>;
@@ -356,13 +384,6 @@ export type GetAllCharacteristicQuery = {
     id: number;
     name: string;
   }>;
-};
-
-export type GetAllTagsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetAllTagsQuery = {
-  __typename?: 'Query';
-  getAllTags: Array<{ __typename?: 'Tag'; id: number; name: string }>;
 };
 
 export const CreateNewProductDocument = gql`
@@ -853,6 +874,79 @@ export type CreateTagMutationOptions = Apollo.BaseMutationOptions<
   CreateTagMutation,
   CreateTagMutationVariables
 >;
+export const GetAllTagsDocument = gql`
+  query GetAllTags {
+    getAllTags {
+      id
+      name
+    }
+  }
+`;
+
+/**
+ * __useGetAllTagsQuery__
+ *
+ * To run a query within a React component, call `useGetAllTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllTagsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllTagsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllTagsQuery,
+    GetAllTagsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
+    GetAllTagsDocument,
+    options
+  );
+}
+export function useGetAllTagsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllTagsQuery,
+    GetAllTagsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
+    GetAllTagsDocument,
+    options
+  );
+}
+export function useGetAllTagsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetAllTagsQuery, GetAllTagsQueryVariables>
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
+    GetAllTagsDocument,
+    options
+  );
+}
+export type GetAllTagsQueryHookResult = ReturnType<typeof useGetAllTagsQuery>;
+export type GetAllTagsLazyQueryHookResult = ReturnType<
+  typeof useGetAllTagsLazyQuery
+>;
+export type GetAllTagsSuspenseQueryHookResult = ReturnType<
+  typeof useGetAllTagsSuspenseQuery
+>;
+export type GetAllTagsQueryResult = Apollo.QueryResult<
+  GetAllTagsQuery,
+  GetAllTagsQueryVariables
+>;
 export const UpdateTagDocument = gql`
   mutation UpdateTag($input: UpdateTagInput!) {
     updateTag(input: $input) {
@@ -902,6 +996,53 @@ export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
 export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<
   UpdateTagMutation,
   UpdateTagMutationVariables
+>;
+export const DeleteTagDocument = gql`
+  mutation DeleteTag($id: Int!) {
+    deleteTag(id: $id)
+  }
+`;
+export type DeleteTagMutationFn = Apollo.MutationFunction<
+  DeleteTagMutation,
+  DeleteTagMutationVariables
+>;
+
+/**
+ * __useDeleteTagMutation__
+ *
+ * To run a mutation, you first call `useDeleteTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteTagMutation, { data, loading, error }] = useDeleteTagMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteTagMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteTagMutation,
+    DeleteTagMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<DeleteTagMutation, DeleteTagMutationVariables>(
+    DeleteTagDocument,
+    options
+  );
+}
+export type DeleteTagMutationHookResult = ReturnType<
+  typeof useDeleteTagMutation
+>;
+export type DeleteTagMutationResult = Apollo.MutationResult<DeleteTagMutation>;
+export type DeleteTagMutationOptions = Apollo.BaseMutationOptions<
+  DeleteTagMutation,
+  DeleteTagMutationVariables
 >;
 export const GetAllProductsDocument = gql`
   query GetAllProducts($search: String) {
@@ -1229,77 +1370,4 @@ export type GetAllCharacteristicSuspenseQueryHookResult = ReturnType<
 export type GetAllCharacteristicQueryResult = Apollo.QueryResult<
   GetAllCharacteristicQuery,
   GetAllCharacteristicQueryVariables
->;
-export const GetAllTagsDocument = gql`
-  query GetAllTags {
-    getAllTags {
-      id
-      name
-    }
-  }
-`;
-
-/**
- * __useGetAllTagsQuery__
- *
- * To run a query within a React component, call `useGetAllTagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllTagsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllTagsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetAllTagsQuery,
-    GetAllTagsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
-    GetAllTagsDocument,
-    options
-  );
-}
-export function useGetAllTagsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetAllTagsQuery,
-    GetAllTagsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
-    GetAllTagsDocument,
-    options
-  );
-}
-export function useGetAllTagsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<GetAllTagsQuery, GetAllTagsQueryVariables>
-) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
-    GetAllTagsDocument,
-    options
-  );
-}
-export type GetAllTagsQueryHookResult = ReturnType<typeof useGetAllTagsQuery>;
-export type GetAllTagsLazyQueryHookResult = ReturnType<
-  typeof useGetAllTagsLazyQuery
->;
-export type GetAllTagsSuspenseQueryHookResult = ReturnType<
-  typeof useGetAllTagsSuspenseQuery
->;
-export type GetAllTagsQueryResult = Apollo.QueryResult<
-  GetAllTagsQuery,
-  GetAllTagsQueryVariables
 >;

@@ -87,11 +87,26 @@ export const CREATE_TAG = gql`
   }
 `;
 
+export const GET_ALL_TAGS = gql`
+  query GetAllTags {
+    getAllTags {
+      id
+      name
+    }
+  }
+`;
+
 export const UPDATE_TAG = gql`
   mutation UpdateTag($input: UpdateTagInput!) {
     updateTag(input: $input) {
       id
       name
     }
+  }
+`;
+
+export const DELETE_TAG = gql`
+  mutation DeleteTag($id: Int!) {
+    deleteTag(id: $id)
   }
 `;
