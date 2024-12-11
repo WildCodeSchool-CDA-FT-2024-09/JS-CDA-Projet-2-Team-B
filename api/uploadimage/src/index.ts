@@ -20,13 +20,12 @@ app.use(cors(corsOptions));
 
 const PORT = process.env.PORT;
 
-// Configuration de Multer pour le stockage des fichiers
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, '../uploads')); // Chemin vers le dossier "uploads"
+    cb(null, path.join(__dirname, '../uploads'));
   },
   filename: (req, file, cb) => {
-    cb(null, `${Date.now()}-${file.originalname}`); // Nom unique pour le fichier
+    cb(null, `${Date.now()}-${file.originalname}`);
   }
 });
 const upload = multer({ storage });
@@ -36,7 +35,6 @@ app.get('/upload', (_: Request, res: Response) => {
   res.send('Hello World');
 });
 
-// Route pour uploader une image
 app.post(
   '/upload',
   upload.single('image'),
@@ -50,13 +48,11 @@ app.post(
       return;
     }
 
-    const filePath = `http://localhost:3000/uploads/${req.file.filename}`; // URL publique de l'image
+    const filePath = `http://localhost:3000/uploads/${req.file.filename}`;
 
     try {
-      // Vérifiez l'existence du fichier avec fs.promises
       await fs.promises.access(req.file.path);
 
-      // Appel de l'API GraphQL pour enregistrer l'image
       const response = await axios.post('http://product:4000/graphql', {
         query: `
         mutation {
@@ -75,7 +71,6 @@ app.post(
         return;
       }
 
-      // Réponse en cas de succès
       res.status(200).json({
         status: 'success',
         data: response.data.data.addImage
@@ -93,7 +88,6 @@ app.post(
   }
 );
 
-// Démarrage du serveur
 app.listen(PORT, async () => {
   console.info(`Listening on port ${PORT}`);
 
