@@ -1,15 +1,61 @@
 import { Box, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
+import { useUpdateTagMutation } from '../generated/graphql-types';
 
-interface TagItemProps {
+type TagItemProps = {
+  id: number;
   name: string;
-  onDelete?: () => void;
-}
+  onDelete: () => void;
+  onRefetch: () => void;
+};
 
-const TagItem = ({ name, onDelete }: TagItemProps) => {
+const TagItem = ({ id, name, onDelete, onRefetch }: TagItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const [updateTag] = useUpdateTagMutation();
+
+  const handleSave = useCallback(async () => {
+    const newName = editedName.trim();
+    if (newName && newName !== name) {
+      try {
+        const response = await updateTag({
+          variables: {
+            input: { id, name: newName }
+          }
+        });
+        if (response.data?.updateTag) {
+          await onRefetch();
+        }
+      } catch (err) {
+        console.error('Error updating tag:', err);
+        setEditedName(name);
+      }
+    } else {
+      setEditedName(name);
+    }
+    setIsEditing(false);
+  }, [editedName, name, id, updateTag, onRefetch]);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        inputRef.current &&
+        !inputRef.current.contains(event.target as Node)
+      ) {
+        handleSave();
+      }
+    };
+
+    if (isEditing) {
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [isEditing, handleSave]);
 
   return (
     <Box
@@ -23,23 +69,22 @@ const TagItem = ({ name, onDelete }: TagItemProps) => {
         gap: 1,
         boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
         transition: 'transform 0.2s ease-in-out',
-        transform: isEditing ? 'scale(1.2)' : 'scale(1)',
+        transform: isEditing ? 'scale(1.05)' : 'scale(1)',
         cursor: 'pointer'
       }}
-      onClick={() => setIsEditing(true)}
+      onClick={() => !isEditing && setIsEditing(true)}
     >
       {isEditing ? (
         <TextField
+          inputRef={inputRef}
           size="small"
           value={editedName}
           onChange={(e) => setEditedName(e.target.value)}
-          onBlur={() => {
-            console.info('Saving:', editedName);
-            setIsEditing(false);
-          }}
           onKeyDown={(e) => {
             if (e.key === 'Enter') {
-              console.info('Saving:', editedName);
+              handleSave();
+            } else if (e.key === 'Escape') {
+              setEditedName(name);
               setIsEditing(false);
             }
           }}
@@ -63,7 +108,7 @@ const TagItem = ({ name, onDelete }: TagItemProps) => {
         size="small"
         onClick={(e) => {
           e.stopPropagation();
-          onDelete?.();
+          onDelete();
         }}
         sx={{
           color: '#d32f2f',

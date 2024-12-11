@@ -5,8 +5,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import { useState } from 'react';
-import { useCreateTagMutation } from '../generated/graphql-types';
-import { useGetAllTagsQuery } from '../generated/graphql-types';
+import {
+  useCreateTagMutation,
+  useGetAllTagsQuery
+} from '../generated/graphql-types';
 import TagItem from './TagItem';
 
 const TagForm = () => {
@@ -16,11 +18,12 @@ const TagForm = () => {
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    const newName = newTagName.trim();
     try {
-      if (newTagName.trim()) {
+      if (newName) {
         const response = await createTag({
           variables: {
-            input: { name: newTagName.trim() }
+            input: { name: newName }
           }
         });
         if (response.data?.createTag) {
@@ -31,6 +34,10 @@ const TagForm = () => {
     } catch (err) {
       console.error('Error:', err);
     }
+  };
+
+  const handleRefetch = async () => {
+    await refetch();
   };
 
   return (
@@ -86,8 +93,10 @@ const TagForm = () => {
             data?.getAllTags.map((tag) => (
               <TagItem
                 key={tag.id}
+                id={tag.id}
                 name={tag.name}
                 onDelete={() => console.info('Delete tag:', tag.name)}
+                onRefetch={handleRefetch}
               />
             ))
           )}
