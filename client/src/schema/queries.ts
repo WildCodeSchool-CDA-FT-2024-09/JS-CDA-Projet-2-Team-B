@@ -22,6 +22,10 @@ export const GET_PRODUCT_BY_ID = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;

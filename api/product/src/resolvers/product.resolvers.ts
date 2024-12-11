@@ -9,6 +9,8 @@ import {
   Field,
   Int
 } from 'type-graphql';
+import { Category } from '../entity/category.entities';
+import { ILike } from 'typeorm';
 
 @InputType()
 class ProductInput {
@@ -26,6 +28,9 @@ class ProductInput {
 
   @Field()
   price: number;
+
+  @Field(() => Int, { nullable: true })
+  categoryId?: number;
 }
 
 @Resolver(Product)
@@ -34,15 +39,14 @@ export default class ProductResolver {
   async getAllProducts(
     @Arg('search', { nullable: true }) search: string
   ): Promise<Product[]> {
-    const queryBuilder = Product.createQueryBuilder('product');
+    const query = {
+      where: search ? { name: ILike(`%${search}%`) } : {},
+      relations: {
+        categories: true
+      }
+    };
 
-    if (search) {
-      queryBuilder.where('LOWER(product.name) LIKE :search', {
-        search: `%${search.toLowerCase()}%`
-      });
-    }
-
-    return queryBuilder.getMany();
+    return Product.find(query);
   }
 
   @Mutation(() => Product)
@@ -65,6 +69,15 @@ export default class ProductResolver {
     product.description = newProduct.description;
     product.price = newProduct.price;
 
+    if (newProduct.categoryId) {
+      const category = await Category.findOne({
+        where: { id: newProduct.categoryId }
+      });
+      if (category) {
+        product.categories = [category];
+      }
+    }
+
     return await product.save();
   }
 
@@ -72,7 +85,10 @@ export default class ProductResolver {
   async getProductById(
     @Arg('id', () => Int) id: number
   ): Promise<Product | null> {
-    return await Product.findOne({ where: { id } });
+    return await Product.findOne({
+      where: { id },
+      relations: ['categories']
+    });
   }
 
   @Mutation(() => Product)
@@ -82,7 +98,8 @@ export default class ProductResolver {
     const { id } = newDataProduct;
 
     const product = await Product.findOne({
-      where: { id }
+      where: { id },
+      relations: ['categories']
     });
 
     if (!product) {
@@ -91,6 +108,15 @@ export default class ProductResolver {
 
     // Using assign method from Object to assign new data to the found product.
     Object.assign(product, newDataProduct);
+
+    if (newDataProduct.categoryId) {
+      const category = await Category.findOne({
+        where: { id: newDataProduct.categoryId }
+      });
+      if (category) {
+        product.categories = [category];
+      }
+    }
 
     return await product.save();
   }

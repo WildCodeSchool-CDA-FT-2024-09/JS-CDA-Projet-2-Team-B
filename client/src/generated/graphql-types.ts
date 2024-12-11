@@ -36,6 +36,7 @@ export type Category = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
+  products?: Maybe<Array<Product>>;
 };
 
 export type Characteristic = {
@@ -134,6 +135,7 @@ export type MutationUpdateTagArgs = {
 
 export type Product = {
   __typename?: 'Product';
+  categories?: Maybe<Array<Category>>;
   description: Scalars['String']['output'];
   id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
@@ -143,6 +145,7 @@ export type Product = {
 };
 
 export type ProductInput = {
+  categoryId?: InputMaybe<Scalars['Int']['input']>;
   description: Scalars['String']['input'];
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
@@ -151,6 +154,7 @@ export type ProductInput = {
 };
 
 export type ProductUpdateInput = {
+  categoryId?: InputMaybe<Scalars['ID']['input']>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
   name: Scalars['String']['input'];
@@ -242,6 +246,11 @@ export type UpdateProductMutation = {
     shortDescription: string;
     description: string;
     price: number;
+    categories?: Array<{
+      __typename?: 'Category';
+      id: number;
+      name: string;
+    }> | null;
   };
 };
 
@@ -358,6 +367,11 @@ export type GetProductByIdQuery = {
     shortDescription: string;
     description: string;
     price: number;
+    categories?: Array<{
+      __typename?: 'Category';
+      id: number;
+      name: string;
+    }> | null;
   } | null;
 };
 
@@ -501,6 +515,10 @@ export const UpdateProductDocument = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;
@@ -1136,6 +1154,10 @@ export const GetProductByIdDocument = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;

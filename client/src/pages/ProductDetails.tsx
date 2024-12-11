@@ -22,6 +22,7 @@ interface ProductDetailsReq {
   shortDescription: string;
   description: string;
   price: number;
+  categoryId?: number;
 }
 
 export default function ProductDetails() {
@@ -79,7 +80,8 @@ export default function ProductDetails() {
             reference: product.reference,
             shortDescription: product.shortDescription,
             description: product.description,
-            price: product.price
+            price: product.price,
+            categoryId: selectedCategory ? selectedCategory : undefined
           }
         }
       });
@@ -102,6 +104,9 @@ export default function ProductDetails() {
         description: data.getProductById.description,
         price: data.getProductById.price
       });
+      if (data.getProductById.categories?.[0]) {
+        setSelectedCategory(data.getProductById.categories[0].id.toString());
+      }
     } else if (fetchError) {
       setError(fetchError.message);
     }
