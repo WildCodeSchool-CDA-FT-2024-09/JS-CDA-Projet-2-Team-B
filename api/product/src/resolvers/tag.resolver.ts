@@ -77,7 +77,7 @@ export default class TagResolver {
       });
 
       if (!tag) {
-        throw new Error('Category not found');
+        throw new Error('Tag not found');
       }
 
       await tag.softRemove();
