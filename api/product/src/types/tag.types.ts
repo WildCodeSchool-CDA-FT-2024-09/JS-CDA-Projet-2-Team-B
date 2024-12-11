@@ -9,3 +9,13 @@ export class CreateTagInput {
   })
   name: string;
 }
+
+@InputType()
+export class UpdateTagInput {
+  @Field()
+  id: number;
+
+  @Field()
+  @Length(1, 50)
+  name: string;
+}

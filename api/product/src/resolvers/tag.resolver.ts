@@ -1,24 +1,18 @@
-import { Resolver, Mutation, Arg, Query, InputType, Field } from 'type-graphql';
+import { Resolver, Mutation, Arg, Query, Int } from 'type-graphql';
 import { Tag } from '../entity/tag.entities';
-import { CreateTagInput } from '../types/tag.types';
-import { Length } from 'class-validator';
-
-@InputType()
-export class UpdateTagInput {
-  @Field()
-  id: number;
-
-  @Field()
-  @Length(1, 50)
-  name: string;
-}
+import { CreateTagInput, UpdateTagInput } from '../types/tag.types';
 
 @Resolver(Tag)
 export default class TagResolver {
   @Query(() => [Tag])
-  async getAllTags(): Promise<Tag[]> {
+  async getAllTags(
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
+  ): Promise<Tag[]> {
     try {
-      return await Tag.find();
+      return await Tag.find({
+        withDeleted: includeDeleted
+      });
     } catch (error) {
       throw new Error(
         `Erreur lors de la récupération des tags: ${error.message}`
@@ -72,6 +66,46 @@ export default class TagResolver {
       throw new Error(
         `Erreur lors de la mise à jour de la catégorie: ${error.message}`
       );
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async deleteTag(@Arg('id', () => Int) id: number): Promise<boolean> {
+    try {
+      const tag = await Tag.findOne({
+        where: { id }
+      });
+
+      if (!tag) {
+        throw new Error('Tag not found');
+      }
+
+      await tag.softRemove();
+
+      return true;
+    } catch (error) {
+      console.error('Error while deleting tag:', error);
+      throw error;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async restoreTag(@Arg('id', () => Int) id: number): Promise<boolean> {
+    try {
+      const tag = await Tag.findOne({
+        where: { id },
+        withDeleted: true
+      });
+
+      if (!tag) {
+        throw new Error('Tag not found');
+      }
+
+      await tag.recover();
+      return true;
+    } catch (error) {
+      console.error('Error restoring Tag:', error);
+      throw error;
     }
   }
 }
