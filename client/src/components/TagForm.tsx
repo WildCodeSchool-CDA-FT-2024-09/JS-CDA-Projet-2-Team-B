@@ -36,6 +36,10 @@ const TagForm = () => {
     }
   };
 
+  const handleRefetch = async () => {
+    await refetch();
+  };
+
   return (
     <Card sx={{ maxWidth: 900, margin: 1, boxShadow: 4 }}>
       <CardContent>
@@ -92,7 +96,7 @@ const TagForm = () => {
                 id={tag.id}
                 name={tag.name}
                 onDelete={() => console.info('Delete tag:', tag.name)}
-                onRefetch={refetch}
+                onRefetch={handleRefetch}
               />
             ))
           )}

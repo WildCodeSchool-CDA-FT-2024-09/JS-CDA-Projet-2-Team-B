@@ -1,17 +1,13 @@
 import { Box, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import {
-  GetAllTagsQuery,
-  useUpdateTagMutation
-} from '../generated/graphql-types';
-import { ApolloQueryResult } from '@apollo/client';
+import { useUpdateTagMutation } from '../generated/graphql-types';
 
 type TagItemProps = {
   id: number;
   name: string;
   onDelete: () => void;
-  onRefetch: () => Promise<ApolloQueryResult<GetAllTagsQuery>>;
+  onRefetch: () => void;
 };
 
 const TagItem = ({ id, name, onDelete, onRefetch }: TagItemProps) => {
