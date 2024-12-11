@@ -7,7 +7,10 @@ import {
   Button,
   Box
 } from '@mui/material';
-import { useCreateNewProductMutation } from '../generated/graphql-types';
+import {
+  GetAllProductsDocument,
+  useCreateNewProductMutation
+} from '../generated/graphql-types';
 
 export default function CreationProduct() {
   const [formData, setFormData] = useState({
@@ -15,7 +18,7 @@ export default function CreationProduct() {
     reference: '',
     shortDescription: '',
     description: '',
-    price: ''
+    price: '' as string | number
   });
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -33,6 +36,11 @@ export default function CreationProduct() {
     event.preventDefault();
     const { name, reference, shortDescription, description, price } = formData;
 
+    if (isNaN(parseFloat(price as string))) {
+      console.error('Le prix doit être un nombre valide.');
+      return;
+    }
+
     try {
       await createProduct({
         variables: {
@@ -41,10 +49,37 @@ export default function CreationProduct() {
             reference,
             shortDescription,
             description,
-            price: parseFloat(price)
+            price: parseFloat(price as string)
+          }
+        },
+        update(cache, { data }) {
+          if (data?.createNewProduct) {
+            const existingProducts = cache.readQuery<{
+              getAllProducts: Array<{
+                id: number;
+                name: string;
+                price: number;
+                reference: string;
+                shortDescription: string;
+                description: string;
+              }>;
+            }>({
+              query: GetAllProductsDocument
+            });
+
+            cache.writeQuery({
+              query: GetAllProductsDocument,
+              data: {
+                getAllProducts: [
+                  ...(existingProducts?.getAllProducts || []),
+                  data.createNewProduct
+                ]
+              }
+            });
           }
         }
       });
+
       setSuccessMessage('Produit créé avec succès !');
       setFormData({
         name: '',
