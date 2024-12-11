@@ -1,9 +1,19 @@
-import { Box, TextField, Button, Typography } from '@mui/material';
+import {
+  Box,
+  TextField,
+  Button,
+  Typography,
+  Select,
+  MenuItem,
+  FormControl,
+  SelectChangeEvent
+} from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   useGetProductByIdQuery,
-  useUpdateProductMutation
+  useUpdateProductMutation,
+  useGetAllCategoriesQuery
 } from '../generated/graphql-types';
 
 interface ProductDetailsReq {
@@ -17,6 +27,8 @@ interface ProductDetailsReq {
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState<string | null>('');
+  const { data: categoriesData } = useGetAllCategoriesQuery();
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [product, setProduct] = useState<ProductDetailsReq>({
     name: '',
     reference: '',
@@ -44,6 +56,10 @@ export default function ProductDetails() {
       ...prev,
       [name]: name === 'price' ? parseFloat(value) || 0 : value
     }));
+  };
+
+  const handleCategoryChange = (event: SelectChangeEvent) => {
+    setSelectedCategory(event.target.value as string);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -185,6 +201,24 @@ export default function ProductDetails() {
         onChange={handleChange}
         placeholder="Prix"
       />
+      <Typography sx={{ marginLeft: '2px', fontWeight: 'bold' }}>
+        Catégorie
+      </Typography>
+      <FormControl>
+        <Select
+          value={selectedCategory}
+          onChange={handleCategoryChange}
+          displayEmpty
+          sx={{ width: '100%' }}
+        >
+          <MenuItem value="">Sélectionner une catégorie</MenuItem>
+          {categoriesData?.getAllCategories?.map((category) => (
+            <MenuItem key={category.id} value={category.id}>
+              {category.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
       <Button
         variant="contained"
         disabled={updateLoading}
