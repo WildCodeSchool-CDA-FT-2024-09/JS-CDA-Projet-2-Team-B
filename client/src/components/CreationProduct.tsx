@@ -18,17 +18,18 @@ export default function CreationProduct() {
     reference: '',
     shortDescription: '',
     description: '',
-    price: '' as string | number
+    price: 0
   });
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [createProduct, { loading, error }] = useCreateNewProductMutation();
+  const [error, setError] = useState<string | null>('');
+  const [createProduct, { loading }] = useCreateNewProductMutation();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: name === 'price' ? parseFloat(value) || 0 : value
     }));
   };
 
@@ -36,8 +37,13 @@ export default function CreationProduct() {
     event.preventDefault();
     const { name, reference, shortDescription, description, price } = formData;
 
-    if (isNaN(parseFloat(price as string))) {
-      console.error('Le prix doit être un nombre valide.');
+    if (!name || !reference) {
+      setError('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+
+    if (price < 0) {
+      setError('Le prix doit être un nombre positif.');
       return;
     }
 
@@ -49,7 +55,7 @@ export default function CreationProduct() {
             reference,
             shortDescription,
             description,
-            price: parseFloat(price as string)
+            price
           }
         },
         update(cache, { data }) {
@@ -86,7 +92,7 @@ export default function CreationProduct() {
         reference: '',
         shortDescription: '',
         description: '',
-        price: ''
+        price: 0
       });
     } catch (err) {
       setSuccessMessage(null);
@@ -160,7 +166,7 @@ export default function CreationProduct() {
         )}
         {error && (
           <Typography color="error.main" variant="body2">
-            Une erreur s'est produite : {error.message}
+            Une erreur s'est produite : {error}
           </Typography>
         )}
       </CardContent>
