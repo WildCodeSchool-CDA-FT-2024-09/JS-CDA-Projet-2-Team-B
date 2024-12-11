@@ -79,6 +79,7 @@ export type Mutation = {
   restoreCategory: Scalars['Boolean']['output'];
   updateCategory: Category;
   updateProduct: Product;
+  updateTag: Tag;
 };
 
 export type MutationAddImageArgs = {
@@ -115,6 +116,10 @@ export type MutationUpdateCategoryArgs = {
 
 export type MutationUpdateProductArgs = {
   data: ProductUpdateInput;
+};
+
+export type MutationUpdateTagArgs = {
+  input: UpdateTagInput;
 };
 
 export type Product = {
@@ -173,6 +178,11 @@ export type Tag = {
 };
 
 export type UpdateCategoryInput = {
+  id: Scalars['Float']['input'];
+  name: Scalars['String']['input'];
+};
+
+export type UpdateTagInput = {
   id: Scalars['Float']['input'];
   name: Scalars['String']['input'];
 };
@@ -278,6 +288,15 @@ export type CreateTagMutationVariables = Exact<{
 export type CreateTagMutation = {
   __typename?: 'Mutation';
   createTag: { __typename?: 'Tag'; id: number; name: string };
+};
+
+export type UpdateTagMutationVariables = Exact<{
+  input: UpdateTagInput;
+}>;
+
+export type UpdateTagMutation = {
+  __typename?: 'Mutation';
+  updateTag: { __typename?: 'Tag'; id: number; name: string };
 };
 
 export type GetAllProductsQueryVariables = Exact<{
@@ -833,6 +852,56 @@ export type CreateTagMutationResult = Apollo.MutationResult<CreateTagMutation>;
 export type CreateTagMutationOptions = Apollo.BaseMutationOptions<
   CreateTagMutation,
   CreateTagMutationVariables
+>;
+export const UpdateTagDocument = gql`
+  mutation UpdateTag($input: UpdateTagInput!) {
+    updateTag(input: $input) {
+      id
+      name
+    }
+  }
+`;
+export type UpdateTagMutationFn = Apollo.MutationFunction<
+  UpdateTagMutation,
+  UpdateTagMutationVariables
+>;
+
+/**
+ * __useUpdateTagMutation__
+ *
+ * To run a mutation, you first call `useUpdateTagMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateTagMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateTagMutation, { data, loading, error }] = useUpdateTagMutation({
+ *   variables: {
+ *      input: // value for 'input'
+ *   },
+ * });
+ */
+export function useUpdateTagMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateTagMutation,
+    UpdateTagMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateTagMutation, UpdateTagMutationVariables>(
+    UpdateTagDocument,
+    options
+  );
+}
+export type UpdateTagMutationHookResult = ReturnType<
+  typeof useUpdateTagMutation
+>;
+export type UpdateTagMutationResult = Apollo.MutationResult<UpdateTagMutation>;
+export type UpdateTagMutationOptions = Apollo.BaseMutationOptions<
+  UpdateTagMutation,
+  UpdateTagMutationVariables
 >;
 export const GetAllProductsDocument = gql`
   query GetAllProducts($search: String) {
