@@ -69,10 +69,10 @@ export default class ProductResolver {
     product.description = newProduct.description;
     product.price = newProduct.price;
 
-    const categories = newProduct.categoryIds
-      ? await Category.findBy({ id: In(newProduct.categoryIds) })
-      : [];
-    if (categories.length > 0) {
+    if (newProduct.categoryIds) {
+      const categories = await Category.findBy({
+        id: In(newProduct.categoryIds)
+      });
       product.categories = categories;
     }
 
