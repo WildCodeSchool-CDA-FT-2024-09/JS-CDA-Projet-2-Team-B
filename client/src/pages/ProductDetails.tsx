@@ -85,9 +85,9 @@ export default function ProductDetails() {
         setProduct({
           name: data.updateProduct.name,
           reference: data.updateProduct.reference,
-          shortDescription: data.updateProduct.shortDescription,
-          description: data.updateProduct.description,
-          price: data.updateProduct.price,
+          shortDescription: data.updateProduct.shortDescription ?? '',
+          description: data.updateProduct.description ?? '',
+          price: data.updateProduct.price ?? 0,
           categories: data.updateProduct.categories || []
         });
         setError(null);
@@ -102,9 +102,9 @@ export default function ProductDetails() {
       setProduct({
         name: data.getProductById.name,
         reference: data.getProductById.reference,
-        shortDescription: data.getProductById.shortDescription,
-        description: data.getProductById.description,
-        price: data.getProductById.price,
+        shortDescription: data.getProductById.shortDescription || '',
+        description: data.getProductById.description || '',
+        price: data.getProductById.price || 0,
         categories: data.getProductById.categories || []
       });
     } else if (fetchError) {
