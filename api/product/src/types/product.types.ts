@@ -1,5 +1,5 @@
 import { Product } from '../entity/product.entities';
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType, Int } from 'type-graphql';
 
 @InputType()
 export class ProductUpdateInput implements Partial<Product> {
@@ -20,4 +20,7 @@ export class ProductUpdateInput implements Partial<Product> {
 
   @Field()
   price: number;
+
+  @Field(() => [Int], { nullable: true })
+  categoryIds?: number[];
 }

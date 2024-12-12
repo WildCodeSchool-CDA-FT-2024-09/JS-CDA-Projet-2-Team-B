@@ -1,6 +1,14 @@
-import { Entity, BaseEntity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  BaseEntity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToMany,
+  JoinTable
+} from 'typeorm';
 import { ObjectType, Field, Float } from 'type-graphql';
 import { Length, Min } from 'class-validator';
+import { Category } from './category.entities';
 
 @ObjectType()
 @Entity('products')
@@ -19,16 +27,21 @@ export class Product extends BaseEntity {
   @Length(1, 255)
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column('text', { nullable: true })
   shortDescription: string;
 
-  @Field()
+  @Field({ nullable: true })
   @Column({ nullable: true })
   description: string;
 
-  @Field(() => Float)
+  @Field(() => Float, { nullable: true })
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
   @Min(0)
   price: number;
+
+  @Field(() => [Category], { nullable: true })
+  @ManyToMany(() => Category)
+  @JoinTable()
+  categories?: Category[];
 }

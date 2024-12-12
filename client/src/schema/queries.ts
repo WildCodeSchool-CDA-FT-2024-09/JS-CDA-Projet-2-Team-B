@@ -9,6 +9,10 @@ export const GET_PRODUCT = gql`
       reference
       shortDescription
       description
+      categories {
+        id
+        name
+      }
     }
   }
 `;
@@ -22,6 +26,10 @@ export const GET_PRODUCT_BY_ID = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;
