@@ -145,7 +145,7 @@ export type Product = {
 };
 
 export type ProductInput = {
-  categoryId?: InputMaybe<Scalars['Int']['input']>;
+  categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
@@ -154,7 +154,7 @@ export type ProductInput = {
 };
 
 export type ProductUpdateInput = {
-  categoryId?: InputMaybe<Scalars['ID']['input']>;
+  categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
   name: Scalars['String']['input'];
@@ -350,6 +350,11 @@ export type GetAllProductsQuery = {
     reference: string;
     shortDescription: string;
     description: string;
+    categories?: Array<{
+      __typename?: 'Category';
+      id: number;
+      name: string;
+    }> | null;
   }>;
 };
 
@@ -1071,6 +1076,10 @@ export const GetAllProductsDocument = gql`
       reference
       shortDescription
       description
+      categories {
+        id
+        name
+      }
     }
   }
 `;

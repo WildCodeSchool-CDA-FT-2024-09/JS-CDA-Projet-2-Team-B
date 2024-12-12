@@ -9,6 +9,10 @@ export const GET_PRODUCT = gql`
       reference
       shortDescription
       description
+      categories {
+        id
+        name
+      }
     }
   }
 `;

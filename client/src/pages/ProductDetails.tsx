@@ -3,17 +3,16 @@ import {
   TextField,
   Button,
   Typography,
-  Select,
-  MenuItem,
+  Chip,
   FormControl,
-  SelectChangeEvent
+  Autocomplete
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+  useGetAllCategoriesQuery,
   useGetProductByIdQuery,
-  useUpdateProductMutation,
-  useGetAllCategoriesQuery
+  useUpdateProductMutation
 } from '../generated/graphql-types';
 
 interface ProductDetailsReq {
@@ -22,20 +21,20 @@ interface ProductDetailsReq {
   shortDescription: string;
   description: string;
   price: number;
-  categoryId?: number;
+  categories?: { id: number; name: string }[] | null;
 }
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState<string | null>('');
   const { data: categoriesData } = useGetAllCategoriesQuery();
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [product, setProduct] = useState<ProductDetailsReq>({
     name: '',
     reference: '',
     shortDescription: '',
     description: '',
-    price: 0
+    price: 0,
+    categories: []
   });
 
   const {
@@ -59,10 +58,6 @@ export default function ProductDetails() {
     }));
   };
 
-  const handleCategoryChange = (event: SelectChangeEvent) => {
-    setSelectedCategory(event.target.value as string);
-  };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -81,13 +76,20 @@ export default function ProductDetails() {
             shortDescription: product.shortDescription,
             description: product.description,
             price: product.price,
-            categoryId: selectedCategory ? selectedCategory : undefined
+            categoryIds: product.categories?.map((cat) => cat.id) || []
           }
         }
       });
 
       if (data?.updateProduct) {
-        setProduct(data.updateProduct);
+        setProduct({
+          name: data.updateProduct.name,
+          reference: data.updateProduct.reference,
+          shortDescription: data.updateProduct.shortDescription,
+          description: data.updateProduct.description,
+          price: data.updateProduct.price,
+          categories: data.updateProduct.categories || []
+        });
         setError(null);
       }
     } catch (err) {
@@ -102,11 +104,9 @@ export default function ProductDetails() {
         reference: data.getProductById.reference,
         shortDescription: data.getProductById.shortDescription,
         description: data.getProductById.description,
-        price: data.getProductById.price
+        price: data.getProductById.price,
+        categories: data.getProductById.categories || []
       });
-      if (data.getProductById.categories?.[0]) {
-        setSelectedCategory(data.getProductById.categories[0].id.toString());
-      }
     } else if (fetchError) {
       setError(fetchError.message);
     }
@@ -209,21 +209,99 @@ export default function ProductDetails() {
       <Typography sx={{ marginLeft: '2px', fontWeight: 'bold' }}>
         Catégorie
       </Typography>
-      <FormControl>
-        <Select
-          value={selectedCategory}
-          onChange={handleCategoryChange}
-          displayEmpty
-          sx={{ width: '100%' }}
-        >
-          <MenuItem value="">Sélectionner une catégorie</MenuItem>
-          {categoriesData?.getAllCategories?.map((category) => (
-            <MenuItem key={category.id} value={category.id}>
-              {category.name}
-            </MenuItem>
-          ))}
-        </Select>
+      <FormControl fullWidth>
+        <Autocomplete
+          multiple
+          options={categoriesData?.getAllCategories || []}
+          getOptionLabel={(option) => option.name}
+          value={[]} // Il faut qu'on le garde toujours vide car on gère l'ajout nous-mêmes
+          onChange={(_, newValue) => {
+            if (newValue.length > 0) {
+              const newCategories = newValue.filter(
+                (newCat) =>
+                  !product.categories?.some(
+                    (existingCat) => existingCat.id === newCat.id
+                  )
+              );
+
+              setProduct((prev) => ({
+                ...prev,
+                categories: [...(prev.categories || []), ...newCategories]
+              }));
+            }
+          }}
+          filterOptions={(options) =>
+            options.filter(
+              (option) =>
+                !product.categories?.some((cat) => cat.id === option.id)
+            )
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder="Rechercher des catégories"
+              size="small"
+            />
+          )}
+        />
       </FormControl>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1,
+          minHeight: '40px',
+          padding: '8px',
+          border: 'none',
+          borderRadius: '4px'
+        }}
+      >
+        {product.categories && product.categories.length > 0 ? (
+          product.categories.map((category) => (
+            <Chip
+              key={category.id}
+              label={category.name}
+              variant="filled"
+              color="primary"
+              onDelete={() => {
+                setProduct((prev) => ({
+                  ...prev,
+                  categories:
+                    prev.categories?.filter((cat) => cat.id !== category.id) ||
+                    []
+                }));
+              }}
+              sx={{
+                backgroundColor: '#f5f5f5',
+                borderRadius: '20px',
+                margin: '4px',
+                padding: '4px 8px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                transition: 'transform 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  backgroundColor: '#f5f5f5'
+                },
+                '& .MuiChip-label': {
+                  color: 'text.primary'
+                },
+                '& .MuiChip-deleteIcon': {
+                  color: '#d32f2f',
+                  '&:hover': {
+                    color: '#d32f2f',
+                    backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                    borderRadius: '50%'
+                  }
+                }
+              }}
+            />
+          ))
+        ) : (
+          <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+            Aucune catégorie associée
+          </Typography>
+        )}
+      </Box>
       <Button
         variant="contained"
         disabled={updateLoading}

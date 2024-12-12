@@ -10,7 +10,7 @@ import {
   Int
 } from 'type-graphql';
 import { Category } from '../entity/category.entities';
-import { ILike } from 'typeorm';
+import { ILike, In } from 'typeorm';
 
 @InputType()
 class ProductInput {
@@ -29,8 +29,8 @@ class ProductInput {
   @Field()
   price: number;
 
-  @Field(() => Int, { nullable: true })
-  categoryId?: number;
+  @Field(() => [Int], { nullable: true })
+  categoryIds?: number[];
 }
 
 @Resolver(Product)
@@ -69,13 +69,11 @@ export default class ProductResolver {
     product.description = newProduct.description;
     product.price = newProduct.price;
 
-    if (newProduct.categoryId) {
-      const category = await Category.findOne({
-        where: { id: newProduct.categoryId }
-      });
-      if (category) {
-        product.categories = [category];
-      }
+    const categories = newProduct.categoryIds
+      ? await Category.findBy({ id: In(newProduct.categoryIds) })
+      : [];
+    if (categories.length > 0) {
+      product.categories = categories;
     }
 
     return await product.save();
@@ -109,13 +107,11 @@ export default class ProductResolver {
     // Using assign method from Object to assign new data to the found product.
     Object.assign(product, newDataProduct);
 
-    if (newDataProduct.categoryId) {
-      const category = await Category.findOne({
-        where: { id: newDataProduct.categoryId }
+    if (newDataProduct.categoryIds) {
+      const categories = await Category.findBy({
+        id: In(newDataProduct.categoryIds)
       });
-      if (category) {
-        product.categories = [category];
-      }
+      product.categories = categories;
     }
 
     return await product.save();
