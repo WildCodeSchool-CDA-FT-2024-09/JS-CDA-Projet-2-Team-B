@@ -1,7 +1,7 @@
 import CardProduct from '../components/CardProduct';
 import Grid from '@mui/material/Grid2';
 import { useGetAllProductsQuery } from '../generated/graphql-types';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { TextField } from '@mui/material';
 import debounce from 'lodash/debounce';
 

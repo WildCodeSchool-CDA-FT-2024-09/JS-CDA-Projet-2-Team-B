@@ -70,3 +70,14 @@ export const GET_ALL_TAGS = gql`
     }
   }
 `;
+
+export const GET_ALL_BRANDS = gql`
+  query GetAllBrands {
+    getAllBrands {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;

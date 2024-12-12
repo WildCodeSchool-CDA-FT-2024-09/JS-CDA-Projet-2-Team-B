@@ -10,6 +10,7 @@ import ProductDetails from './pages/ProductDetails.tsx';
 import AddProduct from './pages/AddProduct.tsx';
 import BrandManagement from './pages/BrandManagement.tsx';
 import AddBrand from './components/AddBrand.tsx';
+import BrandCatalog from './components/BrandCatalog.tsx';
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
         path: '/brand',
         element: <BrandManagement />,
         children: [
+          {
+            path: '/brand/view',
+            element: <BrandCatalog />
+          },
           {
             path: '/brand/add',
             element: <AddBrand />
