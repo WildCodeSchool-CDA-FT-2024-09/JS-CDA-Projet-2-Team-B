@@ -26,8 +26,6 @@ services:
     env_file: ./api/product/.env
     volumes:
       - ./api/product/src:/app/src
-    ports:
-      - 4000:4000
     depends_on:
       db:
         condition: service_healthy
