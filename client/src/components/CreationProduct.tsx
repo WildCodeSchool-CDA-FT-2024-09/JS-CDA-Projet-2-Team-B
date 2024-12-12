@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+
 import {
   Card,
   CardContent,
@@ -11,8 +12,10 @@ import {
   GetAllProductsDocument,
   useCreateNewProductMutation
 } from '../generated/graphql-types';
+import axios from 'axios';
 
 export default function CreationProduct() {
+  // État pour le formulaire de produit
   const [formData, setFormData] = useState({
     name: '',
     reference: '',
@@ -21,10 +24,17 @@ export default function CreationProduct() {
     price: 0
   });
 
+  // État pour les IDs des images
+  const [imageIds, setImageIds] = useState<string[]>([]);
+
+  // Messages de succès/erreur
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>('');
-  const [createProduct, { loading }] = useCreateNewProductMutation();
+  const [loading, setLoading] = useState(false);
 
+  const [createProduct] = useCreateNewProductMutation();
+
+  // Gestion des changements dans les champs du formulaire
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
@@ -33,6 +43,31 @@ export default function CreationProduct() {
     }));
   };
 
+  // Gestion de l'ajout des images
+  const handleAddImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || !event.target.files[0]) return;
+
+    const file = event.target.files[0];
+    const formData = new FormData();
+    formData.append('image', file);
+
+    try {
+      setLoading(true);
+      const response = await axios.post<{ id: string }>(
+        'http://localhost:3000/upload',
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      );
+      setImageIds((prev) => [...prev, response.data.id]); // Ajouter l'ID de l'image
+    } catch (err) {
+      console.error("Erreur lors de l'upload de l'image :", err);
+      setError("Erreur lors de l'upload de l'image.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Soumission du formulaire pour créer le produit
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const { name, reference, shortDescription, description, price } = formData;
@@ -55,7 +90,8 @@ export default function CreationProduct() {
             reference,
             shortDescription,
             description,
-            price
+            price,
+            imageIds
           }
         },
         update(cache, { data }) {
@@ -69,9 +105,7 @@ export default function CreationProduct() {
                 shortDescription: string;
                 description: string;
               }>;
-            }>({
-              query: GetAllProductsDocument
-            });
+            }>({ query: GetAllProductsDocument });
 
             cache.writeQuery({
               query: GetAllProductsDocument,
@@ -94,15 +128,19 @@ export default function CreationProduct() {
         description: '',
         price: 0
       });
+      setImageIds([]); // Réinitialiser les images après succès
     } catch (err) {
-      setSuccessMessage(null);
-      console.error('Erreur lors de la création du produit :', err);
+      setError('Erreur lors de la création du produit.');
+      console.error('Erreur :', err);
     }
   };
 
   return (
     <Card sx={{ maxWidth: 600, padding: 3 }}>
       <CardContent>
+        <Typography variant="h5" component="h2">
+          Ajouter un Produit
+        </Typography>
         <Box component="form" onSubmit={handleSubmit}>
           <TextField
             label="Nom du produit"
@@ -148,6 +186,15 @@ export default function CreationProduct() {
             margin="normal"
           />
 
+          <Typography variant="h6" sx={{ marginTop: 3 }}>
+            Ajouter des Images
+          </Typography>
+          <TextField
+            type="file"
+            inputProps={{ accept: 'image/*' }}
+            onChange={handleAddImage}
+            sx={{ display: 'block', marginBottom: 2 }}
+          />
           <Button
             type="submit"
             variant="contained"

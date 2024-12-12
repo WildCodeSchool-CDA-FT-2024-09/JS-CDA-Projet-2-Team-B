@@ -1,6 +1,37 @@
 import { ProductUpdateInput } from '../types/product.types';
 import { Product } from '../entity/product.entities';
-import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
+import {
+  Resolver,
+  Query,
+  Mutation,
+  Arg,
+  InputType,
+  Field,
+  Int
+} from 'type-graphql';
+import { Image } from '../entity/image.entities';
+import { In } from 'typeorm';
+
+@InputType()
+class ProductInput {
+  @Field()
+  reference: string;
+
+  @Field()
+  name: string;
+
+  @Field()
+  shortDescription: string;
+
+  @Field()
+  description: string;
+
+  @Field()
+  price: number;
+
+  @Field(() => [Int], { nullable: true })
+  imageIds: number[];
+}
 
 @Resolver(Product)
 export default class ProductResolver {
@@ -8,25 +39,20 @@ export default class ProductResolver {
   async getAllProducts(
     @Arg('search', { nullable: true }) search: string
   ): Promise<Product[]> {
-    const queryBuilder = Product.createQueryBuilder('product');
-
-    queryBuilder.leftJoinAndSelect('product.images', 'images');
-
-    if (search) {
-      queryBuilder.where('LOWER(product.name) LIKE :search', {
-        search: `%${search.toLowerCase()}%`
-      });
-    }
-
-    return queryBuilder.getMany();
+    const existingProducts = await Product.find({
+      where: { reference: search },
+      relations: ['images']
+    });
+    return existingProducts;
   }
 
   @Mutation(() => Product)
   async createNewProduct(
-    @Arg('data') newProduct: ProductUpdateInput
+    @Arg('data') newProduct: ProductInput
   ): Promise<Product> {
     const existingProduct = await Product.findOne({
-      where: { reference: newProduct.reference }
+      where: { reference: newProduct.reference },
+      relations: ['images']
     });
     if (existingProduct) {
       throw new Error(
@@ -40,6 +66,11 @@ export default class ProductResolver {
     product.shortDescription = newProduct.shortDescription;
     product.description = newProduct.description;
     product.price = newProduct.price;
+
+    if (newProduct.imageIds && newProduct.imageIds.length > 0) {
+      const images = await Image.findBy({ id: In(newProduct.imageIds) });
+      product.images = images;
+    }
 
     return await product.save();
   }
