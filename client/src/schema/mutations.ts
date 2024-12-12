@@ -31,6 +31,10 @@ export const PUT_PRODUCT = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;
