@@ -3,6 +3,8 @@ import { AppDataSource } from '../data-source';
 import getSchema from '../schema';
 import { POST_BRAND } from './schemas/mutations';
 import { Brand } from '../../src/entity/brand.entities';
+import { createBrand } from './helpers/test.helpers';
+import { GET_ALL_BRANDS } from './schemas/queries';
 
 describe('Brand resolvers tests', () => {
   let schema: GraphQLSchema;
@@ -33,5 +35,17 @@ describe('Brand resolvers tests', () => {
       description: manualBrandCreation.description,
       logo: manualBrandCreation.logo
     });
+  });
+
+  it('creates 2 brands and fetches all the brands', async () => {
+    await createBrand();
+    await createBrand();
+
+    const result = (await graphql({
+      schema: schema,
+      source: print(GET_ALL_BRANDS)
+    })) as { data: { getAllBrands: Array<Brand> } };
+
+    expect(result.data.getAllBrands.length).toEqual(2);
   });
 });
