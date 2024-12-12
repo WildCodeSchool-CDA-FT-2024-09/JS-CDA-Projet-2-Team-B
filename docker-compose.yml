@@ -8,6 +8,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 5
+    networks:
+      - mynetwork
 
   adminer:
     image: adminer
@@ -18,6 +20,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - mynetwork
 
   product:
     build: ./api/product
@@ -26,20 +30,31 @@ services:
     env_file: ./api/product/.env
     volumes:
       - ./api/product/src:/app/src
+    ports:
+      - 4000:4000
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - mynetwork
 
   uploadimage:
     build: ./api/uploadimage
     command: npm run dev
     restart: always
     env_file: ./api/uploadimage/.env
+    environment:
+      - VITE_API_URL=http://localhost:5050/upload
     volumes:
       - ./api/uploadimage/src:/app/src
+      - ./api/uploadimage/uploads:/app/uploads
+    ports:
+      - 3000:3000
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - mynetwork
 
   auth:
     build: ./api/auth
@@ -51,6 +66,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - mynetwork
 
   email:
     build: ./api/email
@@ -62,6 +79,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    networks:
+      - mynetwork
 
   client:
     build: ./client
@@ -71,6 +90,8 @@ services:
       - VITE_API_URL=http://localhost:5050/graph
     volumes:
       - ./client/src:/app/src
+    networks:
+      - mynetwork
 
   gateway:
     image: nginx
@@ -84,3 +105,9 @@ services:
       - auth
       - email
       - client
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
