@@ -1,32 +1,6 @@
 import { ProductUpdateInput } from '../types/product.types';
 import { Product } from '../entity/product.entities';
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Arg,
-  InputType,
-  Field,
-  Int
-} from 'type-graphql';
-
-@InputType()
-class ProductInput {
-  @Field()
-  reference: string;
-
-  @Field()
-  name: string;
-
-  @Field()
-  shortDescription: string;
-
-  @Field()
-  description: string;
-
-  @Field()
-  price: number;
-}
+import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
 
 @Resolver(Product)
 export default class ProductResolver {
@@ -35,6 +9,8 @@ export default class ProductResolver {
     @Arg('search', { nullable: true }) search: string
   ): Promise<Product[]> {
     const queryBuilder = Product.createQueryBuilder('product');
+
+    queryBuilder.leftJoinAndSelect('product.images', 'images');
 
     if (search) {
       queryBuilder.where('LOWER(product.name) LIKE :search', {
@@ -47,7 +23,7 @@ export default class ProductResolver {
 
   @Mutation(() => Product)
   async createNewProduct(
-    @Arg('data') newProduct: ProductInput
+    @Arg('data') newProduct: ProductUpdateInput
   ): Promise<Product> {
     const existingProduct = await Product.findOne({
       where: { reference: newProduct.reference }
