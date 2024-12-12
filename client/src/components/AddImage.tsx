@@ -1,34 +1,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Card, Button, Typography, Box, styled } from '@mui/material';
-import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { Card, Button, Typography, TextField } from '@mui/material';
 
 interface UploadResponse {
   id: string;
 }
-
-const VisuallyHiddenInput = styled('input')({
-  clip: 'rect(0 0 0 0)',
-  clipPath: 'inset(50%)',
-  height: 1,
-  overflow: 'hidden',
-  position: 'absolute',
-  whiteSpace: 'nowrap',
-  width: 1
-});
 
 const AddImage: React.FC = () => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<UploadResponse | null>(null);
-  const [imagePreview, setImagePreview] = useState<string | null>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const file = e.target.files[0];
-      setImageFile(file);
-      setImagePreview(URL.createObjectURL(file));
+      setImageFile(e.target.files[0]);
     }
   };
 
@@ -55,8 +41,7 @@ const AddImage: React.FC = () => {
         }
       );
       setData(response.data);
-      setImageFile(null);
-      setImagePreview(null);
+      setImageFile(null); // Réinitialiser l'état après succès
     } catch (e) {
       setError(e as Error);
     } finally {
@@ -65,69 +50,32 @@ const AddImage: React.FC = () => {
   };
 
   return (
-    <Card
-      sx={{
-        maxWidth: 600,
-        padding: 3,
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center'
-      }}
-    >
-      <Box sx={{ marginBottom: 2 }}>
-        <Button
-          component="label"
-          variant="contained"
-          startIcon={<CloudUploadIcon />}
-        >
-          Choisir un fichier
-          <VisuallyHiddenInput
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </Button>
-      </Box>
-
-      {imagePreview && (
-        <Box
-          component="img"
-          src={imagePreview}
-          alt="Prévisualisation"
-          sx={{
-            display: 'flex',
-            maxWidth: '60%',
-            height: 'auto',
-            marginBottom: 2,
-            borderRadius: 1,
-            border: '1px solid #ccc'
-          }}
-        />
-      )}
-
+    <Card sx={{ maxWidth: 600, padding: 3 }}>
+      <TextField
+        type="file"
+        inputProps={{ accept: 'image/*' }}
+        onChange={handleFileChange}
+        sx={{
+          display: 'block',
+          marginBottom: 2
+        }}
+      />
       <Button
         type="submit"
         onClick={handleAddImage}
-        sx={{
-          marginTop: 2,
-          backgroundColor: 'green',
-          color: 'white'
-        }}
+        sx={{ marginTop: 2, backgroundColor: 'green' }}
         disabled={loading || !imageFile}
       >
-        {loading ? 'Ajout en cours...' : 'Ajouter +'}
+        {loading ? 'Ajout en cours...' : 'Ajouter'}
       </Button>
-
       {error && (
         <Typography color="error" sx={{ marginTop: 2 }}>
           {error.message || 'Une erreur est survenue.'}
         </Typography>
       )}
-
       {data && (
         <Typography color="primary" sx={{ marginTop: 2 }}>
-          Image ajoutée avec succès {data.id}
+          Image ajoutée avec l'ID: {data.id}
         </Typography>
       )}
     </Card>

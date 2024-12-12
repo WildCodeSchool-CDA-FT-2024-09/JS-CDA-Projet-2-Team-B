@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "test": "jest --config ./jest.config.ts --passWithNoTests",
+    "test": "jest --config ./jest.config.ts --passWithNoTests --runInBand",
     "lint": "eslint \"*/**/*.{js,jsx,ts,tsx}\"",
     "format": "prettier --write \"*/**/*.{js,jsx,ts,tsx}\"",
     "dev": "ts-node-dev ./src/index.ts"

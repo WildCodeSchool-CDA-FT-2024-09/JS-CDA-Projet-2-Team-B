@@ -77,6 +77,17 @@ export const CREATE_TAG = gql`
   }
 `;
 
+export const CREATE_BRAND = gql`
+  mutation CreateBrand($data: BrandCreationInput!) {
+    createBrand(data: $data) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
+
 export const GET_ALL_TAGS = gql`
   query GetAllTags {
     getAllTags {
