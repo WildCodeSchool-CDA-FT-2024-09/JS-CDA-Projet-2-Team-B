@@ -25,3 +25,14 @@ export const GET_PRODUCT_BY_ID = gql`
     }
   }
 `;
+
+export const GET_ALL_BRANDS = gql`
+  query GetAllBrands {
+    getAllBrands {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
