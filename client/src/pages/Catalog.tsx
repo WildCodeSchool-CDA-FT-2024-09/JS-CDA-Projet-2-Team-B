@@ -9,7 +9,8 @@ export default function Catalog() {
   const [searchProduct, setSearchProduct] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState(searchProduct);
   const { loading, error, data } = useGetAllProductsQuery({
-    variables: { search: debouncedSearch }
+    variables: { search: debouncedSearch },
+    fetchPolicy: 'cache-and-network'
   });
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {

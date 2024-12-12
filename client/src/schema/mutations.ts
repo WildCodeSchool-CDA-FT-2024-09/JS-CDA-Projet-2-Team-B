@@ -66,16 +66,6 @@ export const UPDATE_CATEGORY = gql`
   }
 `;
 
-export const ADD_IMAGE = gql`
-  mutation addImage($data: ImageInput!) {
-    addImage(data: $data) {
-      id
-      url
-      isMain
-    }
-  }
-`;
-
 export const DELETE_CATEGORY = gql`
   mutation DeleteCategory($id: Int!) {
     deleteCategory(id: $id)
@@ -87,6 +77,17 @@ export const CREATE_TAG = gql`
     createTag(input: $input) {
       id
       name
+    }
+  }
+`;
+
+export const CREATE_BRAND = gql`
+  mutation CreateBrand($data: BrandCreationInput!) {
+    createBrand(data: $data) {
+      id
+      name
+      description
+      logo
     }
   }
 `;

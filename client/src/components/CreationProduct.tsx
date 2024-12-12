@@ -7,7 +7,10 @@ import {
   Button,
   Box
 } from '@mui/material';
-import { useCreateNewProductMutation } from '../generated/graphql-types';
+import {
+  GetAllProductsDocument,
+  useCreateNewProductMutation
+} from '../generated/graphql-types';
 
 export default function CreationProduct() {
   const [formData, setFormData] = useState({
@@ -15,23 +18,34 @@ export default function CreationProduct() {
     reference: '',
     shortDescription: '',
     description: '',
-    price: ''
+    price: 0
   });
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [createProduct, { loading, error }] = useCreateNewProductMutation();
+  const [error, setError] = useState<string | null>('');
+  const [createProduct, { loading }] = useCreateNewProductMutation();
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: name === 'price' ? parseFloat(value) || 0 : value
     }));
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     const { name, reference, shortDescription, description, price } = formData;
+
+    if (!name || !reference) {
+      setError('Veuillez remplir tous les champs obligatoires.');
+      return;
+    }
+
+    if (price < 0) {
+      setError('Le prix doit être un nombre positif.');
+      return;
+    }
 
     try {
       await createProduct({
@@ -41,17 +55,44 @@ export default function CreationProduct() {
             reference,
             shortDescription,
             description,
-            price: parseFloat(price)
+            price
+          }
+        },
+        update(cache, { data }) {
+          if (data?.createNewProduct) {
+            const existingProducts = cache.readQuery<{
+              getAllProducts: Array<{
+                id: number;
+                name: string;
+                price: number;
+                reference: string;
+                shortDescription: string;
+                description: string;
+              }>;
+            }>({
+              query: GetAllProductsDocument
+            });
+
+            cache.writeQuery({
+              query: GetAllProductsDocument,
+              data: {
+                getAllProducts: [
+                  ...(existingProducts?.getAllProducts || []),
+                  data.createNewProduct
+                ]
+              }
+            });
           }
         }
       });
+
       setSuccessMessage('Produit créé avec succès !');
       setFormData({
         name: '',
         reference: '',
         shortDescription: '',
         description: '',
-        price: ''
+        price: 0
       });
     } catch (err) {
       setSuccessMessage(null);
@@ -125,7 +166,7 @@ export default function CreationProduct() {
         )}
         {error && (
           <Typography color="error.main" variant="body2">
-            Une erreur s'est produite : {error.message}
+            Une erreur s'est produite : {error}
           </Typography>
         )}
       </CardContent>

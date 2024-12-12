@@ -4,6 +4,7 @@ import CharacteristicResolver from './resolvers/characteristic.resolvers';
 import CategoryResolver from './resolvers/category.resolver';
 import ImageResolver from './resolvers/image.resolvers';
 import TagResolver from './resolvers/tag.resolver';
+import BrandResolver from './resolvers/brand.resolvers';
 
 const getSchema = async () => {
   return await buildSchema({
@@ -12,7 +13,8 @@ const getSchema = async () => {
       CharacteristicResolver,
       CategoryResolver,
       ImageResolver,
-      TagResolver
+      TagResolver,
+      BrandResolver
     ]
   });
 };

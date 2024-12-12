@@ -2,17 +2,21 @@ import { Field, ObjectType } from 'type-graphql';
 import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
 @ObjectType()
-@Entity('image')
-export class Image extends BaseEntity {
+@Entity('brand')
+export class Brand extends BaseEntity {
   @Field()
   @PrimaryGeneratedColumn()
   id: number;
 
   @Field()
-  @Column({ nullable: false })
-  url: string;
+  @Column({ unique: true })
+  name: string;
 
   @Field()
-  @Column({ name: 'ismain', default: false })
-  isMain: boolean;
+  @Column({ nullable: true })
+  description: string;
+
+  @Field()
+  @Column({ nullable: true })
+  logo: string;
 }

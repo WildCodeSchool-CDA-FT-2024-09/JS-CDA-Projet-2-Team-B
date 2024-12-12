@@ -31,6 +31,20 @@ export type Scalars = {
   DateTime: { input: undefined; output: undefined };
 };
 
+export type Brand = {
+  __typename?: 'Brand';
+  description: Scalars['String']['output'];
+  id: Scalars['Float']['output'];
+  logo: Scalars['String']['output'];
+  name: Scalars['String']['output'];
+};
+
+export type BrandCreationInput = {
+  description: Scalars['String']['input'];
+  logo: Scalars['String']['input'];
+  name: Scalars['String']['input'];
+};
+
 export type Category = {
   __typename?: 'Category';
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -64,14 +78,9 @@ export type Image = {
   url: Scalars['String']['output'];
 };
 
-export type ImageInput = {
-  isMain: Scalars['Boolean']['input'];
-  url: Scalars['String']['input'];
-};
-
 export type Mutation = {
   __typename?: 'Mutation';
-  addImage: Image;
+  createBrand: Brand;
   createCategory: Category;
   createNewCharacteristic: Characteristic;
   createNewProduct: Product;
@@ -85,8 +94,8 @@ export type Mutation = {
   updateTag: Tag;
 };
 
-export type MutationAddImageArgs = {
-  data: ImageInput;
+export type MutationCreateBrandArgs = {
+  data: BrandCreationInput;
 };
 
 export type MutationCreateCategoryArgs = {
@@ -287,15 +296,6 @@ export type UpdateCategoryMutation = {
   updateCategory: { __typename?: 'Category'; id: number; name: string };
 };
 
-export type AddImageMutationVariables = Exact<{
-  data: ImageInput;
-}>;
-
-export type AddImageMutation = {
-  __typename?: 'Mutation';
-  addImage: { __typename?: 'Image'; id: number; url: string; isMain: boolean };
-};
-
 export type DeleteCategoryMutationVariables = Exact<{
   id: Scalars['Int']['input'];
 }>;
@@ -312,6 +312,21 @@ export type CreateTagMutationVariables = Exact<{
 export type CreateTagMutation = {
   __typename?: 'Mutation';
   createTag: { __typename?: 'Tag'; id: number; name: string };
+};
+
+export type CreateBrandMutationVariables = Exact<{
+  data: BrandCreationInput;
+}>;
+
+export type CreateBrandMutation = {
+  __typename?: 'Mutation';
+  createBrand: {
+    __typename?: 'Brand';
+    id: number;
+    name: string;
+    description: string;
+    logo: string;
+  };
 };
 
 export type GetAllTagsQueryVariables = Exact<{ [key: string]: never }>;
@@ -750,55 +765,6 @@ export type UpdateCategoryMutationOptions = Apollo.BaseMutationOptions<
   UpdateCategoryMutation,
   UpdateCategoryMutationVariables
 >;
-export const AddImageDocument = gql`
-  mutation addImage($data: ImageInput!) {
-    addImage(data: $data) {
-      id
-      url
-      isMain
-    }
-  }
-`;
-export type AddImageMutationFn = Apollo.MutationFunction<
-  AddImageMutation,
-  AddImageMutationVariables
->;
-
-/**
- * __useAddImageMutation__
- *
- * To run a mutation, you first call `useAddImageMutation` within a React component and pass it any options that fit your needs.
- * When your component renders, `useAddImageMutation` returns a tuple that includes:
- * - A mutate function that you can call at any time to execute the mutation
- * - An object with fields that represent the current status of the mutation's execution
- *
- * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
- *
- * @example
- * const [addImageMutation, { data, loading, error }] = useAddImageMutation({
- *   variables: {
- *      data: // value for 'data'
- *   },
- * });
- */
-export function useAddImageMutation(
-  baseOptions?: Apollo.MutationHookOptions<
-    AddImageMutation,
-    AddImageMutationVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useMutation<AddImageMutation, AddImageMutationVariables>(
-    AddImageDocument,
-    options
-  );
-}
-export type AddImageMutationHookResult = ReturnType<typeof useAddImageMutation>;
-export type AddImageMutationResult = Apollo.MutationResult<AddImageMutation>;
-export type AddImageMutationOptions = Apollo.BaseMutationOptions<
-  AddImageMutation,
-  AddImageMutationVariables
->;
 export const DeleteCategoryDocument = gql`
   mutation DeleteCategory($id: Int!) {
     deleteCategory(id: $id)
@@ -896,6 +862,59 @@ export type CreateTagMutationResult = Apollo.MutationResult<CreateTagMutation>;
 export type CreateTagMutationOptions = Apollo.BaseMutationOptions<
   CreateTagMutation,
   CreateTagMutationVariables
+>;
+export const CreateBrandDocument = gql`
+  mutation CreateBrand($data: BrandCreationInput!) {
+    createBrand(data: $data) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
+export type CreateBrandMutationFn = Apollo.MutationFunction<
+  CreateBrandMutation,
+  CreateBrandMutationVariables
+>;
+
+/**
+ * __useCreateBrandMutation__
+ *
+ * To run a mutation, you first call `useCreateBrandMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBrandMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBrandMutation, { data, loading, error }] = useCreateBrandMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useCreateBrandMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    CreateBrandMutation,
+    CreateBrandMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<CreateBrandMutation, CreateBrandMutationVariables>(
+    CreateBrandDocument,
+    options
+  );
+}
+export type CreateBrandMutationHookResult = ReturnType<
+  typeof useCreateBrandMutation
+>;
+export type CreateBrandMutationResult =
+  Apollo.MutationResult<CreateBrandMutation>;
+export type CreateBrandMutationOptions = Apollo.BaseMutationOptions<
+  CreateBrandMutation,
+  CreateBrandMutationVariables
 >;
 export const GetAllTagsDocument = gql`
   query GetAllTags {

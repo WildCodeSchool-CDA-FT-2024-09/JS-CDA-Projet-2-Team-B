@@ -25,3 +25,14 @@ export const PUT_PRODUCT = gql`
     }
   }
 `;
+
+export const POST_BRAND = gql`
+  mutation CreateBrand($data: BrandCreationInput!) {
+    createBrand(data: $data) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
