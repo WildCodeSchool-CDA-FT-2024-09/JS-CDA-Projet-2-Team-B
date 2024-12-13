@@ -145,12 +145,12 @@ export type MutationUpdateTagArgs = {
 export type Product = {
   __typename?: 'Product';
   categories?: Maybe<Array<Category>>;
-  description: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
   name: Scalars['String']['output'];
-  price: Scalars['Float']['output'];
+  price?: Maybe<Scalars['Float']['output']>;
   reference: Scalars['String']['output'];
-  shortDescription: Scalars['String']['output'];
+  shortDescription?: Maybe<Scalars['String']['output']>;
 };
 
 export type ProductInput = {
@@ -227,9 +227,14 @@ export type CreateNewProductMutation = {
     id: number;
     reference: string;
     name: string;
-    shortDescription: string;
-    description: string;
-    price: number;
+    shortDescription?: string | null;
+    description?: string | null;
+    price?: number | null;
+    categories?: Array<{
+      __typename?: 'Category';
+      id: number;
+      name: string;
+    }> | null;
   };
 };
 
@@ -253,9 +258,9 @@ export type UpdateProductMutation = {
     id: number;
     reference: string;
     name: string;
-    shortDescription: string;
-    description: string;
-    price: number;
+    shortDescription?: string | null;
+    description?: string | null;
+    price?: number | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -362,10 +367,10 @@ export type GetAllProductsQuery = {
     __typename?: 'Product';
     id: number;
     name: string;
-    price: number;
+    price?: number | null;
     reference: string;
-    shortDescription: string;
-    description: string;
+    shortDescription?: string | null;
+    description?: string | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -385,9 +390,9 @@ export type GetProductByIdQuery = {
     id: number;
     reference: string;
     name: string;
-    shortDescription: string;
-    description: string;
-    price: number;
+    shortDescription?: string | null;
+    description?: string | null;
+    price?: number | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -443,6 +448,10 @@ export const CreateNewProductDocument = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;

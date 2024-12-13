@@ -9,6 +9,10 @@ export const CREATE_PRODUCT = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;
