@@ -6,9 +6,11 @@ import client from './services/connexion.ts';
 import App from './App.tsx';
 import Catalog from './pages/Catalog.tsx';
 import ManagementProduct from './pages/ManagementProduct.tsx';
-import ProductDetails from './components/ProductDetails.tsx';
-import AddImage from './pages/Addimage.tsx';
+import ProductDetails from './pages/ProductDetails.tsx';
 import AddProduct from './pages/AddProduct.tsx';
+import BrandManagement from './pages/BrandManagement.tsx';
+import AddBrand from './components/AddBrand.tsx';
+import BrandCatalog from './components/BrandCatalog.tsx';
 
 const router = createBrowserRouter([
   {
@@ -32,8 +34,18 @@ const router = createBrowserRouter([
         element: <ProductDetails />
       },
       {
-        path: '/addimage',
-        element: <AddImage />
+        path: '/brand',
+        element: <BrandManagement />,
+        children: [
+          {
+            path: '/brand/view',
+            element: <BrandCatalog />
+          },
+          {
+            path: '/brand/add',
+            element: <AddBrand />
+          }
+        ]
       }
     ]
   }

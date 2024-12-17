@@ -1,8 +1,4 @@
-import express, { json, Response, Request } from 'express';
-import cors from 'cors';
-import multer from 'multer';
-import path from 'path';
-import 'dotenv/config';
+import { app } from './config';
 import { pool } from './database/pg.client';
 import fs from 'fs';
 import axios from 'axios';
@@ -13,7 +9,7 @@ app.use(json());
 
 const corsOptions = {
   credentials: true,
-  origin: 'http://localhost:5173'
+  origin: ['http://localhost:5173', 'http://localhost:5050']
 };
 
 app.use(cors(corsOptions));
@@ -103,7 +99,5 @@ app.listen(PORT, async () => {
     client.release();
   } catch (error) {
     console.error('❌ Failed to connect to the database:', error);
-  } finally {
-    await pool.end();
   }
 });

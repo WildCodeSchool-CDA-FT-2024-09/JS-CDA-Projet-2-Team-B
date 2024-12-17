@@ -95,7 +95,6 @@ const TagForm = () => {
                 key={tag.id}
                 id={tag.id}
                 name={tag.name}
-                onDelete={() => console.info('Delete tag:', tag.name)}
                 onRefetch={handleRefetch}
               />
             ))

@@ -13,6 +13,6 @@ export class Image extends BaseEntity {
   url: string;
 
   @Field()
-  @Column({ default: false })
+  @Column({ name: 'ismain', default: false })
   isMain: boolean;
 }

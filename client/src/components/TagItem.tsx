@@ -1,20 +1,23 @@
 import { Box, IconButton, TextField, Typography } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { useUpdateTagMutation } from '../generated/graphql-types';
+import {
+  useDeleteTagMutation,
+  useUpdateTagMutation
+} from '../generated/graphql-types';
 
 type TagItemProps = {
   id: number;
   name: string;
-  onDelete: () => void;
   onRefetch: () => void;
 };
 
-const TagItem = ({ id, name, onDelete, onRefetch }: TagItemProps) => {
+const TagItem = ({ id, name, onRefetch }: TagItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedName, setEditedName] = useState(name);
   const inputRef = useRef<HTMLInputElement>(null);
   const [updateTag] = useUpdateTagMutation();
+  const [deleteTag] = useDeleteTagMutation();
 
   const handleSave = useCallback(async () => {
     const newName = editedName.trim();
@@ -26,7 +29,7 @@ const TagItem = ({ id, name, onDelete, onRefetch }: TagItemProps) => {
           }
         });
         if (response.data?.updateTag) {
-          await onRefetch();
+          onRefetch();
         }
       } catch (err) {
         console.error('Error updating tag:', err);
@@ -37,6 +40,19 @@ const TagItem = ({ id, name, onDelete, onRefetch }: TagItemProps) => {
     }
     setIsEditing(false);
   }, [editedName, name, id, updateTag, onRefetch]);
+
+  const handleDelete = async () => {
+    try {
+      const response = await deleteTag({
+        variables: { id }
+      });
+      if (response.data?.deleteTag) {
+        onRefetch();
+      }
+    } catch (err) {
+      console.error('Error deleting tag:', err);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -108,7 +124,7 @@ const TagItem = ({ id, name, onDelete, onRefetch }: TagItemProps) => {
         size="small"
         onClick={(e) => {
           e.stopPropagation();
-          onDelete();
+          handleDelete();
         }}
         sx={{
           color: '#d32f2f',

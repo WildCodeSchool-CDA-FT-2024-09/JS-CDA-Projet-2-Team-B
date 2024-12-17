@@ -9,6 +9,10 @@ export const CREATE_PRODUCT = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;
@@ -31,6 +35,10 @@ export const PUT_PRODUCT = gql`
       shortDescription
       description
       price
+      categories {
+        id
+        name
+      }
     }
   }
 `;
@@ -62,16 +70,6 @@ export const UPDATE_CATEGORY = gql`
   }
 `;
 
-export const ADD_IMAGE = gql`
-  mutation addImage($data: ImageInput!) {
-    addImage(data: $data) {
-      id
-      url
-      isMain
-    }
-  }
-`;
-
 export const DELETE_CATEGORY = gql`
   mutation DeleteCategory($id: Int!) {
     deleteCategory(id: $id)
@@ -95,11 +93,37 @@ export const CREATE_TAG = gql`
   }
 `;
 
+export const CREATE_BRAND = gql`
+  mutation CreateBrand($data: BrandCreationInput!) {
+    createBrand(data: $data) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
+
+export const GET_ALL_TAGS = gql`
+  query GetAllTags {
+    getAllTags {
+      id
+      name
+    }
+  }
+`;
+
 export const UPDATE_TAG = gql`
   mutation UpdateTag($input: UpdateTagInput!) {
     updateTag(input: $input) {
       id
       name
     }
+  }
+`;
+
+export const DELETE_TAG = gql`
+  mutation DeleteTag($id: Int!) {
+    deleteTag(id: $id)
   }
 `;
