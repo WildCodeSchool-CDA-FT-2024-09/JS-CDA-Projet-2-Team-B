@@ -52,15 +52,6 @@ export const CREATE_CHARACTERISTIC = gql`
   }
 `;
 
-export const GET_ALL_CATEGORIES = gql`
-  query GetAllCategories {
-    getAllCategories {
-      id
-      name
-    }
-  }
-`;
-
 export const UPDATE_CATEGORY = gql`
   mutation UpdateCategory($input: UpdateCategoryInput!) {
     updateCategory(input: $input) {
@@ -96,11 +87,13 @@ export const CREATE_BRAND = gql`
   }
 `;
 
-export const GET_ALL_TAGS = gql`
-  query GetAllTags {
-    getAllTags {
+export const PUT_BRAND = gql`
+  mutation UpdateBrand($data: BrandUpdateInput!) {
+    updateBrand(data: $data) {
       id
       name
+      description
+      logo
     }
   }
 `;

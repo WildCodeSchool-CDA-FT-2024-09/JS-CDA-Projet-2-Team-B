@@ -14,7 +14,9 @@ describe('Product resolvers tests', () => {
   });
 
   beforeEach(async () => {
-    await AppDataSource.query('TRUNCATE TABLE products RESTART IDENTITY');
+    await AppDataSource.query(
+      'TRUNCATE TABLE products RESTART IDENTITY CASCADE'
+    );
   });
 
   const productOne = {
