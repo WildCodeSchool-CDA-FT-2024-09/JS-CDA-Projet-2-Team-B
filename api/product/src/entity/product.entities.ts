@@ -4,11 +4,13 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
-  JoinTable
+  JoinTable,
+  ManyToOne
 } from 'typeorm';
 import { ObjectType, Field, Float } from 'type-graphql';
 import { Length, Min } from 'class-validator';
 import { Category } from './category.entities';
+import { Brand } from './brand.entities';
 
 @ObjectType()
 @Entity('products')
@@ -44,4 +46,8 @@ export class Product extends BaseEntity {
   @ManyToMany(() => Category)
   @JoinTable()
   categories?: Category[];
+
+  @Field(() => Brand, { nullable: true })
+  @ManyToOne(() => Brand, (brand) => brand.id)
+  brand: Brand;
 }
