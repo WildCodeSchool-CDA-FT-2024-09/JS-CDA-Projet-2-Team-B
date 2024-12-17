@@ -142,10 +142,5 @@ Les contributions sont les bienvenues ! Pour proposer des modifications :
 ## Auteur
 
 [Pierre DELAROCQUE](https://github.com/PierreDelarocque), [Johane Decamps](https://github.com/JohaneDecamps), [Nicolas Sokolowski](https://github.com/NicolasSokolowski), [Alexandre Graff](https://github.com/alexandreg67)
-[LinkedIn](#) | [GitHub](#) | [Site personnel](#)
 
 ---
-
-## Licence
-
-Ce projet est sous licence MIT.
