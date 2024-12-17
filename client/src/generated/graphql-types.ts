@@ -74,6 +74,7 @@ export type Image = {
   __typename?: 'Image';
   id: Scalars['Float']['output'];
   isMain: Scalars['Boolean']['output'];
+  products: Array<Product>;
   url: Scalars['String']['output'];
 };
 
@@ -143,16 +144,18 @@ export type MutationUpdateTagArgs = {
 
 export type Product = {
   __typename?: 'Product';
-  description: Scalars['String']['output'];
+  description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
+  images: Array<Image>;
   name: Scalars['String']['output'];
-  price: Scalars['Float']['output'];
+  price?: Maybe<Scalars['Float']['output']>;
   reference: Scalars['String']['output'];
-  shortDescription: Scalars['String']['output'];
+  shortDescription?: Maybe<Scalars['String']['output']>;
 };
 
 export type ProductInput = {
   description: Scalars['String']['input'];
+  imageIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
@@ -162,6 +165,7 @@ export type ProductInput = {
 export type ProductUpdateInput = {
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
+  imageIds?: InputMaybe<Array<Scalars['Float']['input']>>;
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
@@ -222,9 +226,9 @@ export type CreateNewProductMutation = {
     id: number;
     reference: string;
     name: string;
-    shortDescription: string;
-    description: string;
-    price: number;
+    shortDescription?: string | null;
+    description?: string | null;
+    price?: number | null;
   };
 };
 
@@ -248,9 +252,9 @@ export type UpdateProductMutation = {
     id: number;
     reference: string;
     name: string;
-    shortDescription: string;
-    description: string;
-    price: number;
+    shortDescription?: string | null;
+    description?: string | null;
+    price?: number | null;
   };
 };
 
@@ -352,10 +356,10 @@ export type GetAllProductsQuery = {
     __typename?: 'Product';
     id: number;
     name: string;
-    price: number;
+    price?: number | null;
     reference: string;
-    shortDescription: string;
-    description: string;
+    shortDescription?: string | null;
+    description?: string | null;
   }>;
 };
 
@@ -370,9 +374,9 @@ export type GetProductByIdQuery = {
     id: number;
     reference: string;
     name: string;
-    shortDescription: string;
-    description: string;
-    price: number;
+    shortDescription?: string | null;
+    description?: string | null;
+    price?: number | null;
   } | null;
 };
 

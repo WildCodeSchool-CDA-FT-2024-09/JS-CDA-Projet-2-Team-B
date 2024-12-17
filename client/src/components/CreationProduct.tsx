@@ -1,21 +1,32 @@
 import React, { useState } from 'react';
-
+import axios from 'axios';
 import {
   Card,
   CardContent,
   Typography,
   TextField,
   Button,
-  Box
+  Box,
+  styled
 } from '@mui/material';
+import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import {
   GetAllProductsDocument,
   useCreateNewProductMutation
 } from '../generated/graphql-types';
-import axios from 'axios';
 
-export default function CreationProduct() {
-  // État pour le formulaire de produit
+const VisuallyHiddenInput = styled('input')({
+  clip: 'rect(0 0 0 0)',
+  clipPath: 'inset(50%)',
+  height: 1,
+  overflow: 'hidden',
+  position: 'absolute',
+  whiteSpace: 'nowrap',
+  width: 1
+});
+
+const CombinedComponent: React.FC = () => {
+  // État pour les champs du produit
   const [formData, setFormData] = useState({
     name: '',
     reference: '',
@@ -25,17 +36,16 @@ export default function CreationProduct() {
   });
 
   // État pour les IDs des images
-  const [imageIds, setImageIds] = useState<string[]>([]);
-
-  // Messages de succès/erreur
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>('');
+  const [imageIds, setImageIds] = useState<number[]>([]);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   const [createProduct] = useCreateNewProductMutation();
 
-  // Gestion des changements dans les champs du formulaire
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  // Gestion des changements dans le formulaire
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setFormData((prev) => ({
       ...prev,
@@ -43,42 +53,39 @@ export default function CreationProduct() {
     }));
   };
 
-  // Gestion de l'ajout des images
-  const handleAddImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (!event.target.files || !event.target.files[0]) return;
+  // Upload de l'image dès sa sélection
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setImagePreview(URL.createObjectURL(file)); // Prévisualisation
+      const formData = new FormData();
+      formData.append('image', file);
 
-    const file = event.target.files[0];
-    const formData = new FormData();
-    formData.append('image', file);
-
-    try {
-      setLoading(true);
-      const response = await axios.post<{ id: string }>(
-        'http://localhost:3000/upload',
-        formData,
-        { headers: { 'Content-Type': 'multipart/form-data' } }
-      );
-      setImageIds((prev) => [...prev, response.data.id]); // Ajouter l'ID de l'image
-    } catch (err) {
-      console.error("Erreur lors de l'upload de l'image :", err);
-      setError("Erreur lors de l'upload de l'image.");
-    } finally {
-      setLoading(false);
+      try {
+        setLoading(true);
+        const response = await axios.post<{ id: string }>(
+          'http://localhost:3000/upload',
+          formData,
+          { headers: { 'Content-Type': 'multipart/form-data' } }
+        );
+        setImageIds((prev) => [...prev, parseInt(response.data.id, 10)]);
+      } catch {
+        setError("Erreur lors de l'upload de l'image.");
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
   // Soumission du formulaire pour créer le produit
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
+
     const { name, reference, shortDescription, description, price } = formData;
-
-    if (!name || !reference) {
-      setError('Veuillez remplir tous les champs obligatoires.');
-      return;
-    }
-
-    if (price < 0) {
-      setError('Le prix doit être un nombre positif.');
+    if (!name || !reference || price < 0) {
+      setError(
+        'Veuillez remplir tous les champs obligatoires avec des valeurs valides.'
+      );
       return;
     }
 
@@ -128,25 +135,25 @@ export default function CreationProduct() {
         description: '',
         price: 0
       });
-      setImageIds([]); // Réinitialiser les images après succès
-    } catch (err) {
+      setImageIds([]);
+    } catch {
       setError('Erreur lors de la création du produit.');
-      console.error('Erreur :', err);
     }
   };
 
   return (
-    <Card sx={{ maxWidth: 600, padding: 3 }}>
+    <Card sx={{ maxWidth: 600, padding: 3, margin: 'auto' }}>
       <CardContent>
         <Typography variant="h5" component="h2">
           Ajouter un Produit
         </Typography>
         <Box component="form" onSubmit={handleSubmit}>
+          {/* Champs du produit */}
           <TextField
             label="Nom du produit"
             name="name"
             value={formData.name}
-            onChange={handleChange}
+            onChange={handleInputChange}
             fullWidth
             margin="normal"
           />
@@ -154,7 +161,7 @@ export default function CreationProduct() {
             label="Référence"
             name="reference"
             value={formData.reference}
-            onChange={handleChange}
+            onChange={handleInputChange}
             fullWidth
             margin="normal"
           />
@@ -162,7 +169,7 @@ export default function CreationProduct() {
             label="Courte description"
             name="shortDescription"
             value={formData.shortDescription}
-            onChange={handleChange}
+            onChange={handleInputChange}
             fullWidth
             margin="normal"
           />
@@ -170,7 +177,7 @@ export default function CreationProduct() {
             label="Description"
             name="description"
             value={formData.description}
-            onChange={handleChange}
+            onChange={handleInputChange}
             fullWidth
             margin="normal"
             multiline
@@ -181,42 +188,75 @@ export default function CreationProduct() {
             name="price"
             type="number"
             value={formData.price}
-            onChange={handleChange}
+            onChange={handleInputChange}
             fullWidth
             margin="normal"
           />
 
+          {/* Gestion des images */}
           <Typography variant="h6" sx={{ marginTop: 3 }}>
             Ajouter des Images
           </Typography>
-          <TextField
-            type="file"
-            inputProps={{ accept: 'image/*' }}
-            onChange={handleAddImage}
-            sx={{ display: 'block', marginBottom: 2 }}
-          />
+          <Box sx={{ marginBottom: 2 }}>
+            <Button
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+            >
+              Choisir une image
+              <VisuallyHiddenInput
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+            </Button>
+          </Box>
+
+          {imagePreview && (
+            <Box
+              component="img"
+              src={imagePreview}
+              alt="Prévisualisation"
+              sx={{
+                maxWidth: '100%',
+                height: 'auto',
+                border: '1px solid #ccc',
+                borderRadius: 1,
+                marginBottom: 2
+              }}
+            />
+          )}
+
+          {/* Soumission du produit */}
           <Button
             type="submit"
             variant="contained"
             color="primary"
             disabled={loading}
-            sx={{ marginTop: 2, backgroundColor: 'green' }}
+            sx={{ backgroundColor: 'green' }}
           >
-            {loading ? 'Création en cours...' : 'Ajouter le Produit'}
+            {loading ? 'Création en cours...' : 'Créer le Produit'}
           </Button>
         </Box>
 
+        {/* Messages de succès ou d'erreur */}
         {successMessage && (
-          <Typography color="success.main" variant="body2">
+          <Typography
+            color="success.main"
+            variant="body2"
+            sx={{ marginTop: 2 }}
+          >
             {successMessage}
           </Typography>
         )}
         {error && (
-          <Typography color="error.main" variant="body2">
-            Une erreur s'est produite : {error}
+          <Typography color="error.main" variant="body2" sx={{ marginTop: 2 }}>
+            {error}
           </Typography>
         )}
       </CardContent>
     </Card>
   );
-}
+};
+
+export default CombinedComponent;

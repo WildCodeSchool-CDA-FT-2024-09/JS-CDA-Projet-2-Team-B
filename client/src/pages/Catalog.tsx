@@ -25,6 +25,8 @@ export default function Catalog() {
     };
   }, [searchProduct]);
 
+  console.info('Données chargées :', data?.getAllProducts);
+
   if (loading) return <p> loading </p>;
   if (error) return <p> error : </p>;
 
@@ -58,10 +60,10 @@ export default function Catalog() {
             key={produit.id}
             id={produit.id}
             name={produit.name}
-            price={produit.price}
+            price={produit.price ?? 0}
             reference={produit.reference}
-            shortDescription={produit.shortDescription}
-            description={produit.description}
+            shortDescription={produit.shortDescription ?? ''}
+            description={produit.description ?? ''}
           />
         ))}
       </Grid>

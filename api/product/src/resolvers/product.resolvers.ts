@@ -69,6 +69,7 @@ export default class ProductResolver {
 
     if (newProduct.imageIds && newProduct.imageIds.length > 0) {
       const images = await Image.findBy({ id: In(newProduct.imageIds) });
+
       product.images = images;
     }
 
