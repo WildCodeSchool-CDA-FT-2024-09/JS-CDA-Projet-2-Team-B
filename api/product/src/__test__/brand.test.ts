@@ -49,7 +49,7 @@ describe('Brand resolvers tests', () => {
     expect(result.data.getAllBrands.length).toEqual(2);
   });
 
-  it('creates and updates a product', async () => {
+  it('creates and updates a brand', async () => {
     const createdBrand = await createBrand();
 
     const newData = {
