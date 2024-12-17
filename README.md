@@ -25,15 +25,15 @@
 
 ### Liste des produits
 
-![Liste des produits](image.png)
+![Liste des produits](client/public/detail.png)
 
 ### Édition d'un produit
 
-![Édition d'un produit](image.png)
+![Édition d'un produit](client/public/list.png)
 
 ### Détails du produit
 
-![Détails du produit](image.png)
+![Détails du produit](client/public/edit.png)
 
 ---
 
