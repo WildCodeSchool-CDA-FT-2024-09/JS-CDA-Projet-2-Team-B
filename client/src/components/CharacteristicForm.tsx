@@ -1,23 +1,20 @@
-import Chip from '@mui/material/Chip';
 import Card from '@mui/material/Card';
-import { TextField, Typography } from '@mui/material';
+import CardContent from '@mui/material/CardContent';
+import { Box, TextField, Typography } from '@mui/material';
 import Button from '@mui/material/Button';
 import {
   useGetAllCharacteristicQuery,
-  useCreateNewCharacteristicMutation,
-  useEditCharacteristicMutation
+  useCreateNewCharacteristicMutation
 } from '../generated/graphql-types';
 import { useState } from 'react';
+import CharacteristicItem from './CharacteristicItem';
 
 export default function CharacteristicForm() {
   const [characteristic, setCaracteristic] = useState('');
   const [createNewCharacteristic] = useCreateNewCharacteristicMutation();
 
-  const [editCharacteristic] = useEditCharacteristicMutation();
-  const [selectId, setSelectId] = useState<number | null>(null);
-  const [editName, setEditName] = useState<string>('');
-
-  const handleAdd = async () => {
+  const handleAdd = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
     try {
       await createNewCharacteristic({
         variables: {
@@ -33,108 +30,73 @@ export default function CharacteristicForm() {
     }
   };
 
-  const { loading, error, data, refetch } = useGetAllCharacteristicQuery();
-  if (loading) return <p> Loading </p>;
-  if (error) return <p> Error : </p>;
+  const { loading, data, refetch } = useGetAllCharacteristicQuery();
 
-  const handleClickChip = (id: number, name: string) => {
-    setSelectId(id);
-    setEditName(name);
-  };
-
-  const handleSaveEdit = async () => {
-    if (editName) {
-      try {
-        await editCharacteristic({
-          variables: {
-            characteristic: {
-              id: selectId,
-              name: editName
-            }
-          }
-        });
-        setSelectId(null);
-        setEditName('');
-      } catch (err) {
-        console.error(err);
-      }
-    }
+  const handleRefetch = async () => {
+    await refetch();
   };
 
   return (
-    <Card
-      sx={{
-        margin: 1,
-        maxWidth: 900,
-        padding: 2,
-        boxShadow: 4
-      }}
-    >
-      <Typography variant="h6" sx={{ marginBottom: 2 }}>
-        Caractéristiques
-      </Typography>
-      <Card
-        sx={{
-          marginTop: 3,
-          display: 'flex',
-          maxWidth: 500,
-          justifyContent: 'space-around',
-          boxShadow: 0,
-          gap: 2
-        }}
-      >
-        <Typography sx={{ minWidth: 'fit-content' }}>
-          Ajouter une caractéristique :
+    <Card sx={{ maxWidth: 900, margin: 1, boxShadow: 4 }}>
+      <CardContent>
+        <Typography variant="h6" sx={{ marginBottom: 2 }}>
+          Caractéristiques
         </Typography>
-        <TextField
-          sx={{ maxWidth: '300px' }}
-          variant="outlined"
-          size="small"
-          value={characteristic}
-          onChange={(e) => setCaracteristic(e.target.value)}
-        />
-        <Button
-          onClick={handleAdd}
-          variant="contained"
-          sx={{ backgroundColor: 'green', color: 'white' }}
+        <Box
+          component="form"
+          onSubmit={handleAdd}
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 2,
+            marginBottom: 2
+          }}
         >
-          Ajouter
-        </Button>
-      </Card>
-
-      <div style={{ marginTop: 10 }}>
-        <Typography sx={{ marginTop: 5, marginBottom: 4 }}>
-          Modifier une caractéristique en cliquant dessus :
-        </Typography>
-        {data?.getAllCharacteristic.map((c) => (
-          <div key={c.id} style={{ display: 'inline-block', marginTop: 10 }}>
-            {selectId === c.id ? (
-              <TextField
-                value={editName}
-                onChange={(e) => setEditName(e.target.value)}
-                onBlur={handleSaveEdit}
-                variant="outlined"
-                sx={{
-                  height: 37,
-                  width: 200,
-                  '& .MuiOutlinedInput-root': {
-                    height: '100%',
-                    borderRadius: '16px',
-                    border: '1px solid #ddd'
-                  }
-                }}
+          <Typography sx={{ minWidth: 'fit-content' }}>
+            Ajouter une caractéristique :
+          </Typography>
+          <TextField
+            sx={{ maxWidth: '300px', marginLeft: '25px' }}
+            placeholder="Nom"
+            variant="outlined"
+            size="small"
+            value={characteristic}
+            onChange={(e) => setCaracteristic(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            type="submit"
+            sx={{
+              backgroundColor: 'green',
+              padding: '4px 10px',
+              borderRadius: '5px'
+            }}
+          >
+            Ajouter +
+          </Button>
+        </Box>
+        <Box
+          sx={{
+            display: 'flex',
+            flexWrap: 'wrap',
+            gap: 1,
+            marginTop: 3
+          }}
+        >
+          {loading ? (
+            <Typography> Chargement ... </Typography>
+          ) : (
+            data?.getAllCharacteristic.map((c) => (
+              <CharacteristicItem
+                key={c.id}
+                id={c.id}
+                name={c.name}
+                onRefetch={handleRefetch}
               />
-            ) : (
-              <Chip
-                label={c.name}
-                variant="outlined"
-                onClick={() => handleClickChip(c.id, c.name)}
-                sx={{ padding: 2, marginLeft: 2, marginBottom: 5 }}
-              />
-            )}
-          </div>
-        ))}
-      </div>
+            ))
+          )}
+        </Box>
+      </CardContent>
     </Card>
   );
 }
