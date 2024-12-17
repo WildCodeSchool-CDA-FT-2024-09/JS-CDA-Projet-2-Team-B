@@ -157,7 +157,7 @@ export default function ProductDetails() {
         Reference
       </Typography>
       <TextField
-        required
+        disabled
         id="outlined-required"
         name="reference"
         value={product.reference}
