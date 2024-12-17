@@ -45,6 +45,13 @@ export type BrandCreationInput = {
   name: Scalars['String']['input'];
 };
 
+export type BrandUpdateInput = {
+  description?: InputMaybe<Scalars['String']['input']>;
+  id: Scalars['Float']['input'];
+  logo?: InputMaybe<Scalars['String']['input']>;
+  name?: InputMaybe<Scalars['String']['input']>;
+};
+
 export type Category = {
   __typename?: 'Category';
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
@@ -89,6 +96,7 @@ export type Mutation = {
   deleteTag: Scalars['Boolean']['output'];
   restoreCategory: Scalars['Boolean']['output'];
   restoreTag: Scalars['Boolean']['output'];
+  updateBrand: Brand;
   updateCategory: Category;
   updateProduct: Product;
   updateTag: Tag;
@@ -128,6 +136,10 @@ export type MutationRestoreCategoryArgs = {
 
 export type MutationRestoreTagArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type MutationUpdateBrandArgs = {
+  data: BrandUpdateInput;
 };
 
 export type MutationUpdateCategoryArgs = {
@@ -180,6 +192,7 @@ export type Query = {
   getAllImages: Array<Image>;
   getAllProducts: Array<Product>;
   getAllTags: Array<Tag>;
+  getBrandById: Brand;
   getProductById?: Maybe<Product>;
 };
 
@@ -193,6 +206,10 @@ export type QueryGetAllProductsArgs = {
 
 export type QueryGetAllTagsArgs = {
   includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type QueryGetBrandByIdArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type QueryGetProductByIdArgs = {
@@ -335,6 +352,21 @@ export type CreateBrandMutation = {
   };
 };
 
+export type UpdateBrandMutationVariables = Exact<{
+  data: BrandUpdateInput;
+}>;
+
+export type UpdateBrandMutation = {
+  __typename?: 'Mutation';
+  updateBrand: {
+    __typename?: 'Brand';
+    id: number;
+    name: string;
+    description: string;
+    logo: string;
+  };
+};
+
 export type GetAllTagsQueryVariables = Exact<{ [key: string]: never }>;
 
 export type GetAllTagsQuery = {
@@ -437,6 +469,21 @@ export type GetAllBrandsQuery = {
     description: string;
     logo: string;
   }>;
+};
+
+export type GetBrandByIdQueryVariables = Exact<{
+  getBrandByIdId: Scalars['Int']['input'];
+}>;
+
+export type GetBrandByIdQuery = {
+  __typename?: 'Query';
+  getBrandById: {
+    __typename?: 'Brand';
+    id: number;
+    name: string;
+    description: string;
+    logo: string;
+  };
 };
 
 export const CreateNewProductDocument = gql`
@@ -938,6 +985,59 @@ export type CreateBrandMutationResult =
 export type CreateBrandMutationOptions = Apollo.BaseMutationOptions<
   CreateBrandMutation,
   CreateBrandMutationVariables
+>;
+export const UpdateBrandDocument = gql`
+  mutation UpdateBrand($data: BrandUpdateInput!) {
+    updateBrand(data: $data) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
+export type UpdateBrandMutationFn = Apollo.MutationFunction<
+  UpdateBrandMutation,
+  UpdateBrandMutationVariables
+>;
+
+/**
+ * __useUpdateBrandMutation__
+ *
+ * To run a mutation, you first call `useUpdateBrandMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateBrandMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateBrandMutation, { data, loading, error }] = useUpdateBrandMutation({
+ *   variables: {
+ *      data: // value for 'data'
+ *   },
+ * });
+ */
+export function useUpdateBrandMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    UpdateBrandMutation,
+    UpdateBrandMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<UpdateBrandMutation, UpdateBrandMutationVariables>(
+    UpdateBrandDocument,
+    options
+  );
+}
+export type UpdateBrandMutationHookResult = ReturnType<
+  typeof useUpdateBrandMutation
+>;
+export type UpdateBrandMutationResult =
+  Apollo.MutationResult<UpdateBrandMutation>;
+export type UpdateBrandMutationOptions = Apollo.BaseMutationOptions<
+  UpdateBrandMutation,
+  UpdateBrandMutationVariables
 >;
 export const GetAllTagsDocument = gql`
   query GetAllTags {
@@ -1523,4 +1623,89 @@ export type GetAllBrandsSuspenseQueryHookResult = ReturnType<
 export type GetAllBrandsQueryResult = Apollo.QueryResult<
   GetAllBrandsQuery,
   GetAllBrandsQueryVariables
+>;
+export const GetBrandByIdDocument = gql`
+  query GetBrandById($getBrandByIdId: Int!) {
+    getBrandById(id: $getBrandByIdId) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
+
+/**
+ * __useGetBrandByIdQuery__
+ *
+ * To run a query within a React component, call `useGetBrandByIdQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetBrandByIdQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetBrandByIdQuery({
+ *   variables: {
+ *      getBrandByIdId: // value for 'getBrandByIdId'
+ *   },
+ * });
+ */
+export function useGetBrandByIdQuery(
+  baseOptions: Apollo.QueryHookOptions<
+    GetBrandByIdQuery,
+    GetBrandByIdQueryVariables
+  > &
+    (
+      | { variables: GetBrandByIdQueryVariables; skip?: boolean }
+      | { skip: boolean }
+    )
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetBrandByIdQuery, GetBrandByIdQueryVariables>(
+    GetBrandByIdDocument,
+    options
+  );
+}
+export function useGetBrandByIdLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetBrandByIdQuery,
+    GetBrandByIdQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetBrandByIdQuery, GetBrandByIdQueryVariables>(
+    GetBrandByIdDocument,
+    options
+  );
+}
+export function useGetBrandByIdSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetBrandByIdQuery,
+        GetBrandByIdQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetBrandByIdQuery, GetBrandByIdQueryVariables>(
+    GetBrandByIdDocument,
+    options
+  );
+}
+export type GetBrandByIdQueryHookResult = ReturnType<
+  typeof useGetBrandByIdQuery
+>;
+export type GetBrandByIdLazyQueryHookResult = ReturnType<
+  typeof useGetBrandByIdLazyQuery
+>;
+export type GetBrandByIdSuspenseQueryHookResult = ReturnType<
+  typeof useGetBrandByIdSuspenseQuery
+>;
+export type GetBrandByIdQueryResult = Apollo.QueryResult<
+  GetBrandByIdQuery,
+  GetBrandByIdQueryVariables
 >;
