@@ -1,12 +1,19 @@
 import { Brand } from '../entity/brand.entities';
 import { BrandCreationInput, BrandUpdateInput } from '../types/brand.types';
-import { Arg, Mutation, Query, Resolver } from 'type-graphql';
+import { Arg, Int, Mutation, Query, Resolver } from 'type-graphql';
 
 @Resolver()
 export default class BrandResolver {
   @Query(() => [Brand])
   async getAllBrands(): Promise<Brand[]> {
     return await Brand.find();
+  }
+
+  @Query(() => Brand)
+  async getBrandById(@Arg('id', () => Int) id: number): Promise<Brand | null> {
+    return await Brand.findOne({
+      where: { id }
+    });
   }
 
   @Mutation(() => Brand)
