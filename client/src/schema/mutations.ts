@@ -66,6 +66,14 @@ export const DELETE_CATEGORY = gql`
     deleteCategory(id: $id)
   }
 `;
+export const UPDATE_CHARACTERISTIC = gql`
+  mutation EditCharacteristic($characteristic: CharacteristicInput!) {
+    editCharacteristic(characteristic: $characteristic) {
+      id
+      name
+    }
+  }
+`;
 
 export const CREATE_TAG = gql`
   mutation CreateTag($input: CreateTagInput!) {
