@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
@@ -14,13 +14,16 @@ import {
   MenuItem
 } from '@mui/material';
 import {
+  GetAllBrandsDocument,
   GetAllProductsDocument,
   useCreateNewProductMutation,
   useGetAllCategoriesQuery
 } from '../generated/graphql-types';
+import { useLazyQuery } from '@apollo/client';
 
 export default function CreationProduct() {
   const { data: categoriesData } = useGetAllCategoriesQuery();
+  const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
   const [formData, setFormData] = useState({
     name: '',
     reference: '',
@@ -28,12 +31,31 @@ export default function CreationProduct() {
     description: '',
     price: 0,
     isPublished: true,
-    categories: [] as Array<{ id: number; name: string }>
+    categories: [] as Array<{ id: number; name: string }>,
+    brand: null as { id: number; name: string } | null
   });
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>('');
   const [createProduct, { loading }] = useCreateNewProductMutation();
+  const [brandInputValue, setBrandInputValue] = useState('');
+  const [brandOptions, setBrandOptions] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
+
+  useEffect(() => {
+    if (brandInputValue !== '') {
+      getBrands({ variables: { search: brandInputValue } });
+    } else {
+      setBrandOptions([]);
+    }
+  }, [brandInputValue, getBrands]);
+
+  useEffect(() => {
+    if (brandsData?.getAllBrands) {
+      setBrandOptions(brandsData.getAllBrands);
+    }
+  }, [brandsData]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -52,6 +74,7 @@ export default function CreationProduct() {
       description,
       price,
       categories,
+      brand,
       isPublished
     } = formData;
 
@@ -75,7 +98,8 @@ export default function CreationProduct() {
             description,
             price,
             isPublished,
-            categoryIds: categories.map((cat) => cat.id)
+            categoryIds: categories.map((cat) => cat.id),
+            brand: brand!.id
           }
         },
         update(cache, { data }) {
@@ -115,7 +139,8 @@ export default function CreationProduct() {
         description: '',
         price: 0,
         isPublished: true,
-        categories: []
+        categories: [],
+        brand: null
       });
     } catch (err) {
       setSuccessMessage(null);
@@ -258,7 +283,30 @@ export default function CreationProduct() {
               </Typography>
             )}
           </Box>
-
+          <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
+            <Autocomplete
+              options={brandOptions}
+              getOptionLabel={(option) => option.name}
+              value={formData.brand}
+              onChange={(_, newValue) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  brand: newValue
+                }))
+              }
+              inputValue={brandInputValue}
+              onInputChange={(_, newInputValue) => {
+                setBrandInputValue(newInputValue);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Sélectionner une marque"
+                  placeholder="Rechercher une marque"
+                />
+              )}
+            />
+          </FormControl>
           <FormControl fullWidth margin="normal">
             <InputLabel id="status-label">Statut de publication</InputLabel>
             <Select
