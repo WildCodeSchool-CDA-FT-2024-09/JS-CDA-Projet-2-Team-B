@@ -1,37 +1,9 @@
-import { ProductUpdateInput } from '../types/product.types';
+import { ProductInput, ProductUpdateInput } from '../types/product.types';
 import { Product } from '../entity/product.entities';
-import {
-  Resolver,
-  Query,
-  Mutation,
-  Arg,
-  InputType,
-  Field,
-  Int
-} from 'type-graphql';
+import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
 import { Category } from '../entity/category.entities';
 import { ILike, In } from 'typeorm';
-
-@InputType()
-class ProductInput {
-  @Field()
-  reference: string;
-
-  @Field()
-  name: string;
-
-  @Field()
-  shortDescription: string;
-
-  @Field()
-  description: string;
-
-  @Field()
-  price: number;
-
-  @Field(() => [Int], { nullable: true })
-  categoryIds?: number[];
-}
+import { Brand } from '../entity/brand.entities';
 
 @Resolver(Product)
 export default class ProductResolver {
@@ -42,7 +14,8 @@ export default class ProductResolver {
     const query = {
       where: search ? { name: ILike(`%${search}%`) } : {},
       relations: {
-        categories: true
+        categories: true,
+        brand: true
       }
     };
 
@@ -69,6 +42,14 @@ export default class ProductResolver {
     product.description = newProduct.description;
     product.price = newProduct.price;
 
+    const brand = await Brand.findOne({ where: { id: newProduct.brand } });
+
+    if (!brand) {
+      throw new Error(`La marque ${newProduct.brand} n'existe pas.`);
+    }
+
+    product.brand = brand;
+
     if (newProduct.categoryIds) {
       const categories = await Category.findBy({
         id: In(newProduct.categoryIds)
@@ -85,7 +66,7 @@ export default class ProductResolver {
   ): Promise<Product | null> {
     return await Product.findOne({
       where: { id },
-      relations: ['categories']
+      relations: ['categories', 'brand']
     });
   }
 
@@ -97,7 +78,7 @@ export default class ProductResolver {
 
     const product = await Product.findOne({
       where: { id },
-      relations: ['categories']
+      relations: ['categories', 'brand']
     });
 
     if (!product) {
@@ -106,6 +87,14 @@ export default class ProductResolver {
 
     // Using assign method from Object to assign new data to the found product.
     Object.assign(product, newDataProduct);
+
+    const brand = await Brand.findOne({ where: { id: newDataProduct.brand } });
+
+    if (!brand) {
+      throw new Error(`La marque ${newDataProduct.brand} n'existe pas.`);
+    }
+
+    product.brand = brand;
 
     if (newDataProduct.categoryIds) {
       const categories = await Category.findBy({
