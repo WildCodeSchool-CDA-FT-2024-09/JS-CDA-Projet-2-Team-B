@@ -64,15 +64,6 @@ export const CREATE_CHARACTERISTIC = gql`
   }
 `;
 
-export const GET_ALL_CATEGORIES = gql`
-  query GetAllCategories {
-    getAllCategories {
-      id
-      name
-    }
-  }
-`;
-
 export const UPDATE_CATEGORY = gql`
   mutation UpdateCategory($input: UpdateCategoryInput!) {
     updateCategory(input: $input) {
@@ -85,6 +76,14 @@ export const UPDATE_CATEGORY = gql`
 export const DELETE_CATEGORY = gql`
   mutation DeleteCategory($id: Int!) {
     deleteCategory(id: $id)
+  }
+`;
+export const UPDATE_CHARACTERISTIC = gql`
+  mutation EditCharacteristic($characteristic: CharacteristicInput!) {
+    editCharacteristic(characteristic: $characteristic) {
+      id
+      name
+    }
   }
 `;
 
@@ -100,6 +99,17 @@ export const CREATE_TAG = gql`
 export const CREATE_BRAND = gql`
   mutation CreateBrand($data: BrandCreationInput!) {
     createBrand(data: $data) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
+
+export const PUT_BRAND = gql`
+  mutation UpdateBrand($data: BrandUpdateInput!) {
+    updateBrand(data: $data) {
       id
       name
       description

@@ -56,3 +56,14 @@ export const POST_BRAND = gql`
     }
   }
 `;
+
+export const PUT_BRAND = gql`
+  mutation UpdateBrand($data: BrandUpdateInput!) {
+    updateBrand(data: $data) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;

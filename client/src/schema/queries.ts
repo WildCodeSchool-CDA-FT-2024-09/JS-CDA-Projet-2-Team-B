@@ -91,3 +91,23 @@ export const GET_ALL_BRANDS = gql`
     }
   }
 `;
+
+export const GET_BRAND_BY_ID = gql`
+  query GetBrandById($getBrandByIdId: Int!) {
+    getBrandById(id: $getBrandByIdId) {
+      id
+      name
+      description
+      logo
+    }
+  }
+`;
+
+export const GET_ALL_CATEGORIES = gql`
+  query GetAllCategories {
+    getAllCategories {
+      id
+      name
+    }
+  }
+`;
