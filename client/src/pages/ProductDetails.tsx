@@ -10,10 +10,12 @@ import {
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
+  GetAllBrandsDocument,
   useGetAllCategoriesQuery,
   useGetProductByIdQuery,
   useUpdateProductMutation
 } from '../generated/graphql-types';
+import { useLazyQuery } from '@apollo/client';
 
 interface ProductDetailsReq {
   name: string;
@@ -22,19 +24,28 @@ interface ProductDetailsReq {
   description: string;
   price: number;
   categories?: { id: number; name: string }[] | null;
+  brand: { id: number; name: string } | null;
 }
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState<string | null>('');
   const { data: categoriesData } = useGetAllCategoriesQuery();
+  const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
+  const [brandInputValue, setBrandInputValue] = useState('');
+  const [brandOptions, setBrandOptions] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
+  const [updateProduct, { loading: updateLoading }] =
+    useUpdateProductMutation();
   const [product, setProduct] = useState<ProductDetailsReq>({
     name: '',
     reference: '',
     shortDescription: '',
     description: '',
     price: 0,
-    categories: []
+    categories: [],
+    brand: null
   });
 
   const {
@@ -45,8 +56,19 @@ export default function ProductDetails() {
     variables: { getProductByIdId: parseInt(id!) }
   });
 
-  const [updateProduct, { loading: updateLoading }] =
-    useUpdateProductMutation();
+  useEffect(() => {
+    if (brandInputValue !== '') {
+      getBrands({ variables: { search: brandInputValue } });
+    } else {
+      setBrandOptions([]);
+    }
+  }, [brandInputValue, getBrands]);
+
+  useEffect(() => {
+    if (brandsData?.getAllBrands) {
+      setBrandOptions(brandsData.getAllBrands);
+    }
+  }, [brandsData]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -76,7 +98,8 @@ export default function ProductDetails() {
             shortDescription: product.shortDescription,
             description: product.description,
             price: product.price,
-            categoryIds: product.categories?.map((cat) => cat.id) || []
+            categoryIds: product.categories?.map((cat) => cat.id) || [],
+            brand: product.brand!.id
           }
         }
       });
@@ -88,7 +111,8 @@ export default function ProductDetails() {
           shortDescription: data.updateProduct.shortDescription ?? '',
           description: data.updateProduct.description ?? '',
           price: data.updateProduct.price ?? 0,
-          categories: data.updateProduct.categories || []
+          categories: data.updateProduct.categories || [],
+          brand: data.updateProduct.brand as { id: number; name: string }
         });
         setError(null);
       }
@@ -105,7 +129,8 @@ export default function ProductDetails() {
         shortDescription: data.getProductById.shortDescription || '',
         description: data.getProductById.description || '',
         price: data.getProductById.price || 0,
-        categories: data.getProductById.categories || []
+        categories: data.getProductById.categories || [],
+        brand: data.getProductById.brand as { id: number; name: string }
       });
     } else if (fetchError) {
       setError(fetchError.message);
@@ -302,6 +327,30 @@ export default function ProductDetails() {
           </Typography>
         )}
       </Box>
+      <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
+        <Autocomplete
+          options={brandOptions}
+          getOptionLabel={(option) => option.name}
+          value={product.brand}
+          onChange={(_, newValue) =>
+            setProduct((prev) => ({
+              ...prev,
+              brand: newValue
+            }))
+          }
+          inputValue={brandInputValue}
+          onInputChange={(_, newInputValue) => {
+            setBrandInputValue(newInputValue);
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Sélectionner une marque"
+              placeholder="Rechercher une marque"
+            />
+          )}
+        />
+      </FormControl>
       <Button
         variant="contained"
         disabled={updateLoading}
