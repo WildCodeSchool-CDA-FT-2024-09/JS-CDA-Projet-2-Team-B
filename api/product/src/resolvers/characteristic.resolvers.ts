@@ -1,22 +1,21 @@
-import { Arg, Field, InputType, Query, Resolver, Mutation } from 'type-graphql';
 import { Characteristic } from '../entity/characteristic.entities';
-import { IsNumber } from 'class-validator';
-
-@InputType()
-class CharacteristicInput {
-  @Field({ nullable: true })
-  @IsNumber()
-  id?: number;
-
-  @Field()
-  name: string;
-}
+import { Arg, Query, Resolver, Mutation } from 'type-graphql';
+import { CharacteristicInput } from '../types/characteristic.types';
 
 @Resolver(Characteristic)
 export default class CharacteristicResolver {
   @Query(() => [Characteristic])
-  async getAllCharacteristic() {
-    return await Characteristic.find();
+  async getAllCharacteristic(
+    @Arg('isDeleted', () => Boolean, { nullable: true })
+    isDeleted = false
+  ): Promise<Characteristic[]> {
+    try {
+      return await Characteristic.find({ withDeleted: isDeleted });
+    } catch (error) {
+      throw new Error(
+        ` Erreur lors de la récupération des characteristiques : ${error.message}`
+      );
+    }
   }
 
   @Mutation(() => Characteristic)
@@ -70,6 +69,41 @@ export default class CharacteristicResolver {
       return characteristicEdit;
     } catch (error) {
       throw new Error(`${error.message}`);
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async disableCharacteristic(@Arg('id') id: number) {
+    try {
+      const characteristic = await Characteristic.findOne({
+        where: { id }
+      });
+      if (!characteristic) {
+        throw new Error('Characteristic not found');
+      }
+      await characteristic.softRemove();
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
+    }
+  }
+
+  @Mutation(() => Boolean)
+  async enableCharacteristic(@Arg('id') id: number) {
+    try {
+      const characteristic = await Characteristic.findOne({
+        where: { id },
+        withDeleted: true
+      });
+      if (!characteristic) {
+        throw new Error('Characteristic not found');
+      }
+      await characteristic.recover();
+      return true;
+    } catch (error) {
+      console.error(error);
+      throw error;
     }
   }
 }
