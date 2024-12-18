@@ -9,6 +9,12 @@ export const CREATE_PRODUCT = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -35,6 +41,12 @@ export const PUT_PRODUCT = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -92,15 +104,6 @@ export const CREATE_BRAND = gql`
       name
       description
       logo
-    }
-  }
-`;
-
-export const GET_ALL_TAGS = gql`
-  query GetAllTags {
-    getAllTags {
-      id
-      name
     }
   }
 `;

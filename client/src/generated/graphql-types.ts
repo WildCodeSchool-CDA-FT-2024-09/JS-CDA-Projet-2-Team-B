@@ -37,6 +37,7 @@ export type Brand = {
   id: Scalars['Float']['output'];
   logo: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  products: Array<Product>;
 };
 
 export type BrandCreationInput = {
@@ -144,6 +145,7 @@ export type MutationUpdateTagArgs = {
 
 export type Product = {
   __typename?: 'Product';
+  brand?: Maybe<Brand>;
   categories?: Maybe<Array<Category>>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
@@ -154,6 +156,7 @@ export type Product = {
 };
 
 export type ProductInput = {
+  brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -163,6 +166,7 @@ export type ProductInput = {
 };
 
 export type ProductUpdateInput = {
+  brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
@@ -180,7 +184,12 @@ export type Query = {
   getAllImages: Array<Image>;
   getAllProducts: Array<Product>;
   getAllTags: Array<Tag>;
+  getBrandById?: Maybe<Brand>;
   getProductById?: Maybe<Product>;
+};
+
+export type QueryGetAllBrandsArgs = {
+  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryGetAllCategoriesArgs = {
@@ -193,6 +202,10 @@ export type QueryGetAllProductsArgs = {
 
 export type QueryGetAllTagsArgs = {
   includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type QueryGetBrandByIdArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type QueryGetProductByIdArgs = {
@@ -230,6 +243,13 @@ export type CreateNewProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+    } | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -261,6 +281,13 @@ export type UpdateProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+    } | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -335,13 +362,6 @@ export type CreateBrandMutation = {
   };
 };
 
-export type GetAllTagsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetAllTagsQuery = {
-  __typename?: 'Query';
-  getAllTags: Array<{ __typename?: 'Tag'; id: number; name: string }>;
-};
-
 export type UpdateTagMutationVariables = Exact<{
   input: UpdateTagInput;
 }>;
@@ -366,11 +386,18 @@ export type GetAllProductsQuery = {
   getAllProducts: Array<{
     __typename?: 'Product';
     id: number;
-    name: string;
-    price?: number | null;
     reference: string;
+    name: string;
     shortDescription?: string | null;
     description?: string | null;
+    price?: number | null;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+    } | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -398,6 +425,13 @@ export type GetProductByIdQuery = {
       id: number;
       name: string;
     }> | null;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+    } | null;
   } | null;
 };
 
@@ -426,7 +460,16 @@ export type GetAllCharacteristicQuery = {
   }>;
 };
 
-export type GetAllBrandsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetAllTagsQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllTagsQuery = {
+  __typename?: 'Query';
+  getAllTags: Array<{ __typename?: 'Tag'; id: number; name: string }>;
+};
+
+export type GetAllBrandsQueryVariables = Exact<{
+  search?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 export type GetAllBrandsQuery = {
   __typename?: 'Query';
@@ -448,6 +491,12 @@ export const CreateNewProductDocument = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -558,6 +607,12 @@ export const UpdateProductDocument = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -939,79 +994,6 @@ export type CreateBrandMutationOptions = Apollo.BaseMutationOptions<
   CreateBrandMutation,
   CreateBrandMutationVariables
 >;
-export const GetAllTagsDocument = gql`
-  query GetAllTags {
-    getAllTags {
-      id
-      name
-    }
-  }
-`;
-
-/**
- * __useGetAllTagsQuery__
- *
- * To run a query within a React component, call `useGetAllTagsQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllTagsQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllTagsQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetAllTagsQuery,
-    GetAllTagsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
-    GetAllTagsDocument,
-    options
-  );
-}
-export function useGetAllTagsLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetAllTagsQuery,
-    GetAllTagsQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
-    GetAllTagsDocument,
-    options
-  );
-}
-export function useGetAllTagsSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<GetAllTagsQuery, GetAllTagsQueryVariables>
-) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
-    GetAllTagsDocument,
-    options
-  );
-}
-export type GetAllTagsQueryHookResult = ReturnType<typeof useGetAllTagsQuery>;
-export type GetAllTagsLazyQueryHookResult = ReturnType<
-  typeof useGetAllTagsLazyQuery
->;
-export type GetAllTagsSuspenseQueryHookResult = ReturnType<
-  typeof useGetAllTagsSuspenseQuery
->;
-export type GetAllTagsQueryResult = Apollo.QueryResult<
-  GetAllTagsQuery,
-  GetAllTagsQueryVariables
->;
 export const UpdateTagDocument = gql`
   mutation UpdateTag($input: UpdateTagInput!) {
     updateTag(input: $input) {
@@ -1113,11 +1095,17 @@ export const GetAllProductsDocument = gql`
   query GetAllProducts($search: String) {
     getAllProducts(search: $search) {
       id
-      name
-      price
       reference
+      name
       shortDescription
       description
+      price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -1208,6 +1196,12 @@ export const GetProductByIdDocument = gql`
       categories {
         id
         name
+      }
+      brand {
+        id
+        name
+        description
+        logo
       }
     }
   }
@@ -1444,9 +1438,82 @@ export type GetAllCharacteristicQueryResult = Apollo.QueryResult<
   GetAllCharacteristicQuery,
   GetAllCharacteristicQueryVariables
 >;
+export const GetAllTagsDocument = gql`
+  query GetAllTags {
+    getAllTags {
+      id
+      name
+    }
+  }
+`;
+
+/**
+ * __useGetAllTagsQuery__
+ *
+ * To run a query within a React component, call `useGetAllTagsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllTagsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllTagsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllTagsQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllTagsQuery,
+    GetAllTagsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
+    GetAllTagsDocument,
+    options
+  );
+}
+export function useGetAllTagsLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllTagsQuery,
+    GetAllTagsQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
+    GetAllTagsDocument,
+    options
+  );
+}
+export function useGetAllTagsSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<GetAllTagsQuery, GetAllTagsQueryVariables>
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<GetAllTagsQuery, GetAllTagsQueryVariables>(
+    GetAllTagsDocument,
+    options
+  );
+}
+export type GetAllTagsQueryHookResult = ReturnType<typeof useGetAllTagsQuery>;
+export type GetAllTagsLazyQueryHookResult = ReturnType<
+  typeof useGetAllTagsLazyQuery
+>;
+export type GetAllTagsSuspenseQueryHookResult = ReturnType<
+  typeof useGetAllTagsSuspenseQuery
+>;
+export type GetAllTagsQueryResult = Apollo.QueryResult<
+  GetAllTagsQuery,
+  GetAllTagsQueryVariables
+>;
 export const GetAllBrandsDocument = gql`
-  query GetAllBrands {
-    getAllBrands {
+  query GetAllBrands($search: String) {
+    getAllBrands(search: $search) {
       id
       name
       description
@@ -1467,6 +1534,7 @@ export const GetAllBrandsDocument = gql`
  * @example
  * const { data, loading, error } = useGetAllBrandsQuery({
  *   variables: {
+ *      search: // value for 'search'
  *   },
  * });
  */
