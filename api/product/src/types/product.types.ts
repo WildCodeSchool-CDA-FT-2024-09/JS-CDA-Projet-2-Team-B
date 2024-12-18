@@ -21,6 +21,6 @@ export class ProductUpdateInput implements Partial<Product> {
   @Field()
   price: number;
 
-  @Field(() => [Number], { nullable: true })
+  @Field(() => [Number])
   imageIds?: number[];
 }

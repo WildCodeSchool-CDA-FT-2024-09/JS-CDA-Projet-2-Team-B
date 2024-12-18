@@ -24,6 +24,9 @@ const AddImage: React.FC = () => {
   const [data, setData] = useState<UploadResponse | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
 
+  const [productId, setProductId] = useState<string>('');
+  const [isMain, setIsMain] = useState<boolean>(false);
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
@@ -40,13 +43,17 @@ const AddImage: React.FC = () => {
 
     const formData = new FormData();
     formData.append('image', imageFile);
+    formData.append('product_id', productId);
+    formData.append('isMain', String(isMain));
+    // formData.append('product_id', product.id)
+    // formData.append('isMain', check)
 
     setLoading(true);
     setError(null);
 
     try {
       const response = await axios.post<UploadResponse>(
-        'http://localhost:3000/upload',
+        'http://localhost:3000/upload', // Attention, passer par Nginx en variable d'env
         formData,
         {
           headers: {
@@ -54,6 +61,7 @@ const AddImage: React.FC = () => {
           }
         }
       );
+
       setData(response.data);
       setImageFile(null);
       setImagePreview(null);
@@ -72,9 +80,13 @@ const AddImage: React.FC = () => {
         textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        margin: 'auto'
       }}
     >
+      <Typography>
+        <h1>Ajouter une Image</h1>
+      </Typography>
       <Box sx={{ marginBottom: 2 }}>
         <Button
           component="label"
@@ -105,6 +117,35 @@ const AddImage: React.FC = () => {
           }}
         />
       )}
+
+      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
+        <Box sx={{ marginBottom: 2 }}>
+          <Typography>Product ID</Typography>
+          <input
+            type="text"
+            value={productId}
+            onChange={(e) => setProductId(e.target.value)}
+            placeholder="Entrer l'ID du produit"
+            style={{
+              width: '100%',
+              padding: '8px',
+              marginTop: '8px',
+              borderRadius: '4px',
+              border: '1px solid #ccc'
+            }}
+          />
+        </Box>
+
+        <Box sx={{ marginBottom: 2 }}>
+          <Typography>Image principale ?</Typography>
+          <input
+            type="checkbox"
+            checked={isMain}
+            onChange={(e) => setIsMain(e.target.checked)}
+            style={{ marginTop: '8px' }}
+          />
+        </Box>
+      </Box>
 
       <Button
         type="submit"

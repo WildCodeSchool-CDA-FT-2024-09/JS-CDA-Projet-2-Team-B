@@ -13,6 +13,7 @@ export const saveImageToDatabase = async (
 
   try {
     const result = await pool.query(query, [url, isMain]);
+    console.info('Image sauvegardée :', result.rows[0]);
     return result.rows[0];
   } catch (error) {
     console.error("Erreur lors de la sauvegarde de l'image :", error);

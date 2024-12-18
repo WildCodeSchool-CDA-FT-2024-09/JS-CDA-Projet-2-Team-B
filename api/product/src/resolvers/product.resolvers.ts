@@ -29,7 +29,7 @@ class ProductInput {
   @Field()
   price: number;
 
-  @Field(() => [Int], { nullable: true })
+  @Field(() => [Int])
   imageIds: number[];
 }
 
@@ -41,7 +41,9 @@ export default class ProductResolver {
   ): Promise<Product[]> {
     const existingProducts = await Product.find({
       where: { reference: search },
-      relations: ['images']
+      relations: {
+        images: true
+      }
     });
     return existingProducts;
   }
@@ -51,8 +53,7 @@ export default class ProductResolver {
     @Arg('data') newProduct: ProductInput
   ): Promise<Product> {
     const existingProduct = await Product.findOne({
-      where: { reference: newProduct.reference },
-      relations: ['images']
+      where: { reference: newProduct.reference }
     });
     if (existingProduct) {
       throw new Error(
@@ -70,6 +71,9 @@ export default class ProductResolver {
     if (newProduct.imageIds && newProduct.imageIds.length > 0) {
       const images = await Image.findBy({ id: In(newProduct.imageIds) });
 
+      if (images.length !== newProduct.imageIds.length) {
+        throw new Error("Certains IDs d'image sont invalides ou inexistants.");
+      }
       product.images = images;
     }
 
@@ -80,7 +84,7 @@ export default class ProductResolver {
   async getProductById(
     @Arg('id', () => Int) id: number
   ): Promise<Product | null> {
-    return await Product.findOne({ where: { id } });
+    return await Product.findOne({ where: { id }, relations: ['images'] });
   }
 
   @Mutation(() => Product)
@@ -90,7 +94,8 @@ export default class ProductResolver {
     const { id } = newDataProduct;
 
     const product = await Product.findOne({
-      where: { id }
+      where: { id },
+      relations: ['images']
     });
 
     if (!product) {
@@ -99,6 +104,12 @@ export default class ProductResolver {
 
     // Using assign method from Object to assign new data to the found product.
     Object.assign(product, newDataProduct);
+
+    if (newDataProduct.imageIds && newDataProduct.imageIds.length > 0) {
+      const images = await Image.findBy({ id: In(newDataProduct.imageIds) });
+
+      product.images = images;
+    }
 
     return await product.save();
   }

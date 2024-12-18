@@ -1,29 +1,29 @@
 import CardProduct from '../components/CardProduct';
 import Grid from '@mui/material/Grid2';
-import { useGetAllProductsQuery } from '../generated/graphql-types';
-import { useEffect, useState } from 'react';
+import { GetAllProductsDocument } from '../generated/graphql-types';
+import { useEffect, useState, ChangeEvent } from 'react';
 import { TextField } from '@mui/material';
-import debounce from 'lodash/debounce';
+import { useQuery } from '@apollo/client';
+
+interface Product {
+  id: number;
+  name: string;
+  price?: number;
+  reference: string;
+  shortDescription?: string;
+  description?: string;
+}
 
 export default function Catalog() {
   const [searchProduct, setSearchProduct] = useState('');
-  const [debouncedSearch, setDebouncedSearch] = useState(searchProduct);
-  const { loading, error, data } = useGetAllProductsQuery({
-    variables: { search: debouncedSearch },
-    fetchPolicy: 'cache-and-network'
-  });
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const { loading, error, data } = useQuery(GetAllProductsDocument);
+
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchProduct(event.target.value);
   };
 
-  useEffect(() => {
-    const debounced = debounce(() => setDebouncedSearch(searchProduct), 300);
-    debounced();
-    return () => {
-      debounced.cancel();
-    };
-  }, [searchProduct]);
+  useEffect(() => {}, [searchProduct]);
 
   console.info('Données chargées :', data?.getAllProducts);
 
@@ -55,7 +55,7 @@ export default function Catalog() {
           justifyContent: 'right'
         }}
       >
-        {data?.getAllProducts.map((produit) => (
+        {data?.getAllProducts.map((produit: Product) => (
           <CardProduct
             key={produit.id}
             id={produit.id}

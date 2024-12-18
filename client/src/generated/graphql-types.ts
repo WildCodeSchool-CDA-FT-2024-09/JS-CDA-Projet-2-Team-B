@@ -155,7 +155,7 @@ export type Product = {
 
 export type ProductInput = {
   description: Scalars['String']['input'];
-  imageIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+  imageIds: Array<Scalars['Int']['input']>;
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
