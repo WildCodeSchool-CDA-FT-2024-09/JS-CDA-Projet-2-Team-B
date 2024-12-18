@@ -14,7 +14,8 @@ describe('Brand resolvers tests', () => {
   });
 
   beforeEach(async () => {
-    await AppDataSource.query('TRUNCATE TABLE brand RESTART IDENTITY');
+    await AppDataSource.query('DELETE FROM products');
+    await AppDataSource.query('DELETE FROM brand');
   });
 
   const manualBrandCreation = {

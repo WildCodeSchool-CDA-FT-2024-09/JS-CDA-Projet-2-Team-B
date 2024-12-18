@@ -1,7 +1,7 @@
 import gql from 'graphql-tag';
 
 export const POST_PRODUCT = gql`
-  mutation createNewProduct($data: ProductInput!) {
+  mutation CreateNewProduct($data: ProductInput!) {
     createNewProduct(data: $data) {
       id
       reference
@@ -9,6 +9,16 @@ export const POST_PRODUCT = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
+      categories {
+        id
+        name
+      }
     }
   }
 `;
@@ -22,6 +32,16 @@ export const PUT_PRODUCT = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
+      categories {
+        id
+        name
+      }
     }
   }
 `;
