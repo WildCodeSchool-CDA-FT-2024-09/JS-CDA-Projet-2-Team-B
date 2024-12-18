@@ -29,6 +29,9 @@ class ProductInput {
   @Field()
   price: number;
 
+  @Field({ defaultValue: true })
+  isPublished: boolean;
+
   @Field(() => [Int], { nullable: true })
   categoryIds?: number[];
 }
@@ -68,6 +71,7 @@ export default class ProductResolver {
     product.shortDescription = newProduct.shortDescription;
     product.description = newProduct.description;
     product.price = newProduct.price;
+    product.isPublished = newProduct.isPublished;
 
     if (newProduct.categoryIds) {
       const categories = await Category.findBy({

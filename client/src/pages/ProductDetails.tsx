@@ -5,7 +5,10 @@ import {
   Typography,
   Chip,
   FormControl,
-  Autocomplete
+  Autocomplete,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -21,6 +24,7 @@ interface ProductDetailsReq {
   shortDescription: string;
   description: string;
   price: number;
+  isPublished: boolean;
   categories?: { id: number; name: string }[] | null;
 }
 
@@ -34,6 +38,7 @@ export default function ProductDetails() {
     shortDescription: '',
     description: '',
     price: 0,
+    isPublished: true,
     categories: []
   });
 
@@ -76,6 +81,7 @@ export default function ProductDetails() {
             shortDescription: product.shortDescription,
             description: product.description,
             price: product.price,
+            isPublished: product.isPublished,
             categoryIds: product.categories?.map((cat) => cat.id) || []
           }
         }
@@ -88,6 +94,7 @@ export default function ProductDetails() {
           shortDescription: data.updateProduct.shortDescription ?? '',
           description: data.updateProduct.description ?? '',
           price: data.updateProduct.price ?? 0,
+          isPublished: data.updateProduct.isPublished ?? true,
           categories: data.updateProduct.categories || []
         });
         setError(null);
@@ -105,6 +112,7 @@ export default function ProductDetails() {
         shortDescription: data.getProductById.shortDescription || '',
         description: data.getProductById.description || '',
         price: data.getProductById.price || 0,
+        isPublished: data.getProductById.isPublished,
         categories: data.getProductById.categories || []
       });
     } else if (fetchError) {
@@ -274,7 +282,7 @@ export default function ProductDetails() {
               sx={{
                 backgroundColor: '#f5f5f5',
                 borderRadius: '20px',
-                margin: '4px',
+                marginTop: '4px',
                 padding: '4px 8px',
                 boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                 transition: 'transform 0.2s ease-in-out',
@@ -302,6 +310,23 @@ export default function ProductDetails() {
           </Typography>
         )}
       </Box>
+      <FormControl fullWidth margin="normal">
+        <InputLabel id="status-label">Statut de publication</InputLabel>
+        <Select
+          labelId="status-label"
+          value={product.isPublished ? 'true' : 'false'}
+          onChange={(event) => {
+            setProduct((prev) => ({
+              ...prev,
+              isPublished: event.target.value === 'true'
+            }));
+          }}
+          label="Statut de publication"
+        >
+          <MenuItem value="false">Non publié</MenuItem>
+          <MenuItem value="true">Publié</MenuItem>
+        </Select>
+      </FormControl>
       <Button
         variant="contained"
         disabled={updateLoading}

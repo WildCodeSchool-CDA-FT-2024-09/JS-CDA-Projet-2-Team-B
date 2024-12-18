@@ -8,7 +8,10 @@ import {
   Box,
   FormControl,
   Autocomplete,
-  Chip
+  Chip,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import {
   GetAllProductsDocument,
@@ -24,6 +27,7 @@ export default function CreationProduct() {
     shortDescription: '',
     description: '',
     price: 0,
+    isPublished: true,
     categories: [] as Array<{ id: number; name: string }>
   });
 
@@ -47,7 +51,8 @@ export default function CreationProduct() {
       shortDescription,
       description,
       price,
-      categories
+      categories,
+      isPublished
     } = formData;
 
     if (!name || !reference) {
@@ -69,6 +74,7 @@ export default function CreationProduct() {
             shortDescription,
             description,
             price,
+            isPublished,
             categoryIds: categories.map((cat) => cat.id)
           }
         },
@@ -82,6 +88,7 @@ export default function CreationProduct() {
                 reference: string;
                 shortDescription: string;
                 description: string;
+                isPublished: boolean;
               }>;
             }>({
               query: GetAllProductsDocument
@@ -107,6 +114,7 @@ export default function CreationProduct() {
         shortDescription: '',
         description: '',
         price: 0,
+        isPublished: true,
         categories: []
       });
     } catch (err) {
@@ -250,6 +258,24 @@ export default function CreationProduct() {
               </Typography>
             )}
           </Box>
+
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="status-label">Statut de publication</InputLabel>
+            <Select
+              labelId="status-label"
+              value={formData.isPublished ? 'true' : 'false'}
+              onChange={(event) => {
+                setFormData((prev) => ({
+                  ...prev,
+                  isPublished: event.target.value === 'true'
+                }));
+              }}
+              label="Statut de publication"
+            >
+              <MenuItem value="false">Non publié</MenuItem>
+              <MenuItem value="true">Publié</MenuItem>
+            </Select>
+          </FormControl>
 
           <Button
             type="submit"

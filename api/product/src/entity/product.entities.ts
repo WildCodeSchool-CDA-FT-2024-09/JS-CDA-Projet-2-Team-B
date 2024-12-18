@@ -40,6 +40,10 @@ export class Product extends BaseEntity {
   @Min(0)
   price: number;
 
+  @Field(() => Boolean)
+  @Column({ default: true })
+  isPublished: boolean;
+
   @Field(() => [Category], { nullable: true })
   @ManyToMany(() => Category)
   @JoinTable()

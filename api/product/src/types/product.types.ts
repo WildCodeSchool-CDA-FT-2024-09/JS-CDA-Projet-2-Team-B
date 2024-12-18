@@ -21,6 +21,9 @@ export class ProductUpdateInput implements Partial<Product> {
   @Field()
   price: number;
 
+  @Field(() => Boolean)
+  isPublished: boolean;
+
   @Field(() => [Int], { nullable: true })
   categoryIds?: number[];
 }
