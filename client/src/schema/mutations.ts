@@ -9,6 +9,12 @@ export const CREATE_PRODUCT = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -35,6 +41,12 @@ export const PUT_PRODUCT = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name

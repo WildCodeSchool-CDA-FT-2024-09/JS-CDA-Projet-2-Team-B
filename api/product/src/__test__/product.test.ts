@@ -5,6 +5,7 @@ import { AppDataSource } from '../../src/data-source';
 import { Product } from 'src/entity/product.entities';
 import getSchema from '../../src/schema';
 import { ProductUpdateInput } from 'src/types/product.types';
+import { createBrand } from './helpers/test.helpers';
 
 describe('Product resolvers tests', () => {
   let schema: GraphQLSchema;
@@ -14,9 +15,8 @@ describe('Product resolvers tests', () => {
   });
 
   beforeEach(async () => {
-    await AppDataSource.query(
-      'TRUNCATE TABLE products RESTART IDENTITY CASCADE'
-    );
+    await AppDataSource.query('DELETE FROM products');
+    await AppDataSource.query('DELETE FROM brand');
   });
 
   const productOne = {
@@ -38,10 +38,17 @@ describe('Product resolvers tests', () => {
   // - - - - - - - - - -
 
   it('create a product and checks if the returned product matches the input product', async () => {
+    const brandOne = await createBrand();
+
+    const brandAddedToProduct = {
+      ...productOne,
+      brand: brandOne.id
+    };
+
     const result = (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: productOne }
+      variableValues: { data: brandAddedToProduct }
     })) as { data: { createNewProduct: Product } };
 
     expect(result.data?.createNewProduct).toMatchObject({
@@ -56,16 +63,28 @@ describe('Product resolvers tests', () => {
   // - - - - - - - - - -
 
   it('creates a product and fetches all the products', async () => {
+    const brandOne = await createBrand();
+
+    const brandAddedToProductOne = {
+      ...productOne,
+      brand: brandOne.id
+    };
+
+    const brandAddedToProductTwo = {
+      ...productTwo,
+      brand: brandOne.id
+    };
+
     (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: productOne }
+      variableValues: { data: brandAddedToProductOne }
     })) as { data: { createNewProduct: unknown } };
 
     (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: productTwo }
+      variableValues: { data: brandAddedToProductTwo }
     })) as { data: { createNewProduct: Product } };
 
     const result = (await graphql({
@@ -79,10 +98,17 @@ describe('Product resolvers tests', () => {
   // - - - - - - - - - -
 
   it('creates a product and fetches it with its id', async () => {
+    const brandOne = await createBrand();
+
+    const brandAddedToProduct = {
+      ...productOne,
+      brand: brandOne.id
+    };
+
     const resultOne = (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: productOne }
+      variableValues: { data: brandAddedToProduct }
     })) as { data: { createNewProduct: Product } };
 
     const productId = resultOne.data?.createNewProduct.id;
@@ -99,10 +125,17 @@ describe('Product resolvers tests', () => {
   });
 
   it('creates and updates a product', async () => {
+    const brandOne = await createBrand();
+
+    const brandAddedToProduct = {
+      ...productOne,
+      brand: brandOne.id
+    };
+
     const resultOne = (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: productOne }
+      variableValues: { data: brandAddedToProduct }
     })) as { data: { createNewProduct: Product } };
 
     const productId = resultOne.data?.createNewProduct.id;
@@ -113,7 +146,8 @@ describe('Product resolvers tests', () => {
       name: 'Updated product',
       shortDescription: 'Updated short description',
       description: 'Updated description',
-      price: 150.0
+      price: 150.0,
+      brand: brandOne.id
     };
 
     const resultTwo = await graphql({
@@ -122,6 +156,14 @@ describe('Product resolvers tests', () => {
       variableValues: { data: updateData }
     });
 
-    expect(resultTwo.data?.updateProduct).toEqual(updateData);
+    expect(resultTwo.data?.updateProduct).toMatchObject({
+      id: productId,
+      reference: '123456789012345',
+      name: 'Updated product',
+      shortDescription: 'Updated short description',
+      description: 'Updated description',
+      price: 150.0,
+      brand: brandOne
+    });
   });
 });
