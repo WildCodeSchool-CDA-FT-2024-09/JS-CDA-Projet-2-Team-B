@@ -96,6 +96,7 @@ export type Mutation = {
   createTag: Tag;
   deleteCategory: Scalars['Boolean']['output'];
   deleteTag: Scalars['Boolean']['output'];
+  editCharacteristic: Characteristic;
   restoreCategory: Scalars['Boolean']['output'];
   restoreTag: Scalars['Boolean']['output'];
   updateBrand: Brand;
@@ -130,6 +131,10 @@ export type MutationDeleteCategoryArgs = {
 
 export type MutationDeleteTagArgs = {
   id: Scalars['Int']['input'];
+};
+
+export type MutationEditCharacteristicArgs = {
+  characteristic: CharacteristicInput;
 };
 
 export type MutationRestoreCategoryArgs = {
@@ -215,10 +220,6 @@ export type QueryGetAllProductsArgs = {
 
 export type QueryGetAllTagsArgs = {
   includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
-};
-
-export type QueryGetBrandByIdArgs = {
-  id: Scalars['Int']['input'];
 };
 
 export type QueryGetBrandByIdArgs = {
@@ -326,17 +327,6 @@ export type CreateNewCharacteristicMutation = {
   };
 };
 
-export type GetAllCategoriesQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetAllCategoriesQuery = {
-  __typename?: 'Query';
-  getAllCategories: Array<{
-    __typename?: 'Category';
-    id: number;
-    name: string;
-  }>;
-};
-
 export type UpdateCategoryMutationVariables = Exact<{
   input: UpdateCategoryInput;
 }>;
@@ -344,6 +334,15 @@ export type UpdateCategoryMutationVariables = Exact<{
 export type UpdateCategoryMutation = {
   __typename?: 'Mutation';
   updateCategory: { __typename?: 'Category'; id: number; name: string };
+};
+
+export type DeleteCategoryMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+export type DeleteCategoryMutation = {
+  __typename?: 'Mutation';
+  deleteCategory: boolean;
 };
 
 export type EditCharacteristicMutationVariables = Exact<{
@@ -396,13 +395,6 @@ export type UpdateBrandMutation = {
     description: string;
     logo: string;
   };
-};
-
-export type GetAllTagsQueryVariables = Exact<{ [key: string]: never }>;
-
-export type GetAllTagsQuery = {
-  __typename?: 'Query';
-  getAllTags: Array<{ __typename?: 'Tag'; id: number; name: string }>;
 };
 
 export type UpdateTagMutationVariables = Exact<{
@@ -468,13 +460,7 @@ export type GetProductByIdQuery = {
       id: number;
       name: string;
     }> | null;
-    brand?: {
-      __typename?: 'Brand';
-      id: number;
-      name: string;
-      description: string;
-      logo: string;
-    } | null;
+    brand?: { __typename?: 'Brand'; id: number; name: string } | null;
   } | null;
 };
 
@@ -498,6 +484,17 @@ export type GetAllCharacteristicQuery = {
   __typename?: 'Query';
   getAllCharacteristic: Array<{
     __typename?: 'Characteristic';
+    id: number;
+    name: string;
+  }>;
+};
+
+export type GetAllCategoriesQueryVariables = Exact<{ [key: string]: never }>;
+
+export type GetAllCategoriesQuery = {
+  __typename?: 'Query';
+  getAllCategories: Array<{
+    __typename?: 'Category';
     id: number;
     name: string;
   }>;
@@ -531,13 +528,13 @@ export type GetBrandByIdQueryVariables = Exact<{
 
 export type GetBrandByIdQuery = {
   __typename?: 'Query';
-  getBrandById: {
+  getBrandById?: {
     __typename?: 'Brand';
     id: number;
     name: string;
     description: string;
     logo: string;
-  };
+  } | null;
 };
 
 export const CreateNewProductDocument = gql`
@@ -771,84 +768,6 @@ export type CreateNewCharacteristicMutationResult =
 export type CreateNewCharacteristicMutationOptions = Apollo.BaseMutationOptions<
   CreateNewCharacteristicMutation,
   CreateNewCharacteristicMutationVariables
->;
-export const GetAllCategoriesDocument = gql`
-  query GetAllCategories {
-    getAllCategories {
-      id
-      name
-    }
-  }
-`;
-
-/**
- * __useGetAllCategoriesQuery__
- *
- * To run a query within a React component, call `useGetAllCategoriesQuery` and pass it any options that fit your needs.
- * When your component renders, `useGetAllCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useGetAllCategoriesQuery({
- *   variables: {
- *   },
- * });
- */
-export function useGetAllCategoriesQuery(
-  baseOptions?: Apollo.QueryHookOptions<
-    GetAllCategoriesQuery,
-    GetAllCategoriesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useQuery<GetAllCategoriesQuery, GetAllCategoriesQueryVariables>(
-    GetAllCategoriesDocument,
-    options
-  );
-}
-export function useGetAllCategoriesLazyQuery(
-  baseOptions?: Apollo.LazyQueryHookOptions<
-    GetAllCategoriesQuery,
-    GetAllCategoriesQueryVariables
-  >
-) {
-  const options = { ...defaultOptions, ...baseOptions };
-  return Apollo.useLazyQuery<
-    GetAllCategoriesQuery,
-    GetAllCategoriesQueryVariables
-  >(GetAllCategoriesDocument, options);
-}
-export function useGetAllCategoriesSuspenseQuery(
-  baseOptions?:
-    | Apollo.SkipToken
-    | Apollo.SuspenseQueryHookOptions<
-        GetAllCategoriesQuery,
-        GetAllCategoriesQueryVariables
-      >
-) {
-  const options =
-    baseOptions === Apollo.skipToken
-      ? baseOptions
-      : { ...defaultOptions, ...baseOptions };
-  return Apollo.useSuspenseQuery<
-    GetAllCategoriesQuery,
-    GetAllCategoriesQueryVariables
-  >(GetAllCategoriesDocument, options);
-}
-export type GetAllCategoriesQueryHookResult = ReturnType<
-  typeof useGetAllCategoriesQuery
->;
-export type GetAllCategoriesLazyQueryHookResult = ReturnType<
-  typeof useGetAllCategoriesLazyQuery
->;
-export type GetAllCategoriesSuspenseQueryHookResult = ReturnType<
-  typeof useGetAllCategoriesSuspenseQuery
->;
-export type GetAllCategoriesQueryResult = Apollo.QueryResult<
-  GetAllCategoriesQuery,
-  GetAllCategoriesQueryVariables
 >;
 export const UpdateCategoryDocument = gql`
   mutation UpdateCategory($input: UpdateCategoryInput!) {
@@ -1362,8 +1281,6 @@ export const GetProductByIdDocument = gql`
       brand {
         id
         name
-        description
-        logo
       }
     }
   }
@@ -1599,6 +1516,84 @@ export type GetAllCharacteristicSuspenseQueryHookResult = ReturnType<
 export type GetAllCharacteristicQueryResult = Apollo.QueryResult<
   GetAllCharacteristicQuery,
   GetAllCharacteristicQueryVariables
+>;
+export const GetAllCategoriesDocument = gql`
+  query GetAllCategories {
+    getAllCategories {
+      id
+      name
+    }
+  }
+`;
+
+/**
+ * __useGetAllCategoriesQuery__
+ *
+ * To run a query within a React component, call `useGetAllCategoriesQuery` and pass it any options that fit your needs.
+ * When your component renders, `useGetAllCategoriesQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useGetAllCategoriesQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useGetAllCategoriesQuery(
+  baseOptions?: Apollo.QueryHookOptions<
+    GetAllCategoriesQuery,
+    GetAllCategoriesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useQuery<GetAllCategoriesQuery, GetAllCategoriesQueryVariables>(
+    GetAllCategoriesDocument,
+    options
+  );
+}
+export function useGetAllCategoriesLazyQuery(
+  baseOptions?: Apollo.LazyQueryHookOptions<
+    GetAllCategoriesQuery,
+    GetAllCategoriesQueryVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useLazyQuery<
+    GetAllCategoriesQuery,
+    GetAllCategoriesQueryVariables
+  >(GetAllCategoriesDocument, options);
+}
+export function useGetAllCategoriesSuspenseQuery(
+  baseOptions?:
+    | Apollo.SkipToken
+    | Apollo.SuspenseQueryHookOptions<
+        GetAllCategoriesQuery,
+        GetAllCategoriesQueryVariables
+      >
+) {
+  const options =
+    baseOptions === Apollo.skipToken
+      ? baseOptions
+      : { ...defaultOptions, ...baseOptions };
+  return Apollo.useSuspenseQuery<
+    GetAllCategoriesQuery,
+    GetAllCategoriesQueryVariables
+  >(GetAllCategoriesDocument, options);
+}
+export type GetAllCategoriesQueryHookResult = ReturnType<
+  typeof useGetAllCategoriesQuery
+>;
+export type GetAllCategoriesLazyQueryHookResult = ReturnType<
+  typeof useGetAllCategoriesLazyQuery
+>;
+export type GetAllCategoriesSuspenseQueryHookResult = ReturnType<
+  typeof useGetAllCategoriesSuspenseQuery
+>;
+export type GetAllCategoriesQueryResult = Apollo.QueryResult<
+  GetAllCategoriesQuery,
+  GetAllCategoriesQueryVariables
 >;
 export const GetAllTagsDocument = gql`
   query GetAllTags {
