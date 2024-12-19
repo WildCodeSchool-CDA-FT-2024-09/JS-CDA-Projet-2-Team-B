@@ -106,4 +106,24 @@ export default class ProductResolver {
 
     return await product.save();
   }
+
+  @Mutation(() => Boolean)
+  async deleteProduct(@Arg('id', () => Int) id: number): Promise<boolean> {
+    try {
+      const product = await Product.findOne({
+        where: { id }
+      });
+
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      await product.softRemove();
+
+      return true;
+    } catch (error) {
+      console.error('Error while deleting product:', error);
+      throw error;
+    }
+  }
 }
