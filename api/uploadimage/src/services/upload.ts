@@ -31,18 +31,14 @@ export const verifyFileExistence = async (filePath: string) => {
   }
 };
 
-export const imageByProduct = async (
-  imageId: number,
-  productId: string,
-  isMain: boolean
-) => {
+export const imageByProduct = async (imageId: number, productId: string) => {
   const query = `
-    INSERT INTO products_images (product_id, image_id, ismain)
-    VALUES ($1, $2, $3);
+    INSERT INTO products_images (product_id, image_id)
+    VALUES ($1, $2);
   `;
 
   try {
-    await pool.query(query, [productId, imageId, isMain]);
+    await pool.query(query, [productId, imageId]);
     console.info('Lien produit-image créé');
   } catch (error) {
     console.error('Erreur lors de la création du lien produit-image :', error);

@@ -14,7 +14,7 @@ router.post(
   multer.single('image'),
   async (req: Request, res: Response): Promise<void> => {
     console.info('Headers:', req.headers);
-    console.info('Body:', req.body); // product_id, isMain
+    console.info('Body:', req.body);
     console.info('Received file:', req.file);
 
     const { product_id, isMain } = req.body;
@@ -27,9 +27,9 @@ router.post(
     const filePath = `/${req.file.filename}`;
 
     try {
-      await verifyFileExistence(req.file.path); // Pas de doublon
-      const savedImage = await saveImageToDatabase(filePath);
-      await imageByProduct(savedImage.id, product_id, isMain); // ISNERT INTO product_image(product, image) VALUES ($1, $2), [ imadeId, productID]
+      await verifyFileExistence(req.file.path);
+      const savedImage = await saveImageToDatabase(filePath, isMain);
+      await imageByProduct(savedImage.id, product_id);
 
       res.status(200).json({
         status: 'success',
@@ -38,7 +38,7 @@ router.post(
       return;
     } catch (error) {
       console.error('Error:', error instanceof Error ? error.message : error);
-      res.status(500).json({ error: 'Internal Server Error' });
+      res.sendStatus(500);
       return;
     }
   }
