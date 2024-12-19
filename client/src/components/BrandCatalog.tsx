@@ -4,7 +4,9 @@ import { useEffect, useState } from 'react';
 import BrandCard from './BrandCard';
 
 export default function BrandCatalog() {
-  const { loading, error, data } = useGetAllBrandsQuery();
+  const { loading, error, data, refetch } = useGetAllBrandsQuery({
+    variables: { includeDeleted: true }
+  });
   const [brands, setBrands] = useState<Brand[]>([]);
 
   useEffect(() => {
@@ -33,6 +35,8 @@ export default function BrandCatalog() {
             name={brand.name}
             description={brand.description}
             logo={brand.logo}
+            deletedAt={brand.deletedAt as Date | null}
+            refetch={refetch}
           />
         ))}
       </Grid>

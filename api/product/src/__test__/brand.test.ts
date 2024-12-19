@@ -1,7 +1,7 @@
 import { graphql, GraphQLSchema, print } from 'graphql';
 import { AppDataSource } from '../data-source';
 import getSchema from '../schema';
-import { POST_BRAND, PUT_BRAND } from './schemas/mutations';
+import { DEACTIVATE_BRAND, POST_BRAND, PUT_BRAND } from './schemas/mutations';
 import { Brand } from '../../src/entity/brand.entities';
 import { createBrand } from './helpers/test.helpers';
 import { GET_ALL_BRANDS } from './schemas/queries';
@@ -67,5 +67,17 @@ describe('Brand resolvers tests', () => {
     })) as { data: { updateBrand: Brand } };
 
     expect(updatedBrand.data?.updateBrand).toMatchObject(newData);
+  });
+
+  it('creates a brand and deactivates it', async () => {
+    const brand = await createBrand();
+
+    const deactivatedBrand = (await graphql({
+      schema: schema,
+      source: print(DEACTIVATE_BRAND),
+      variableValues: { id: brand.id }
+    })) as { data: { deactivateBrand: Brand } };
+
+    expect(deactivatedBrand.data?.deactivateBrand.deletedAt).not.toBe(null);
   });
 });

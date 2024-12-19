@@ -29,15 +29,17 @@ export type Scalars = {
   Int: { input: number; output: number };
   Float: { input: number; output: number };
   DateTime: { input: undefined; output: undefined };
+  DateTimeISO: { input: undefined; output: undefined };
 };
 
 export type Brand = {
   __typename?: 'Brand';
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['Float']['output'];
   logo: Scalars['String']['output'];
   name: Scalars['String']['output'];
-  products: Array<Product>;
+  products?: Maybe<Array<Product>>;
 };
 
 export type BrandCreationInput = {
@@ -47,6 +49,7 @@ export type BrandCreationInput = {
 };
 
 export type BrandUpdateInput = {
+  deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Float']['input'];
   logo?: InputMaybe<Scalars['String']['input']>;
@@ -95,6 +98,7 @@ export type Mutation = {
   createNewCharacteristic: Characteristic;
   createNewProduct: Product;
   createTag: Tag;
+  deactivateBrand: Scalars['Boolean']['output'];
   deleteCategory: Scalars['Boolean']['output'];
   deleteTag: Scalars['Boolean']['output'];
   disableCharacteristic: Scalars['Boolean']['output'];
@@ -126,6 +130,10 @@ export type MutationCreateNewProductArgs = {
 
 export type MutationCreateTagArgs = {
   input: CreateTagInput;
+};
+
+export type MutationDeactivateBrandArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type MutationDeleteCategoryArgs = {
@@ -221,6 +229,7 @@ export type Query = {
 };
 
 export type QueryGetAllBrandsArgs = {
+  includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -242,6 +251,7 @@ export type QueryGetAllTagsArgs = {
 
 export type QueryGetBrandByIdArgs = {
   id: Scalars['Int']['input'];
+  includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type QueryGetProductByIdArgs = {
@@ -432,6 +442,15 @@ export type DeleteTagMutationVariables = Exact<{
 
 export type DeleteTagMutation = { __typename?: 'Mutation'; deleteTag: boolean };
 
+export type DeactivateBrandMutationVariables = Exact<{
+  deactivateBrandId: Scalars['Int']['input'];
+}>;
+
+export type DeactivateBrandMutation = {
+  __typename?: 'Mutation';
+  deactivateBrand: boolean;
+};
+
 export type DisableCharactertisticMutationVariables = Exact<{
   disableCharacteristicId: Scalars['Int']['input'];
 }>;
@@ -450,11 +469,11 @@ export type GetAllProductsQuery = {
   getAllProducts: Array<{
     __typename?: 'Product';
     id: number;
-    reference: string;
     name: string;
+    price?: number | null;
+    reference: string;
     shortDescription?: string | null;
     description?: string | null;
-    price?: number | null;
     isPublished: boolean;
     brand?: {
       __typename?: 'Brand';
@@ -491,7 +510,12 @@ export type GetProductByIdQuery = {
       id: number;
       name: string;
     }> | null;
-    brand?: { __typename?: 'Brand'; id: number; name: string } | null;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      deletedAt?: undefined | null;
+    } | null;
   } | null;
 };
 
@@ -540,6 +564,7 @@ export type GetAllTagsQuery = {
 
 export type GetAllBrandsQueryVariables = Exact<{
   search?: InputMaybe<Scalars['String']['input']>;
+  includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 export type GetAllBrandsQuery = {
@@ -550,6 +575,7 @@ export type GetAllBrandsQuery = {
     name: string;
     description: string;
     logo: string;
+    deletedAt?: undefined | null;
   }>;
 };
 
@@ -565,6 +591,7 @@ export type GetBrandByIdQuery = {
     name: string;
     description: string;
     logo: string;
+    deletedAt?: undefined | null;
   } | null;
 };
 
@@ -1205,6 +1232,54 @@ export type DeleteTagMutationOptions = Apollo.BaseMutationOptions<
   DeleteTagMutation,
   DeleteTagMutationVariables
 >;
+export const DeactivateBrandDocument = gql`
+  mutation DeactivateBrand($deactivateBrandId: Int!) {
+    deactivateBrand(id: $deactivateBrandId)
+  }
+`;
+export type DeactivateBrandMutationFn = Apollo.MutationFunction<
+  DeactivateBrandMutation,
+  DeactivateBrandMutationVariables
+>;
+
+/**
+ * __useDeactivateBrandMutation__
+ *
+ * To run a mutation, you first call `useDeactivateBrandMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeactivateBrandMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deactivateBrandMutation, { data, loading, error }] = useDeactivateBrandMutation({
+ *   variables: {
+ *      deactivateBrandId: // value for 'deactivateBrandId'
+ *   },
+ * });
+ */
+export function useDeactivateBrandMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeactivateBrandMutation,
+    DeactivateBrandMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeactivateBrandMutation,
+    DeactivateBrandMutationVariables
+  >(DeactivateBrandDocument, options);
+}
+export type DeactivateBrandMutationHookResult = ReturnType<
+  typeof useDeactivateBrandMutation
+>;
+export type DeactivateBrandMutationResult =
+  Apollo.MutationResult<DeactivateBrandMutation>;
+export type DeactivateBrandMutationOptions = Apollo.BaseMutationOptions<
+  DeactivateBrandMutation,
+  DeactivateBrandMutationVariables
+>;
 export const DisableCharactertisticDocument = gql`
   mutation DisableCharactertistic($disableCharacteristicId: Int!) {
     disableCharacteristic(id: $disableCharacteristicId)
@@ -1257,8 +1332,9 @@ export const GetAllProductsDocument = gql`
   query GetAllProducts($search: String) {
     getAllProducts(search: $search) {
       id
-      reference
       name
+      price
+      reference
       shortDescription
       description
       price
@@ -1364,6 +1440,7 @@ export const GetProductByIdDocument = gql`
       brand {
         id
         name
+        deletedAt
       }
     }
   }
@@ -1752,12 +1829,13 @@ export type GetAllTagsQueryResult = Apollo.QueryResult<
   GetAllTagsQueryVariables
 >;
 export const GetAllBrandsDocument = gql`
-  query GetAllBrands($search: String) {
-    getAllBrands(search: $search) {
+  query getAllBrands($search: String, $includeDeleted: Boolean) {
+    getAllBrands(search: $search, includeDeleted: $includeDeleted) {
       id
       name
       description
       logo
+      deletedAt
     }
   }
 `;
@@ -1775,6 +1853,7 @@ export const GetAllBrandsDocument = gql`
  * const { data, loading, error } = useGetAllBrandsQuery({
  *   variables: {
  *      search: // value for 'search'
+ *      includeDeleted: // value for 'includeDeleted'
  *   },
  * });
  */
@@ -1833,12 +1912,13 @@ export type GetAllBrandsQueryResult = Apollo.QueryResult<
   GetAllBrandsQueryVariables
 >;
 export const GetBrandByIdDocument = gql`
-  query GetBrandById($getBrandByIdId: Int!) {
-    getBrandById(id: $getBrandByIdId) {
+  query getBrandById($getBrandByIdId: Int!) {
+    getBrandById(id: $getBrandByIdId, includeDeleted: true) {
       id
       name
       description
       logo
+      deletedAt
     }
   }
 `;

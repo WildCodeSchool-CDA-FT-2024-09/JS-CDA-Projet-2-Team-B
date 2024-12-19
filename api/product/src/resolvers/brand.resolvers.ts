@@ -7,19 +7,27 @@ import { Arg, Int, Mutation, Query, Resolver } from 'type-graphql';
 export default class BrandResolver {
   @Query(() => [Brand])
   async getAllBrands(
-    @Arg('search', { nullable: true }) search: string
+    @Arg('search', { nullable: true }) search: string,
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
   ): Promise<Brand[]> {
     const query = {
-      where: search ? { name: ILike(`%${search}%`) } : {}
+      where: search ? { name: ILike(`%${search}%`) } : {},
+      withDeleted: includeDeleted
     };
 
     return Brand.find(query);
   }
 
   @Query(() => Brand, { nullable: true })
-  async getBrandById(@Arg('id', () => Int) id: number): Promise<Brand | null> {
+  async getBrandById(
+    @Arg('id', () => Int) id: number,
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
+  ): Promise<Brand | null> {
     return await Brand.findOne({
-      where: { id }
+      where: { id },
+      withDeleted: includeDeleted
     });
   }
 
@@ -61,5 +69,28 @@ export default class BrandResolver {
     Object.assign(brand, newDataBrand);
 
     return await brand.save();
+  }
+
+  @Mutation(() => Boolean)
+  async deactivateBrand(@Arg('id', () => Int) id: number): Promise<boolean> {
+    try {
+      const brand = await Brand.findOne({
+        where: { id }
+      });
+
+      if (!brand) {
+        throw new Error(`La marque avec l'id ${id} n'a pas été trouvée.`);
+      }
+
+      await brand.softRemove();
+
+      return true;
+    } catch (error) {
+      console.error(
+        `Erreur lors de la suppression de la marque ayant pour id : ${id}`,
+        error
+      );
+      throw error;
+    }
   }
 }
