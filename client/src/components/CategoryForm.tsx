@@ -46,46 +46,48 @@ const CategoryForm = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <Card sx={{ maxWidth: 900, margin: 1, boxShadow: 4 }}>
+    <Card sx={{ width: 900, margin: 1, boxShadow: 4 }}>
       <CardContent>
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
           Catégories
         </Typography>
-
         <Box
           component="form"
           onSubmit={handleSubmit}
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 2,
-            marginBottom: 2
+            justifyContent: 'space-between'
           }}
         >
-          <Typography sx={{ minWidth: 'fit-content' }}>
-            Ajouter une catégorie :
-          </Typography>
-          <TextField
-            sx={{ maxWidth: '300px', marginLeft: '25px' }}
-            placeholder="Nom"
-            variant="outlined"
-            size="small"
-            value={newCategoryName}
-            onChange={(e) => setNewCategoryName(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            type="submit"
-            sx={{
-              padding: '4px 10px',
-              borderRadius: '5px',
-              backgroundColor: 'green'
-            }}
-          >
-            Ajouter +
-          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography sx={{ minWidth: 'fit-content' }}>
+              Ajouter une catégorie :
+            </Typography>
+            <TextField
+              sx={{ marginLeft: '25px' }}
+              placeholder="Nom"
+              variant="outlined"
+              size="small"
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
+            />
+          </Box>
+          <Box>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{
+                padding: '4px 10px',
+                borderRadius: '5px',
+                backgroundColor: 'green',
+                marginRight: 6
+              }}
+            >
+              Ajouter +
+            </Button>
+          </Box>
         </Box>
-
         <Box
           sx={{
             display: 'flex',

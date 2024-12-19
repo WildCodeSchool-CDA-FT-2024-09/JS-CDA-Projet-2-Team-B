@@ -37,7 +37,7 @@ export default function CharacteristicForm() {
   };
 
   return (
-    <Card sx={{ maxWidth: 900, margin: 1, boxShadow: 4 }}>
+    <Card sx={{ width: 900, margin: 1, boxShadow: 4 }}>
       <CardContent>
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
           Caractéristiques
@@ -48,32 +48,36 @@ export default function CharacteristicForm() {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            gap: 2,
-            marginBottom: 2
+            justifyContent: 'space-between'
           }}
         >
-          <Typography sx={{ minWidth: 'fit-content' }}>
-            Ajouter une caractéristique :
-          </Typography>
-          <TextField
-            sx={{ maxWidth: '300px', marginLeft: '25px' }}
-            placeholder="Nom"
-            variant="outlined"
-            size="small"
-            value={characteristic}
-            onChange={(e) => setCaracteristic(e.target.value)}
-          />
-          <Button
-            variant="contained"
-            type="submit"
-            sx={{
-              backgroundColor: 'green',
-              padding: '4px 10px',
-              borderRadius: '5px'
-            }}
-          >
-            Ajouter +
-          </Button>
+          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Typography sx={{ minWidth: 'fit-content' }}>
+              Ajouter une caractéristique :
+            </Typography>
+            <TextField
+              sx={{ marginLeft: '25px' }}
+              placeholder="Nom"
+              variant="outlined"
+              size="small"
+              value={characteristic}
+              onChange={(e) => setCaracteristic(e.target.value)}
+            />
+          </Box>
+          <Box>
+            <Button
+              variant="contained"
+              type="submit"
+              sx={{
+                backgroundColor: 'green',
+                padding: '4px 10px',
+                borderRadius: '5px',
+                marginRight: 6
+              }}
+            >
+              Ajouter +
+            </Button>
+          </Box>
         </Box>
         <Box
           sx={{
