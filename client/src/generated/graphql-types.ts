@@ -97,7 +97,9 @@ export type Mutation = {
   createTag: Tag;
   deleteCategory: Scalars['Boolean']['output'];
   deleteTag: Scalars['Boolean']['output'];
+  disableCharacteristic: Scalars['Boolean']['output'];
   editCharacteristic: Characteristic;
+  enableCharacteristic: Scalars['Boolean']['output'];
   restoreCategory: Scalars['Boolean']['output'];
   restoreTag: Scalars['Boolean']['output'];
   updateBrand: Brand;
@@ -134,8 +136,16 @@ export type MutationDeleteTagArgs = {
   id: Scalars['Int']['input'];
 };
 
+export type MutationDisableCharacteristicArgs = {
+  id: Scalars['Int']['input'];
+};
+
 export type MutationEditCharacteristicArgs = {
   characteristic: CharacteristicInput;
+};
+
+export type MutationEnableCharacteristicArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type MutationRestoreCategoryArgs = {
