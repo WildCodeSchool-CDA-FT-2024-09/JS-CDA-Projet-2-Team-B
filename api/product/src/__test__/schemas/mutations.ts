@@ -67,3 +67,9 @@ export const PUT_BRAND = gql`
     }
   }
 `;
+
+export const DEACTIVATE_BRAND = gql`
+  mutation DeactivateBrand($deactivateBrandId: Int!) {
+    deactivateBrand(id: $deactivateBrandId)
+  }
+`;

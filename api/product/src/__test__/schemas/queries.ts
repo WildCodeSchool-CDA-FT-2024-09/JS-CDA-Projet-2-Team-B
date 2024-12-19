@@ -45,6 +45,7 @@ export const GET_ALL_BRANDS = gql`
       name
       description
       logo
+      deletedAt
     }
   }
 `;
@@ -56,6 +57,7 @@ export const GET_BRAND_BY_ID = gql`
       name
       description
       logo
+      deletedAt
     }
   }
 `;
