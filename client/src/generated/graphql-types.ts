@@ -37,6 +37,7 @@ export type Brand = {
   id: Scalars['Float']['output'];
   logo: Scalars['String']['output'];
   name: Scalars['String']['output'];
+  products: Array<Product>;
 };
 
 export type BrandCreationInput = {
@@ -96,7 +97,6 @@ export type Mutation = {
   createTag: Tag;
   deleteCategory: Scalars['Boolean']['output'];
   deleteTag: Scalars['Boolean']['output'];
-  disableCharacteristic: Scalars['Boolean']['output'];
   editCharacteristic: Characteristic;
   restoreCategory: Scalars['Boolean']['output'];
   restoreTag: Scalars['Boolean']['output'];
@@ -134,10 +134,6 @@ export type MutationDeleteTagArgs = {
   id: Scalars['Int']['input'];
 };
 
-export type MutationDisableCharacteristicArgs = {
-  id: Scalars['Int']['input'];
-};
-
 export type MutationEditCharacteristicArgs = {
   characteristic: CharacteristicInput;
 };
@@ -168,6 +164,7 @@ export type MutationUpdateTagArgs = {
 
 export type Product = {
   __typename?: 'Product';
+  brand?: Maybe<Brand>;
   categories?: Maybe<Array<Category>>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
@@ -178,6 +175,7 @@ export type Product = {
 };
 
 export type ProductInput = {
+  brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -187,6 +185,7 @@ export type ProductInput = {
 };
 
 export type ProductUpdateInput = {
+  brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
@@ -204,8 +203,12 @@ export type Query = {
   getAllImages: Array<Image>;
   getAllProducts: Array<Product>;
   getAllTags: Array<Tag>;
-  getBrandById: Brand;
+  getBrandById?: Maybe<Brand>;
   getProductById?: Maybe<Product>;
+};
+
+export type QueryGetAllBrandsArgs = {
+  search?: InputMaybe<Scalars['String']['input']>;
 };
 
 export type QueryGetAllCategoriesArgs = {
@@ -263,6 +266,13 @@ export type CreateNewProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+    } | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -294,6 +304,13 @@ export type UpdateProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+    } | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -418,11 +435,18 @@ export type GetAllProductsQuery = {
   getAllProducts: Array<{
     __typename?: 'Product';
     id: number;
-    name: string;
-    price?: number | null;
     reference: string;
+    name: string;
     shortDescription?: string | null;
     description?: string | null;
+    price?: number | null;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+    } | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -450,6 +474,7 @@ export type GetProductByIdQuery = {
       id: number;
       name: string;
     }> | null;
+    brand?: { __typename?: 'Brand'; id: number; name: string } | null;
   } | null;
 };
 
@@ -496,7 +521,9 @@ export type GetAllTagsQuery = {
   getAllTags: Array<{ __typename?: 'Tag'; id: number; name: string }>;
 };
 
-export type GetAllBrandsQueryVariables = Exact<{ [key: string]: never }>;
+export type GetAllBrandsQueryVariables = Exact<{
+  search?: InputMaybe<Scalars['String']['input']>;
+}>;
 
 export type GetAllBrandsQuery = {
   __typename?: 'Query';
@@ -515,13 +542,13 @@ export type GetBrandByIdQueryVariables = Exact<{
 
 export type GetBrandByIdQuery = {
   __typename?: 'Query';
-  getBrandById: {
+  getBrandById?: {
     __typename?: 'Brand';
     id: number;
     name: string;
     description: string;
     logo: string;
-  };
+  } | null;
 };
 
 export const CreateNewProductDocument = gql`
@@ -533,6 +560,12 @@ export const CreateNewProductDocument = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -643,6 +676,12 @@ export const UpdateProductDocument = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -1199,11 +1238,17 @@ export const GetAllProductsDocument = gql`
   query GetAllProducts($search: String) {
     getAllProducts(search: $search) {
       id
-      name
-      price
       reference
+      name
       shortDescription
       description
+      price
+      brand {
+        id
+        name
+        description
+        logo
+      }
       categories {
         id
         name
@@ -1292,6 +1337,10 @@ export const GetProductByIdDocument = gql`
       description
       price
       categories {
+        id
+        name
+      }
+      brand {
         id
         name
       }
@@ -1682,8 +1731,8 @@ export type GetAllTagsQueryResult = Apollo.QueryResult<
   GetAllTagsQueryVariables
 >;
 export const GetAllBrandsDocument = gql`
-  query GetAllBrands {
-    getAllBrands {
+  query GetAllBrands($search: String) {
+    getAllBrands(search: $search) {
       id
       name
       description
@@ -1704,6 +1753,7 @@ export const GetAllBrandsDocument = gql`
  * @example
  * const { data, loading, error } = useGetAllBrandsQuery({
  *   variables: {
+ *      search: // value for 'search'
  *   },
  * });
  */
