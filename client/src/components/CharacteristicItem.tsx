@@ -1,6 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
-import { useEditCharacteristicMutation } from '../generated/graphql-types';
+import {
+  useEditCharacteristicMutation,
+  useDisableCharactertisticMutation
+} from '../generated/graphql-types';
 import { Box, IconButton, TextField, Typography } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 type CharacteristicItemProps = {
   id: number;
@@ -17,6 +21,7 @@ const CharacteristicItem = ({
   const [editName, SetEditName] = useState(name);
   const [editCharacteristic] = useEditCharacteristicMutation();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [disableCharacteristic] = useDisableCharactertisticMutation();
 
   const handleSaveEdit = useCallback(async () => {
     const newName = editName.trim();
@@ -60,6 +65,19 @@ const CharacteristicItem = ({
       document.removeEventListener('mousedown', handleClickStop);
     };
   }, [editing, handleSaveEdit]);
+
+  const handleDisable = async () => {
+    try {
+      const response = await disableCharacteristic({
+        variables: { disableCharacteristicId: id }
+      });
+      if (response.data?.disableCharacteristic) {
+        onRefetch();
+      }
+    } catch (err) {
+      console.error(err);
+    }
+  };
 
   return (
     <Box
@@ -112,6 +130,7 @@ const CharacteristicItem = ({
         size="small"
         onClick={(e) => {
           e.stopPropagation();
+          handleDisable();
         }}
         sx={{
           color: '#d32f2f',
@@ -119,7 +138,9 @@ const CharacteristicItem = ({
             backgroundColor: 'rgba(211, 47, 47, 0.1)'
           }
         }}
-      ></IconButton>
+      >
+        <DeleteIcon fontSize="small" />
+      </IconButton>
     </Box>
   );
 };

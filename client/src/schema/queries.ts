@@ -9,6 +9,14 @@ export const GET_PRODUCT = gql`
       reference
       shortDescription
       description
+      price
+      brand {
+        id
+        name
+        description
+        logo
+      }
+      isPublished
       categories {
         id
         name
@@ -26,6 +34,7 @@ export const GET_PRODUCT_BY_ID = gql`
       shortDescription
       description
       price
+      isPublished
       categories {
         id
         name

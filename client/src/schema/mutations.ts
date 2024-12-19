@@ -15,6 +15,7 @@ export const CREATE_PRODUCT = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -47,6 +48,7 @@ export const PUT_PRODUCT = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -136,5 +138,11 @@ export const DELETE_TAG = gql`
 export const DEACTIVATE_BRAND = gql`
   mutation DeactivateBrand($deactivateBrandId: Int!) {
     deactivateBrand(id: $deactivateBrandId)
+  }
+`;
+
+export const DISABLE_CHARACTERISTIC = gql`
+  mutation DisableCharactertistic($disableCharacteristicId: Int!) {
+    disableCharacteristic(id: $disableCharacteristicId)
   }
 `;
