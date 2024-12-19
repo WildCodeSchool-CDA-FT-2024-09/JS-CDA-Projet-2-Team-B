@@ -8,12 +8,16 @@ import {
   Autocomplete,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  FormControlLabel,
+  styled,
+  Switch
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   GetAllBrandsDocument,
+  useDeleteProductMutation,
   useGetAllCategoriesQuery,
   useGetProductByIdQuery,
   useUpdateProductMutation
@@ -29,7 +33,26 @@ interface ProductDetailsReq {
   isPublished: boolean;
   categories?: { id: number; name: string }[] | null;
   brand: { id: number; name: string } | null;
+  isActive: boolean;
 }
+
+const CustomSwitch = styled(Switch)(() => ({
+  '& .MuiSwitch-switchBase.Mui-checked': {
+    color: '#4caf50',
+    '&:hover': {
+      backgroundColor: 'rgba(76, 175, 80, 0.08)'
+    }
+  },
+  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
+    backgroundColor: '#4caf50'
+  },
+  '& .MuiSwitch-switchBase:not(.Mui-checked)': {
+    color: '#f44336'
+  },
+  '& .MuiSwitch-switchBase:not(.Mui-checked) + .MuiSwitch-track': {
+    backgroundColor: '#f44336'
+  }
+}));
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
@@ -37,6 +60,8 @@ export default function ProductDetails() {
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
   const [brandInputValue, setBrandInputValue] = useState('');
+  const [deleteProduct] = useDeleteProductMutation();
+
   const [brandOptions, setBrandOptions] = useState<
     Array<{ id: number; name: string }>
   >([]);
@@ -50,7 +75,8 @@ export default function ProductDetails() {
     price: 0,
     isPublished: true,
     categories: [],
-    brand: null
+    brand: null,
+    isActive: true
   });
 
   const {
@@ -110,6 +136,12 @@ export default function ProductDetails() {
         }
       });
 
+      if (!product.isActive) {
+        await deleteProduct({
+          variables: { id: parseInt(id!) }
+        });
+      }
+
       if (data?.updateProduct) {
         setProduct({
           name: data.updateProduct.name,
@@ -119,7 +151,8 @@ export default function ProductDetails() {
           price: data.updateProduct.price ?? 0,
           isPublished: data.updateProduct.isPublished ?? true,
           categories: data.updateProduct.categories || [],
-          brand: data.updateProduct.brand as { id: number; name: string }
+          brand: data.updateProduct.brand as { id: number; name: string },
+          isActive: product.isActive
         });
         setError(null);
       }
@@ -138,7 +171,8 @@ export default function ProductDetails() {
         price: data.getProductById.price || 0,
         isPublished: data.getProductById.isPublished,
         categories: data.getProductById.categories || [],
-        brand: data.getProductById.brand as { id: number; name: string }
+        brand: data.getProductById.brand as { id: number; name: string },
+        isActive: true
       });
     } else if (fetchError) {
       setError(fetchError.message);
@@ -376,6 +410,31 @@ export default function ProductDetails() {
           <MenuItem value="true">Publié</MenuItem>
         </Select>
       </FormControl>
+      <FormControlLabel
+        control={
+          <CustomSwitch
+            checked={product.isActive}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setProduct((prev) => ({
+                ...prev,
+                isActive: e.target.checked
+              }));
+            }}
+          />
+        }
+        label={
+          <Typography
+            sx={{
+              color: product.isActive ? 'success.main' : 'error.main',
+              fontWeight: 'bold'
+            }}
+          >
+            {product.isActive ? 'Activé' : 'Désactivé'}
+          </Typography>
+        }
+        sx={{ mt: 2, mb: 2 }}
+      />
+
       <Button
         variant="contained"
         disabled={updateLoading}
