@@ -20,6 +20,9 @@ export class ProductInput {
   @Field(() => [Int], { nullable: true })
   categoryIds?: number[];
 
+  @Field(() => Boolean)
+  isPublished: boolean;
+
   @Field(() => Number, { nullable: true })
   brand: number;
 }
@@ -43,6 +46,9 @@ export class ProductUpdateInput {
 
   @Field()
   price: number;
+
+  @Field(() => Boolean)
+  isPublished: boolean;
 
   @Field(() => [Int], { nullable: true })
   categoryIds?: number[];

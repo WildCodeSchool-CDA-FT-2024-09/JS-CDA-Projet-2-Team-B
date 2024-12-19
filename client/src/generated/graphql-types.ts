@@ -63,6 +63,7 @@ export type Category = {
 
 export type Characteristic = {
   __typename?: 'Characteristic';
+  deletedDate?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
 };
@@ -96,7 +97,9 @@ export type Mutation = {
   createTag: Tag;
   deleteCategory: Scalars['Boolean']['output'];
   deleteTag: Scalars['Boolean']['output'];
+  disableCharacteristic: Scalars['Boolean']['output'];
   editCharacteristic: Characteristic;
+  enableCharacteristic: Scalars['Boolean']['output'];
   restoreCategory: Scalars['Boolean']['output'];
   restoreTag: Scalars['Boolean']['output'];
   updateBrand: Brand;
@@ -133,8 +136,16 @@ export type MutationDeleteTagArgs = {
   id: Scalars['Int']['input'];
 };
 
+export type MutationDisableCharacteristicArgs = {
+  id: Scalars['Int']['input'];
+};
+
 export type MutationEditCharacteristicArgs = {
   characteristic: CharacteristicInput;
+};
+
+export type MutationEnableCharacteristicArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type MutationRestoreCategoryArgs = {
@@ -167,6 +178,7 @@ export type Product = {
   categories?: Maybe<Array<Category>>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
+  isPublished: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   price?: Maybe<Scalars['Float']['output']>;
   reference: Scalars['String']['output'];
@@ -177,6 +189,7 @@ export type ProductInput = {
   brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
+  isPublished: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
@@ -188,6 +201,7 @@ export type ProductUpdateInput = {
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
+  isPublished: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
@@ -212,6 +226,10 @@ export type QueryGetAllBrandsArgs = {
 
 export type QueryGetAllCategoriesArgs = {
   includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
+};
+
+export type QueryGetAllCharacteristicArgs = {
+  isDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type QueryGetAllProductsArgs = {
@@ -261,6 +279,7 @@ export type CreateNewProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    isPublished: boolean;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -299,6 +318,7 @@ export type UpdateProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    isPublished: boolean;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -412,6 +432,15 @@ export type DeleteTagMutationVariables = Exact<{
 
 export type DeleteTagMutation = { __typename?: 'Mutation'; deleteTag: boolean };
 
+export type DisableCharactertisticMutationVariables = Exact<{
+  disableCharacteristicId: Scalars['Int']['input'];
+}>;
+
+export type DisableCharactertisticMutation = {
+  __typename?: 'Mutation';
+  disableCharacteristic: boolean;
+};
+
 export type GetAllProductsQueryVariables = Exact<{
   search?: InputMaybe<Scalars['String']['input']>;
 }>;
@@ -426,6 +455,7 @@ export type GetAllProductsQuery = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    isPublished: boolean;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -455,6 +485,7 @@ export type GetProductByIdQuery = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    isPublished: boolean;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -552,6 +583,7 @@ export const CreateNewProductDocument = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -668,6 +700,7 @@ export const UpdateProductDocument = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -1172,6 +1205,54 @@ export type DeleteTagMutationOptions = Apollo.BaseMutationOptions<
   DeleteTagMutation,
   DeleteTagMutationVariables
 >;
+export const DisableCharactertisticDocument = gql`
+  mutation DisableCharactertistic($disableCharacteristicId: Int!) {
+    disableCharacteristic(id: $disableCharacteristicId)
+  }
+`;
+export type DisableCharactertisticMutationFn = Apollo.MutationFunction<
+  DisableCharactertisticMutation,
+  DisableCharactertisticMutationVariables
+>;
+
+/**
+ * __useDisableCharactertisticMutation__
+ *
+ * To run a mutation, you first call `useDisableCharactertisticMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDisableCharactertisticMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [disableCharactertisticMutation, { data, loading, error }] = useDisableCharactertisticMutation({
+ *   variables: {
+ *      disableCharacteristicId: // value for 'disableCharacteristicId'
+ *   },
+ * });
+ */
+export function useDisableCharactertisticMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DisableCharactertisticMutation,
+    DisableCharactertisticMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DisableCharactertisticMutation,
+    DisableCharactertisticMutationVariables
+  >(DisableCharactertisticDocument, options);
+}
+export type DisableCharactertisticMutationHookResult = ReturnType<
+  typeof useDisableCharactertisticMutation
+>;
+export type DisableCharactertisticMutationResult =
+  Apollo.MutationResult<DisableCharactertisticMutation>;
+export type DisableCharactertisticMutationOptions = Apollo.BaseMutationOptions<
+  DisableCharactertisticMutation,
+  DisableCharactertisticMutationVariables
+>;
 export const GetAllProductsDocument = gql`
   query GetAllProducts($search: String) {
     getAllProducts(search: $search) {
@@ -1187,6 +1268,7 @@ export const GetAllProductsDocument = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -1274,6 +1356,7 @@ export const GetProductByIdDocument = gql`
       shortDescription
       description
       price
+      isPublished
       categories {
         id
         name
