@@ -167,6 +167,7 @@ export type Product = {
   categories?: Maybe<Array<Category>>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
+  isPublished: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   price?: Maybe<Scalars['Float']['output']>;
   reference: Scalars['String']['output'];
@@ -177,6 +178,7 @@ export type ProductInput = {
   brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
+  isPublished: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
@@ -188,6 +190,7 @@ export type ProductUpdateInput = {
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
+  isPublished: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
@@ -261,6 +264,7 @@ export type CreateNewProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    isPublished: boolean;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -299,6 +303,7 @@ export type UpdateProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    isPublished: boolean;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -426,6 +431,7 @@ export type GetAllProductsQuery = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    isPublished: boolean;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -455,6 +461,7 @@ export type GetProductByIdQuery = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
+    isPublished: boolean;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -552,6 +559,7 @@ export const CreateNewProductDocument = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -668,6 +676,7 @@ export const UpdateProductDocument = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -1187,6 +1196,7 @@ export const GetAllProductsDocument = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -1274,6 +1284,7 @@ export const GetProductByIdDocument = gql`
       shortDescription
       description
       price
+      isPublished
       categories {
         id
         name

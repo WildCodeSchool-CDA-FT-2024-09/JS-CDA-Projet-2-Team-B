@@ -15,6 +15,7 @@ export const CREATE_PRODUCT = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -47,6 +48,7 @@ export const PUT_PRODUCT = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name

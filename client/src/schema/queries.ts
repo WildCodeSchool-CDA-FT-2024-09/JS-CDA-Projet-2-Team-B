@@ -15,6 +15,7 @@ export const GET_PRODUCT = gql`
         description
         logo
       }
+      isPublished
       categories {
         id
         name
@@ -32,6 +33,7 @@ export const GET_PRODUCT_BY_ID = gql`
       shortDescription
       description
       price
+      isPublished
       categories {
         id
         name

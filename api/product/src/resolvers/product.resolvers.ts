@@ -49,6 +49,7 @@ export default class ProductResolver {
     }
 
     product.brand = brand;
+    product.isPublished = newProduct.isPublished;
 
     if (newProduct.categoryIds) {
       const categories = await Category.findBy({
