@@ -13,7 +13,7 @@ const AddProduct = () => {
   };
 
   return (
-    <Grid2 container spacing={2}>
+    <Grid2 sx={{ margin: 10 }} container spacing={2}>
       <Grid item xs={12}>
         <CreationProduct handleProductId={handleProductId} block={block} />
       </Grid>

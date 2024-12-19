@@ -34,7 +34,7 @@ const initialValue: newProduct = {
 };
 
 export default function CreationProduct({ handleProductId, block }: Props) {
-  const [formData, setFormData] = useState<newProduct>(initialValue);
+  const [formProduct, setFormProduct] = useState<newProduct>(initialValue);
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>('');
@@ -43,7 +43,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!block) {
       const { name, value } = event.target;
-      setFormData((prev) => ({
+      setFormProduct((prev) => ({
         ...prev,
         [name]: name === 'price' ? parseFloat(value) || 0 : value
       }));
@@ -54,7 +54,8 @@ export default function CreationProduct({ handleProductId, block }: Props) {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const { name, reference, shortDescription, description, price } = formData;
+    const { name, reference, shortDescription, description, price } =
+      formProduct;
 
     if (!name || !reference) {
       setError('Veuillez remplir tous les champs obligatoires.');
@@ -104,7 +105,6 @@ export default function CreationProduct({ handleProductId, block }: Props) {
         }
       });
 
-      // Verrouillage du produit (bouton ADD")
       if (data?.createNewProduct?.id) {
         setSuccessMessage(
           'Produit créé avec succès ! Veuillez maintenant ajouter des images '
@@ -118,13 +118,13 @@ export default function CreationProduct({ handleProductId, block }: Props) {
   };
 
   return (
-    <Card sx={{ maxWidth: 600, padding: 3 }}>
+    <Card sx={{ maxWidth: 600, padding: 3, margin: 'auto', marginTop: 5 }}>
       <CardContent>
         <Box component="form" onSubmit={handleSubmit}>
           <TextField
             label="Nom du produit"
             name="name"
-            value={formData.name}
+            value={formProduct.name}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -132,7 +132,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
           <TextField
             label="Référence"
             name="reference"
-            value={formData.reference}
+            value={formProduct.reference}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -140,7 +140,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
           <TextField
             label="Courte description"
             name="shortDescription"
-            value={formData.shortDescription}
+            value={formProduct.shortDescription}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -148,7 +148,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
           <TextField
             label="Description"
             name="description"
-            value={formData.description}
+            value={formProduct.description}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -159,7 +159,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             label="Prix (€)"
             name="price"
             type="number"
-            value={formData.price}
+            value={formProduct.price}
             onChange={handleChange}
             fullWidth
             margin="normal"

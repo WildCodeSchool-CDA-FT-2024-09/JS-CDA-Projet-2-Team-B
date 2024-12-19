@@ -50,22 +50,16 @@ const AddImage = ({ productId, handleBlock }: Props) => {
     formData.append('image', imageFile);
     formData.append('product_id', productId.toString());
     formData.append('isMain', isMain.toString());
-    // formData.append('product_id', product.id)
-    // formData.append('isMain', check)
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.post<UploadResponse>(
-        '/upload', // Attention, passer par Nginx en variable d'env
-        formData,
-        {
-          headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+      const response = await axios.post<UploadResponse>('/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
         }
-      );
+      });
 
       setData(response.data);
       setImageFile(null);
@@ -88,11 +82,12 @@ const AddImage = ({ productId, handleBlock }: Props) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        margin: 'auto'
+        margin: 'auto',
+        marginTop: 5
       }}
     >
       <Typography>
-        <h1>Ajouter une Image</h1>
+        <h3>Ajouter une Image</h3>
       </Typography>
       <Box sx={{ marginBottom: 2 }}>
         <Button
