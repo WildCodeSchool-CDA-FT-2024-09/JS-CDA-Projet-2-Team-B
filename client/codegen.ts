@@ -13,7 +13,8 @@ const config: CodegenConfig = {
       config: {
         withHooks: true,
         scalars: {
-          DateTime: Date
+          DateTime: Date,
+          DateTimeISO: Date
         }
       }
     }
