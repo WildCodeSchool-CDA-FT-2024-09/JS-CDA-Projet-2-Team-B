@@ -134,3 +134,9 @@ export const DELETE_TAG = gql`
     deleteTag(id: $id)
   }
 `;
+
+export const DISABLE_CHARACTERISTIC = gql`
+  mutation DisableCharactertistic($disableCharacteristicId: Int!) {
+    disableCharacteristic(id: $disableCharacteristicId)
+  }
+`;
