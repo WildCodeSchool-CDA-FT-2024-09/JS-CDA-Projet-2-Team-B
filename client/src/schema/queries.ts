@@ -4,17 +4,11 @@ export const GET_PRODUCT = gql`
   query GetAllProducts($search: String) {
     getAllProducts(search: $search) {
       id
-      reference
       name
+      price
+      reference
       shortDescription
       description
-      price
-      brand {
-        id
-        name
-        description
-        logo
-      }
       categories {
         id
         name
@@ -39,6 +33,7 @@ export const GET_PRODUCT_BY_ID = gql`
       brand {
         id
         name
+        deletedAt
       }
     }
   }
@@ -82,23 +77,25 @@ export const GET_ALL_TAGS = gql`
 `;
 
 export const GET_ALL_BRANDS = gql`
-  query GetAllBrands($search: String) {
-    getAllBrands(search: $search) {
+  query getAllBrands($search: String, $includeDeleted: Boolean) {
+    getAllBrands(search: $search, includeDeleted: $includeDeleted) {
       id
       name
       description
       logo
+      deletedAt
     }
   }
 `;
 
 export const GET_BRAND_BY_ID = gql`
-  query GetBrandById($getBrandByIdId: Int!) {
-    getBrandById(id: $getBrandByIdId) {
+  query getBrandById($getBrandByIdId: Int!) {
+    getBrandById(id: $getBrandByIdId, includeDeleted: true) {
       id
       name
       description
       logo
+      deletedAt
     }
   }
 `;

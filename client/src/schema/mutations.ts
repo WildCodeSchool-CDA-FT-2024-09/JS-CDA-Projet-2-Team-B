@@ -132,3 +132,9 @@ export const DELETE_TAG = gql`
     deleteTag(id: $id)
   }
 `;
+
+export const DEACTIVATE_BRAND = gql`
+  mutation DeactivateBrand($deactivateBrandId: Int!) {
+    deactivateBrand(id: $deactivateBrandId)
+  }
+`;
