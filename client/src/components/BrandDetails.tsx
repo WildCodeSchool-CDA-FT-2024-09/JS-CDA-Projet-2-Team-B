@@ -47,9 +47,7 @@ export default function BrandDetails() {
         name: data.getBrandById.name,
         description: data.getBrandById.description,
         logo: data.getBrandById.logo,
-        deletedAt: data.getBrandById.deletedAt
-          ? new Date(data.getBrandById.deletedAt)
-          : null
+        deletedAt: data.getBrandById.deletedAt || null
       });
     } else if (fetchError) {
       setError(fetchError.message);
