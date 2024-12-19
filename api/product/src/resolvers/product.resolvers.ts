@@ -28,9 +28,6 @@ class ProductInput {
 
   @Field()
   price: number;
-
-  @Field(() => [Int])
-  imageIds: number[];
 }
 
 @Resolver(Product)
@@ -67,15 +64,6 @@ export default class ProductResolver {
     product.shortDescription = newProduct.shortDescription;
     product.description = newProduct.description;
     product.price = newProduct.price;
-
-    if (newProduct.imageIds && newProduct.imageIds.length > 0) {
-      const images = await Image.findBy({ id: In(newProduct.imageIds) });
-
-      if (images.length !== newProduct.imageIds.length) {
-        throw new Error("Certains IDs d'image sont invalides ou inexistants.");
-      }
-      product.images = images;
-    }
 
     return await product.save();
   }

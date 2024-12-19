@@ -2,10 +2,17 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Card, Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+// import { Check } from '@mui/icons-material';
 
 interface UploadResponse {
   id: string;
 }
+
+type Props = {
+  productId: number;
+
+  handleBlock: (isBlock: boolean) => void;
+};
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -17,14 +24,12 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 });
 
-const AddImage: React.FC = () => {
+const AddImage = ({ productId, handleBlock }: Props) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<UploadResponse | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-
-  const [productId, setProductId] = useState<string>('');
   const [isMain, setIsMain] = useState<boolean>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -43,8 +48,8 @@ const AddImage: React.FC = () => {
 
     const formData = new FormData();
     formData.append('image', imageFile);
-    formData.append('product_id', productId);
-    formData.append('isMain', String(isMain));
+    formData.append('product_id', productId.toString());
+    formData.append('isMain', isMain.toString());
     // formData.append('product_id', product.id)
     // formData.append('isMain', check)
 
@@ -53,7 +58,7 @@ const AddImage: React.FC = () => {
 
     try {
       const response = await axios.post<UploadResponse>(
-        'http://localhost:3000/upload', // Attention, passer par Nginx en variable d'env
+        '/upload', // Attention, passer par Nginx en variable d'env
         formData,
         {
           headers: {
@@ -65,6 +70,8 @@ const AddImage: React.FC = () => {
       setData(response.data);
       setImageFile(null);
       setImagePreview(null);
+      const isBlocked = false;
+      handleBlock(isBlocked);
     } catch (e) {
       setError(e as Error);
     } finally {
@@ -119,7 +126,7 @@ const AddImage: React.FC = () => {
       )}
 
       <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        <Box sx={{ marginBottom: 2 }}>
+        {/*<Box sx={{ marginBottom: 2 }}>
           <Typography>Product ID</Typography>
           <input
             type="text"
@@ -134,7 +141,7 @@ const AddImage: React.FC = () => {
               border: '1px solid #ccc'
             }}
           />
-        </Box>
+        </Box>*/}
 
         <Box sx={{ marginBottom: 2 }}>
           <Typography>Image principale ?</Typography>

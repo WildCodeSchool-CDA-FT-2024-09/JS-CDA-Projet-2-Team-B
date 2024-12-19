@@ -30,3 +30,22 @@ export const verifyFileExistence = async (filePath: string) => {
     throw error;
   }
 };
+
+export const imageByProduct = async (
+  imageId: number,
+  productId: string,
+  isMain: boolean
+) => {
+  const query = `
+    INSERT INTO products_images (product_id, image_id, ismain)
+    VALUES ($1, $2, $3);
+  `;
+
+  try {
+    await pool.query(query, [productId, imageId, isMain]);
+    console.info('Lien produit-image créé');
+  } catch (error) {
+    console.error('Erreur lors de la création du lien produit-image :', error);
+    throw error;
+  }
+};

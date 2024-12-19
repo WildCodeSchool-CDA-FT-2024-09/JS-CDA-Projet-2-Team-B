@@ -11,14 +11,15 @@ app.use(corsMiddleware);
 
 // Serve server resources
 
-app.use('/upload/image', uploadRoutes);
+app.use('/upload', uploadRoutes);
+
+app.get('/upload/:filename', (req: express.Request, res: express.Response) => {
+  const imagePath = path.join(__dirname, '/../public', req.params.filename);
+  res.sendFile(imagePath);
+});
 
 const publicFolderPath = path.join(__dirname, '/../public');
-// app.get('/upload/*', (req, res) => {
-//   console.log(req.body);
-//   console.log(publicFolderPath);
-//   res.send('Hello Wordl');
-// });
+
 app.get('/upload/*.*', express.static(publicFolderPath, { maxAge: '1y' }));
 
 export { app };
