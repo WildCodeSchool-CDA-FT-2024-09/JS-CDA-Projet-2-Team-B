@@ -13,7 +13,7 @@ import {
 export class Characteristic extends BaseEntity {
   @Field(() => Int)
   @PrimaryGeneratedColumn()
-  id: number;
+  id?: number;
 
   @Field()
   @Column({ unique: true, length: 100 })

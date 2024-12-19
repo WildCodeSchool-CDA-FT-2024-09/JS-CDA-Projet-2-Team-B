@@ -1,5 +1,5 @@
 import { Characteristic } from '../entity/characteristic.entities';
-import { Arg, Query, Resolver, Mutation } from 'type-graphql';
+import { Arg, Query, Resolver, Mutation, Int } from 'type-graphql';
 import { CharacteristicInput } from '../types/characteristic.types';
 
 @Resolver(Characteristic)
@@ -73,7 +73,9 @@ export default class CharacteristicResolver {
   }
 
   @Mutation(() => Boolean)
-  async disableCharacteristic(@Arg('id') id: number) {
+  async disableCharacteristic(
+    @Arg('id', () => Int) id: number
+  ): Promise<boolean> {
     try {
       const characteristic = await Characteristic.findOne({
         where: { id }
@@ -90,7 +92,9 @@ export default class CharacteristicResolver {
   }
 
   @Mutation(() => Boolean)
-  async enableCharacteristic(@Arg('id') id: number) {
+  async enableCharacteristic(
+    @Arg('id', () => Int) id: number
+  ): Promise<boolean> {
     try {
       const characteristic = await Characteristic.findOne({
         where: { id },
