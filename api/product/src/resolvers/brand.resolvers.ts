@@ -1,9 +1,36 @@
+import { ILike } from 'typeorm';
 import { Brand } from '../entity/brand.entities';
-import { BrandCreationInput } from '../types/brand.types';
-import { Arg, Mutation, Resolver } from 'type-graphql';
+import { BrandCreationInput, BrandUpdateInput } from '../types/brand.types';
+import { Arg, Int, Mutation, Query, Resolver } from 'type-graphql';
 
 @Resolver()
 export default class BrandResolver {
+  @Query(() => [Brand])
+  async getAllBrands(
+    @Arg('search', { nullable: true }) search: string,
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
+  ): Promise<Brand[]> {
+    const query = {
+      where: search ? { name: ILike(`%${search}%`) } : {},
+      withDeleted: includeDeleted
+    };
+
+    return Brand.find(query);
+  }
+
+  @Query(() => Brand, { nullable: true })
+  async getBrandById(
+    @Arg('id', () => Int) id: number,
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
+  ): Promise<Brand | null> {
+    return await Brand.findOne({
+      where: { id },
+      withDeleted: includeDeleted
+    });
+  }
+
   @Mutation(() => Brand)
   async createBrand(
     @Arg('data') newBrandData: BrandCreationInput
@@ -21,5 +48,49 @@ export default class BrandResolver {
     Object.assign(newBrand, newBrandData);
 
     return newBrand.save();
+  }
+
+  @Mutation(() => Brand)
+  async updateBrand(
+    @Arg('data') newDataBrand: BrandUpdateInput
+  ): Promise<Brand> {
+    const { id } = newDataBrand;
+
+    const brand = await Brand.findOne({
+      where: {
+        id
+      }
+    });
+
+    if (!brand) {
+      throw new Error(`La marque avec l'id ${id} est introuvable.`);
+    }
+
+    Object.assign(brand, newDataBrand);
+
+    return await brand.save();
+  }
+
+  @Mutation(() => Boolean)
+  async deactivateBrand(@Arg('id', () => Int) id: number): Promise<boolean> {
+    try {
+      const brand = await Brand.findOne({
+        where: { id }
+      });
+
+      if (!brand) {
+        throw new Error(`La marque avec l'id ${id} n'a pas été trouvée.`);
+      }
+
+      await brand.softRemove();
+
+      return true;
+    } catch (error) {
+      console.error(
+        `Erreur lors de la suppression de la marque ayant pour id : ${id}`,
+        error
+      );
+      throw error;
+    }
   }
 }

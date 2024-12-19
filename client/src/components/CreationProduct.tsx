@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Card,
   CardContent,
   Typography,
   TextField,
   Button,
-  Box
+  Box,
+  FormControl,
+  Autocomplete,
+  Chip,
+  InputLabel,
+  Select,
+  MenuItem
 } from '@mui/material';
 import {
+  GetAllBrandsDocument,
   GetAllProductsDocument,
-  useCreateNewProductMutation
+  useCreateNewProductMutation,
+  useGetAllCategoriesQuery
 } from '../generated/graphql-types';
+import { useLazyQuery } from '@apollo/client';
 
 type newProduct = {
   name: string;
@@ -18,6 +27,9 @@ type newProduct = {
   shortDescription: string;
   description: string;
   price: number;
+  brand: { id: number; name: string } | null;
+  categories: Array<{ id: number; name: string }>;
+  isPublished: boolean;
 };
 
 type Props = {
@@ -30,15 +42,38 @@ const initialValue: newProduct = {
   reference: '',
   shortDescription: '',
   description: '',
-  price: 0
+  price: 0,
+  brand: null as { id: number; name: string } | null,
+  categories: [] as Array<{ id: number; name: string }>,
+  isPublished: true
 };
 
 export default function CreationProduct({ handleProductId, block }: Props) {
-  const [formProduct, setFormProduct] = useState<newProduct>(initialValue);
+  const [formProduct, setFormProduct] = useState(initialValue);
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>('');
   const [createProduct, { loading }] = useCreateNewProductMutation();
+  const [brandInputValue, setBrandInputValue] = useState('');
+  const [brandOptions, setBrandOptions] = useState<
+    Array<{ id: number; name: string }>
+  >([]);
+  const { data: categoriesData } = useGetAllCategoriesQuery();
+  const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
+
+  useEffect(() => {
+    if (brandInputValue !== '') {
+      getBrands({ variables: { search: brandInputValue } });
+    } else {
+      setBrandOptions([]);
+    }
+  }, [brandInputValue, getBrands]);
+
+  useEffect(() => {
+    if (brandsData?.getAllBrands) {
+      setBrandOptions(brandsData.getAllBrands);
+    }
+  }, [brandsData]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!block) {
@@ -54,8 +89,16 @@ export default function CreationProduct({ handleProductId, block }: Props) {
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-    const { name, reference, shortDescription, description, price } =
-      formProduct;
+    const {
+      name,
+      reference,
+      shortDescription,
+      description,
+      price,
+      categories,
+      brand,
+      isPublished
+    } = formProduct;
 
     if (!name || !reference) {
       setError('Veuillez remplir tous les champs obligatoires.');
@@ -74,7 +117,10 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             reference,
             shortDescription,
             description,
-            price
+            price,
+            isPublished,
+            categoryIds: categories.map((cat) => cat.id),
+            brand: brand!.id
           }
         },
         update(cache, { data }) {
@@ -87,6 +133,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
                 reference: string;
                 shortDescription: string;
                 description: string;
+                isPublished: boolean;
               }>;
             }>({
               query: GetAllProductsDocument
@@ -105,6 +152,16 @@ export default function CreationProduct({ handleProductId, block }: Props) {
         }
       });
 
+      setFormProduct({
+        name: '',
+        reference: '',
+        shortDescription: '',
+        description: '',
+        price: 0,
+        isPublished: true,
+        categories: [],
+        brand: null
+      });
       if (data?.createNewProduct?.id) {
         setSuccessMessage(
           'Produit créé avec succès ! Veuillez maintenant ajouter des images '
@@ -164,6 +221,136 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             fullWidth
             margin="normal"
           />
+          <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
+            <Autocomplete
+              multiple
+              options={
+                categoriesData?.getAllCategories?.filter(
+                  (cat) =>
+                    !formProduct.categories.some(
+                      (selected) => selected.id === cat.id
+                    )
+                ) || []
+              }
+              getOptionLabel={(option) => option.name}
+              value={[]}
+              onChange={(_, newValue) => {
+                if (newValue.length > 0) {
+                  const lastSelected = newValue[newValue.length - 1];
+
+                  if (
+                    !formProduct.categories.some(
+                      (cat) => cat.id === lastSelected.id
+                    )
+                  ) {
+                    setFormProduct((prev) => ({
+                      ...prev,
+                      categories: [...prev.categories, lastSelected]
+                    }));
+                  }
+                }
+              }}
+              filterOptions={(options) =>
+                options.filter(
+                  (option) =>
+                    !formProduct.categories.some((cat) => cat.id === option.id)
+                )
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Sélectionner une catégorie"
+                  size="small"
+                />
+              )}
+            />
+          </FormControl>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+            {formProduct.categories.length > 0 ? (
+              formProduct.categories.map((category) => (
+                <Chip
+                  key={category.id}
+                  label={category.name}
+                  onDelete={() => {
+                    setFormProduct((prev) => ({
+                      ...prev,
+                      categories: prev.categories.filter(
+                        (cat) => cat.id !== category.id
+                      )
+                    }));
+                  }}
+                  sx={{
+                    backgroundColor: '#f5f5f5',
+                    borderRadius: '20px',
+                    margin: '4px',
+                    padding: '4px 8px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    transition: 'transform 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                      backgroundColor: '#f5f5f5'
+                    },
+                    '& .MuiChip-label': {
+                      color: 'text.primary'
+                    },
+                    '& .MuiChip-deleteIcon': {
+                      color: '#d32f2f',
+                      '&:hover': {
+                        color: '#d32f2f',
+                        backgroundColor: 'rgba(211, 47, 47, 0.1)',
+                        borderRadius: '50%'
+                      }
+                    }
+                  }}
+                />
+              ))
+            ) : (
+              <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                Aucune catégorie sélectionnée
+              </Typography>
+            )}
+          </Box>
+          <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
+            <Autocomplete
+              options={brandOptions}
+              getOptionLabel={(option) => option.name}
+              value={formProduct.brand}
+              onChange={(_, newValue) =>
+                setFormProduct((prev) => ({
+                  ...prev,
+                  brand: newValue
+                }))
+              }
+              inputValue={brandInputValue}
+              onInputChange={(_, newInputValue) => {
+                setBrandInputValue(newInputValue);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Sélectionner une marque"
+                  placeholder="Rechercher une marque"
+                />
+              )}
+            />
+          </FormControl>
+          <FormControl fullWidth margin="normal">
+            <InputLabel id="status-label">Statut de publication</InputLabel>
+            <Select
+              labelId="status-label"
+              value={formProduct.isPublished ? 'true' : 'false'}
+              onChange={(event) => {
+                setFormProduct((prev) => ({
+                  ...prev,
+                  isPublished: event.target.value === 'true'
+                }));
+              }}
+              label="Statut de publication"
+            >
+              <MenuItem value="false">Non publié</MenuItem>
+              <MenuItem value="true">Publié</MenuItem>
+            </Select>
+          </FormControl>
 
           <Button
             type="submit"

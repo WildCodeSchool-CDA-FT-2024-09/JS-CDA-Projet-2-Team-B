@@ -4,11 +4,14 @@ import {
   PrimaryGeneratedColumn,
   Column,
   ManyToMany,
-  JoinTable
+  JoinTable,
+  ManyToOne
 } from 'typeorm';
 import { ObjectType, Field, Float } from 'type-graphql';
 import { Length, Min } from 'class-validator';
 import { Image } from './image.entities';
+import { Category } from './category.entities';
+import { Brand } from './brand.entities';
 
 @ObjectType()
 @Entity('products')
@@ -48,4 +51,17 @@ export class Product extends BaseEntity {
     inverseJoinColumn: { name: 'image_id', referencedColumnName: 'id' }
   })
   images?: Image[];
+
+  @Field(() => Boolean)
+  @Column({ default: true })
+  isPublished: boolean;
+
+  @Field(() => [Category], { nullable: true })
+  @ManyToMany(() => Category)
+  @JoinTable()
+  categories?: Category[];
+
+  @Field(() => Brand, { nullable: true })
+  @ManyToOne(() => Brand, (brand) => brand.id)
+  brand: Brand;
 }

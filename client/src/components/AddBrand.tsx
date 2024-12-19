@@ -1,11 +1,4 @@
-import {
-  Box,
-  Button,
-  Card,
-  CardContent,
-  TextField,
-  Typography
-} from '@mui/material';
+import { Box, Button, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useCreateBrandMutation } from '../generated/graphql-types';
 
@@ -67,103 +60,90 @@ export default function AddBrand() {
   };
 
   return (
-    <Card
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
       sx={{
-        width: '85%',
-        margin: '5px 0',
-        height: '100dvh',
-        boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)',
+        m: 1,
+        width: '60ch',
+        fontWeight: 'bold',
         display: 'flex',
-        alignSelf: 'end'
+        flexDirection: 'column',
+        gap: 1,
+        maxWidth: 400,
+        margin: '0 auto'
       }}
+      noValidate
+      autoComplete="off"
     >
-      <CardContent>
-        <Box
-          component="form"
-          onSubmit={handleSubmit}
+      <Typography
+        sx={{
+          marginLeft: '2px',
+          fontWeight: 'bold'
+        }}
+      >
+        Nom
+      </Typography>
+      <TextField
+        required
+        id="outlined-required"
+        name="name"
+        value={brand.name}
+        onChange={handleChange}
+        placeholder="Nom"
+      />
+      <Typography
+        sx={{
+          marginLeft: '2px',
+          fontWeight: 'bold'
+        }}
+      >
+        Description
+      </Typography>
+      <TextField
+        required
+        id="outlined-required"
+        name="description"
+        value={brand.description}
+        onChange={handleChange}
+        placeholder="Description"
+      />
+      <Button
+        variant="contained"
+        disabled={loading}
+        color="primary"
+        type="submit"
+        sx={{
+          width: '20ch',
+          alignSelf: 'flex-end'
+        }}
+      >
+        Enregistrer
+      </Button>
+      {successMessage && (
+        <Typography
+          color="success.main"
+          variant="body2"
           sx={{
-            m: 1,
-            width: '60ch',
-            fontWeight: 'bold',
             display: 'flex',
-            flexDirection: 'column',
-            gap: 1,
-            maxWidth: 400,
-            margin: '0 auto'
+            justifyContent: 'end'
           }}
-          noValidate
-          autoComplete="off"
         >
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold'
-            }}
-          >
-            Nom!
-          </Typography>
-          <TextField
-            required
-            id="outlined-required"
-            name="name"
-            value={brand.name}
-            onChange={handleChange}
-            placeholder="Nom"
-          />
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold'
-            }}
-          >
-            Description
-          </Typography>
-          <TextField
-            required
-            id="outlined-required"
-            name="description"
-            value={brand.description}
-            onChange={handleChange}
-            placeholder="Description"
-          />
-          <Button
-            variant="contained"
-            disabled={loading}
-            color="primary"
-            type="submit"
-            sx={{
-              width: '20ch',
-              alignSelf: 'flex-end'
-            }}
-          >
-            Enregistrer
-          </Button>
-          {successMessage && (
-            <Typography
-              color="success.main"
-              variant="body2"
-              sx={{
-                display: 'flex',
-                justifyContent: 'end'
-              }}
-            >
-              {successMessage}
-            </Typography>
-          )}
-          {error && (
-            <Typography
-              color="error.main"
-              variant="body2"
-              sx={{
-                display: 'flex',
-                justifyContent: 'end'
-              }}
-            >
-              Une erreur s'est produite : {error.message}
-            </Typography>
-          )}
-        </Box>
-      </CardContent>
-    </Card>
+          {successMessage}
+        </Typography>
+      )}
+      {error && (
+        <Typography
+          color="error.main"
+          variant="body2"
+          sx={{
+            display: 'flex',
+            justifyContent: 'end'
+          }}
+        >
+          Une erreur s'est produite : {error.message}
+        </Typography>
+      )}
+    </Box>
   );
 }

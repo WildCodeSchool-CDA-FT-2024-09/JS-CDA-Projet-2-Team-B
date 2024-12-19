@@ -9,6 +9,17 @@ export const CREATE_PRODUCT = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
+      isPublished
+      categories {
+        id
+        name
+      }
     }
   }
 `;
@@ -31,6 +42,17 @@ export const PUT_PRODUCT = gql`
       shortDescription
       description
       price
+      brand {
+        id
+        name
+        description
+        logo
+      }
+      isPublished
+      categories {
+        id
+        name
+      }
     }
   }
 `;
@@ -38,15 +60,6 @@ export const PUT_PRODUCT = gql`
 export const CREATE_CHARACTERISTIC = gql`
   mutation CreateNewCharacteristic($characteristic: CharacteristicInput!) {
     createNewCharacteristic(characteristic: $characteristic) {
-      id
-      name
-    }
-  }
-`;
-
-export const GET_ALL_CATEGORIES = gql`
-  query GetAllCategories {
-    getAllCategories {
       id
       name
     }
@@ -65,6 +78,14 @@ export const UPDATE_CATEGORY = gql`
 export const DELETE_CATEGORY = gql`
   mutation DeleteCategory($id: Int!) {
     deleteCategory(id: $id)
+  }
+`;
+export const UPDATE_CHARACTERISTIC = gql`
+  mutation EditCharacteristic($characteristic: CharacteristicInput!) {
+    editCharacteristic(characteristic: $characteristic) {
+      id
+      name
+    }
   }
 `;
 
@@ -88,11 +109,13 @@ export const CREATE_BRAND = gql`
   }
 `;
 
-export const GET_ALL_TAGS = gql`
-  query GetAllTags {
-    getAllTags {
+export const PUT_BRAND = gql`
+  mutation UpdateBrand($data: BrandUpdateInput!) {
+    updateBrand(data: $data) {
       id
       name
+      description
+      logo
     }
   }
 `;
@@ -109,5 +132,17 @@ export const UPDATE_TAG = gql`
 export const DELETE_TAG = gql`
   mutation DeleteTag($id: Int!) {
     deleteTag(id: $id)
+  }
+`;
+
+export const DEACTIVATE_BRAND = gql`
+  mutation DeactivateBrand($deactivateBrandId: Int!) {
+    deactivateBrand(id: $deactivateBrandId)
+  }
+`;
+
+export const DISABLE_CHARACTERISTIC = gql`
+  mutation DisableCharactertistic($disableCharacteristicId: Int!) {
+    disableCharacteristic(id: $disableCharacteristicId)
   }
 `;
