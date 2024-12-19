@@ -9,9 +9,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel,
-  styled,
-  Switch
+  FormControlLabel
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -23,6 +21,7 @@ import {
   useUpdateProductMutation
 } from '../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
+import { CustomSwitch } from '../ui/Switch';
 
 interface ProductDetailsReq {
   name: string;
@@ -35,24 +34,6 @@ interface ProductDetailsReq {
   brand: { id: number; name: string } | null;
   isActive: boolean;
 }
-
-const CustomSwitch = styled(Switch)(() => ({
-  '& .MuiSwitch-switchBase.Mui-checked': {
-    color: '#4caf50',
-    '&:hover': {
-      backgroundColor: 'rgba(76, 175, 80, 0.08)'
-    }
-  },
-  '& .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track': {
-    backgroundColor: '#4caf50'
-  },
-  '& .MuiSwitch-switchBase:not(.Mui-checked)': {
-    color: '#f44336'
-  },
-  '& .MuiSwitch-switchBase:not(.Mui-checked) + .MuiSwitch-track': {
-    backgroundColor: '#f44336'
-  }
-}));
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();

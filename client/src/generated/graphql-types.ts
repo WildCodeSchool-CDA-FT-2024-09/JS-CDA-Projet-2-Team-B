@@ -43,6 +43,7 @@ export type Brand = {
 };
 
 export type BrandCreationInput = {
+  deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description: Scalars['String']['input'];
   logo: Scalars['String']['input'];
   name: Scalars['String']['input'];
