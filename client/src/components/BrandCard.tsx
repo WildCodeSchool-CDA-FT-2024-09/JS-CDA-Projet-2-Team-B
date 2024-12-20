@@ -4,7 +4,11 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Button, Link as MUILink } from '@mui/material';
 import { Grid } from '@mui/system';
-import { useDeactivateBrandMutation } from '../generated/graphql-types';
+import {
+  useActivateBrandMutation,
+  useDeactivateBrandMutation
+} from '../generated/graphql-types';
+import { useState } from 'react';
 
 const styleButton = {
   padding: '4px 10px',
@@ -32,16 +36,32 @@ export default function BrandCard({
   deletedAt,
   refetch
 }: Brand) {
-  const [deactivateBrand, { error, loading }] = useDeactivateBrandMutation();
+  const [deactivateBrand, { error, loading: deactivationLoading }] =
+    useDeactivateBrandMutation();
+  const [activateBrand, { loading: activationLoading }] =
+    useActivateBrandMutation();
+  const [isActive, setIsActive] = useState(deletedAt === null);
 
-  const handleActivation = async (brandId: number) => {
+  const handleActivation = async (brandId: number, isActive: boolean) => {
     try {
-      const { data } = await deactivateBrand({
-        variables: { deactivateBrandId: brandId }
-      });
+      if (isActive) {
+        const { data } = await deactivateBrand({
+          variables: { deactivateBrandId: brandId }
+        });
 
-      if (data?.deactivateBrand) {
-        refetch();
+        if (data?.deactivateBrand) {
+          setIsActive(false);
+          refetch();
+        }
+      } else {
+        const { data } = await activateBrand({
+          variables: { activateBrandId: brandId }
+        });
+
+        if (data?.activateBrand) {
+          setIsActive(true);
+          refetch();
+        }
       }
     } catch (err) {
       console.error('Error deactivating brand: ', err);
@@ -80,15 +100,14 @@ export default function BrandCard({
           Modifier
         </MUILink>
         <Button
-          disabled={loading}
-          value={id}
-          onClick={() => handleActivation(id)}
+          disabled={deactivationLoading || activationLoading}
+          onClick={() => handleActivation(id, isActive)}
           sx={{
             ...styleButton,
-            backgroundColor: deletedAt === null ? 'red' : 'info.main'
+            backgroundColor: isActive ? 'red' : 'info.main'
           }}
         >
-          {deletedAt === null ? 'Désactiver' : 'Activer'}
+          {isActive ? 'Désactiver' : 'Activer'}
         </Button>
       </Grid>
     </Card>
