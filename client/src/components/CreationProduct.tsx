@@ -99,7 +99,7 @@ export default function CreationProduct() {
             price,
             isPublished,
             categoryIds: categories.map((cat) => cat.id),
-            brand: brand!.id
+            brand: brand?.id
           }
         },
         update(cache, { data }) {
