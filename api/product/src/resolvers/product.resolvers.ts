@@ -89,13 +89,17 @@ export default class ProductResolver {
     // Using assign method from Object to assign new data to the found product.
     Object.assign(product, newDataProduct);
 
-    const brand = await Brand.findOne({ where: { id: newDataProduct.brand } });
+    if (newDataProduct.brand) {
+      const brand = await Brand.findOne({
+        where: { id: newDataProduct.brand }
+      });
 
-    if (!brand) {
-      throw new Error(`La marque ${newDataProduct.brand} n'existe pas.`);
+      if (!brand) {
+        throw new Error(`La marque ${newDataProduct.brand} n'existe pas.`);
+      }
+
+      product.brand = brand;
     }
-
-    product.brand = brand;
 
     if (newDataProduct.categoryIds) {
       const categories = await Category.findBy({
