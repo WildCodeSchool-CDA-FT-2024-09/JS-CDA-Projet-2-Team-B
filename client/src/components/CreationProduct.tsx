@@ -120,7 +120,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             price,
             isPublished,
             categoryIds: categories.map((cat) => cat.id),
-            brand: brand!.id
+            brand: brand ? brand.id : null
           }
         },
         update(cache, { data }) {
