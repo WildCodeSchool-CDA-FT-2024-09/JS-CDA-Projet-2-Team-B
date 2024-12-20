@@ -9,6 +9,7 @@ import {
 } from 'typeorm';
 import { ObjectType, Field, Float } from 'type-graphql';
 import { Length, Min } from 'class-validator';
+import { Image } from './image.entities';
 import { Category } from './category.entities';
 import { Brand } from './brand.entities';
 
@@ -41,6 +42,15 @@ export class Product extends BaseEntity {
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
   @Min(0)
   price: number;
+
+  @Field(() => [Image])
+  @ManyToMany(() => Image, (image) => image.products)
+  @JoinTable({
+    name: 'products_images',
+    joinColumn: { name: 'product_id', referencedColumnName: 'id' },
+    inverseJoinColumn: { name: 'image_id', referencedColumnName: 'id' }
+  })
+  images?: Image[];
 
   @Field(() => Boolean)
   @Column({ default: true })

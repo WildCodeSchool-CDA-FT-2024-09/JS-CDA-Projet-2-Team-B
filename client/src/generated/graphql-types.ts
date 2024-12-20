@@ -43,6 +43,7 @@ export type Brand = {
 };
 
 export type BrandCreationInput = {
+  deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description: Scalars['String']['input'];
   logo: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -88,6 +89,7 @@ export type Image = {
   __typename?: 'Image';
   id: Scalars['Float']['output'];
   isMain: Scalars['Boolean']['output'];
+  products: Array<Product>;
   url: Scalars['String']['output'];
 };
 
@@ -186,6 +188,7 @@ export type Product = {
   categories?: Maybe<Array<Category>>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
+  images: Array<Image>;
   isPublished: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   price?: Maybe<Scalars['Float']['output']>;
@@ -209,6 +212,7 @@ export type ProductUpdateInput = {
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
+  imageIds: Array<Scalars['Float']['input']>;
   isPublished: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];

@@ -55,4 +55,7 @@ export class ProductUpdateInput {
 
   @Field(() => Number, { nullable: true })
   brand: number;
+
+  @Field(() => [Number])
+  imageIds?: number[];
 }

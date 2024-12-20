@@ -21,19 +21,35 @@ import {
 } from '../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
 
-export default function CreationProduct() {
-  const { data: categoriesData } = useGetAllCategoriesQuery();
-  const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
-  const [formData, setFormData] = useState({
-    name: '',
-    reference: '',
-    shortDescription: '',
-    description: '',
-    price: 0,
-    isPublished: true,
-    categories: [] as Array<{ id: number; name: string }>,
-    brand: null as { id: number; name: string } | null
-  });
+type newProduct = {
+  name: string;
+  reference: string;
+  shortDescription: string;
+  description: string;
+  price: number;
+  brand: { id: number; name: string } | null;
+  categories: Array<{ id: number; name: string }>;
+  isPublished: boolean;
+};
+
+type Props = {
+  handleProductId: (id: number) => void;
+  block: boolean;
+};
+
+const initialValue: newProduct = {
+  name: '',
+  reference: '',
+  shortDescription: '',
+  description: '',
+  price: 0,
+  brand: null as { id: number; name: string } | null,
+  categories: [] as Array<{ id: number; name: string }>,
+  isPublished: true
+};
+
+export default function CreationProduct({ handleProductId, block }: Props) {
+  const [formProduct, setFormProduct] = useState(initialValue);
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>('');
@@ -42,6 +58,8 @@ export default function CreationProduct() {
   const [brandOptions, setBrandOptions] = useState<
     Array<{ id: number; name: string }>
   >([]);
+  const { data: categoriesData } = useGetAllCategoriesQuery();
+  const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
 
   useEffect(() => {
     if (brandInputValue !== '') {
@@ -58,11 +76,15 @@ export default function CreationProduct() {
   }, [brandsData]);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === 'price' ? parseFloat(value) || 0 : value
-    }));
+    if (!block) {
+      const { name, value } = event.target;
+      setFormProduct((prev) => ({
+        ...prev,
+        [name]: name === 'price' ? parseFloat(value) || 0 : value
+      }));
+    } else {
+      setError('Veuillez choisir une image avant de passer à la suite');
+    }
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
@@ -76,20 +98,19 @@ export default function CreationProduct() {
       categories,
       brand,
       isPublished
-    } = formData;
+    } = formProduct;
 
     if (!name || !reference) {
       setError('Veuillez remplir tous les champs obligatoires.');
       return;
     }
-
     if (price < 0) {
       setError('Le prix doit être un nombre positif.');
       return;
     }
 
     try {
-      await createProduct({
+      const { data } = await createProduct({
         variables: {
           data: {
             name,
@@ -131,8 +152,7 @@ export default function CreationProduct() {
         }
       });
 
-      setSuccessMessage('Produit créé avec succès !');
-      setFormData({
+      setFormProduct({
         name: '',
         reference: '',
         shortDescription: '',
@@ -142,6 +162,12 @@ export default function CreationProduct() {
         categories: [],
         brand: null
       });
+      if (data?.createNewProduct?.id) {
+        setSuccessMessage(
+          'Produit créé avec succès ! Veuillez maintenant ajouter des images '
+        );
+        handleProductId(data?.createNewProduct?.id);
+      }
     } catch (err) {
       setSuccessMessage(null);
       console.error('Erreur lors de la création du produit :', err);
@@ -149,13 +175,13 @@ export default function CreationProduct() {
   };
 
   return (
-    <Card sx={{ maxWidth: 600, padding: 3 }}>
+    <Card sx={{ maxWidth: 600, padding: 3, margin: 'auto', marginTop: 5 }}>
       <CardContent>
         <Box component="form" onSubmit={handleSubmit}>
           <TextField
             label="Nom du produit"
             name="name"
-            value={formData.name}
+            value={formProduct.name}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -163,7 +189,7 @@ export default function CreationProduct() {
           <TextField
             label="Référence"
             name="reference"
-            value={formData.reference}
+            value={formProduct.reference}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -171,7 +197,7 @@ export default function CreationProduct() {
           <TextField
             label="Courte description"
             name="shortDescription"
-            value={formData.shortDescription}
+            value={formProduct.shortDescription}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -179,7 +205,7 @@ export default function CreationProduct() {
           <TextField
             label="Description"
             name="description"
-            value={formData.description}
+            value={formProduct.description}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -189,7 +215,8 @@ export default function CreationProduct() {
           <TextField
             label="Prix (€)"
             name="price"
-            value={formData.price}
+            type="number"
+            value={formProduct.price}
             onChange={handleChange}
             fullWidth
             margin="normal"
@@ -200,7 +227,7 @@ export default function CreationProduct() {
               options={
                 categoriesData?.getAllCategories?.filter(
                   (cat) =>
-                    !formData.categories.some(
+                    !formProduct.categories.some(
                       (selected) => selected.id === cat.id
                     )
                 ) || []
@@ -212,11 +239,11 @@ export default function CreationProduct() {
                   const lastSelected = newValue[newValue.length - 1];
 
                   if (
-                    !formData.categories.some(
+                    !formProduct.categories.some(
                       (cat) => cat.id === lastSelected.id
                     )
                   ) {
-                    setFormData((prev) => ({
+                    setFormProduct((prev) => ({
                       ...prev,
                       categories: [...prev.categories, lastSelected]
                     }));
@@ -226,7 +253,7 @@ export default function CreationProduct() {
               filterOptions={(options) =>
                 options.filter(
                   (option) =>
-                    !formData.categories.some((cat) => cat.id === option.id)
+                    !formProduct.categories.some((cat) => cat.id === option.id)
                 )
               }
               renderInput={(params) => (
@@ -239,13 +266,13 @@ export default function CreationProduct() {
             />
           </FormControl>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
-            {formData.categories.length > 0 ? (
-              formData.categories.map((category) => (
+            {formProduct.categories.length > 0 ? (
+              formProduct.categories.map((category) => (
                 <Chip
                   key={category.id}
                   label={category.name}
                   onDelete={() => {
-                    setFormData((prev) => ({
+                    setFormProduct((prev) => ({
                       ...prev,
                       categories: prev.categories.filter(
                         (cat) => cat.id !== category.id
@@ -287,9 +314,9 @@ export default function CreationProduct() {
             <Autocomplete
               options={brandOptions}
               getOptionLabel={(option) => option.name}
-              value={formData.brand}
+              value={formProduct.brand}
               onChange={(_, newValue) =>
-                setFormData((prev) => ({
+                setFormProduct((prev) => ({
                   ...prev,
                   brand: newValue
                 }))
@@ -311,9 +338,9 @@ export default function CreationProduct() {
             <InputLabel id="status-label">Statut de publication</InputLabel>
             <Select
               labelId="status-label"
-              value={formData.isPublished ? 'true' : 'false'}
+              value={formProduct.isPublished ? 'true' : 'false'}
               onChange={(event) => {
-                setFormData((prev) => ({
+                setFormProduct((prev) => ({
                   ...prev,
                   isPublished: event.target.value === 'true'
                 }));
