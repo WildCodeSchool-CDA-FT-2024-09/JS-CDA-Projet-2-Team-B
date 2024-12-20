@@ -43,6 +43,7 @@ export type Brand = {
 };
 
 export type BrandCreationInput = {
+  deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description: Scalars['String']['input'];
   logo: Scalars['String']['input'];
   name: Scalars['String']['input'];
@@ -100,11 +101,13 @@ export type Mutation = {
   createTag: Tag;
   deactivateBrand: Scalars['Boolean']['output'];
   deleteCategory: Scalars['Boolean']['output'];
+  deleteProduct: Scalars['Boolean']['output'];
   deleteTag: Scalars['Boolean']['output'];
   disableCharacteristic: Scalars['Boolean']['output'];
   editCharacteristic: Characteristic;
   enableCharacteristic: Scalars['Boolean']['output'];
   restoreCategory: Scalars['Boolean']['output'];
+  restoreProduct: Product;
   restoreTag: Scalars['Boolean']['output'];
   updateBrand: Brand;
   updateCategory: Category;
@@ -140,6 +143,10 @@ export type MutationDeleteCategoryArgs = {
   id: Scalars['Int']['input'];
 };
 
+export type MutationDeleteProductArgs = {
+  id: Scalars['Int']['input'];
+};
+
 export type MutationDeleteTagArgs = {
   id: Scalars['Int']['input'];
 };
@@ -157,6 +164,10 @@ export type MutationEnableCharacteristicArgs = {
 };
 
 export type MutationRestoreCategoryArgs = {
+  id: Scalars['Int']['input'];
+};
+
+export type MutationRestoreProductArgs = {
   id: Scalars['Int']['input'];
 };
 
@@ -184,6 +195,7 @@ export type Product = {
   __typename?: 'Product';
   brand?: Maybe<Brand>;
   categories?: Maybe<Array<Category>>;
+  deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
   isPublished: Scalars['Boolean']['output'];
@@ -242,6 +254,7 @@ export type QueryGetAllCharacteristicArgs = {
 };
 
 export type QueryGetAllProductsArgs = {
+  includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -256,6 +269,7 @@ export type QueryGetBrandByIdArgs = {
 
 export type QueryGetProductByIdArgs = {
   id: Scalars['Int']['input'];
+  includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 };
 
 export type Tag = {
@@ -290,6 +304,46 @@ export type CreateNewProductMutation = {
     description?: string | null;
     price?: number | null;
     isPublished: boolean;
+    brand?: {
+      __typename?: 'Brand';
+      id: number;
+      name: string;
+      description: string;
+      logo: string;
+    } | null;
+    categories?: Array<{
+      __typename?: 'Category';
+      id: number;
+      name: string;
+    }> | null;
+  };
+};
+
+export type DeleteProductMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+export type DeleteProductMutation = {
+  __typename?: 'Mutation';
+  deleteProduct: boolean;
+};
+
+export type RestoreProductMutationVariables = Exact<{
+  id: Scalars['Int']['input'];
+}>;
+
+export type RestoreProductMutation = {
+  __typename?: 'Mutation';
+  restoreProduct: {
+    __typename?: 'Product';
+    id: number;
+    reference: string;
+    name: string;
+    shortDescription?: string | null;
+    description?: string | null;
+    price?: number | null;
+    isPublished: boolean;
+    deletedAt?: undefined | null;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -474,6 +528,7 @@ export type GetAllProductsQuery = {
     reference: string;
     shortDescription?: string | null;
     description?: string | null;
+    deletedAt?: undefined | null;
     isPublished: boolean;
     brand?: {
       __typename?: 'Brand';
@@ -505,6 +560,7 @@ export type GetProductByIdQuery = {
     description?: string | null;
     price?: number | null;
     isPublished: boolean;
+    deletedAt?: undefined | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
@@ -660,6 +716,121 @@ export type CreateNewProductMutationResult =
 export type CreateNewProductMutationOptions = Apollo.BaseMutationOptions<
   CreateNewProductMutation,
   CreateNewProductMutationVariables
+>;
+export const DeleteProductDocument = gql`
+  mutation DeleteProduct($id: Int!) {
+    deleteProduct(id: $id)
+  }
+`;
+export type DeleteProductMutationFn = Apollo.MutationFunction<
+  DeleteProductMutation,
+  DeleteProductMutationVariables
+>;
+
+/**
+ * __useDeleteProductMutation__
+ *
+ * To run a mutation, you first call `useDeleteProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useDeleteProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [deleteProductMutation, { data, loading, error }] = useDeleteProductMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useDeleteProductMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    DeleteProductMutation,
+    DeleteProductMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    DeleteProductMutation,
+    DeleteProductMutationVariables
+  >(DeleteProductDocument, options);
+}
+export type DeleteProductMutationHookResult = ReturnType<
+  typeof useDeleteProductMutation
+>;
+export type DeleteProductMutationResult =
+  Apollo.MutationResult<DeleteProductMutation>;
+export type DeleteProductMutationOptions = Apollo.BaseMutationOptions<
+  DeleteProductMutation,
+  DeleteProductMutationVariables
+>;
+export const RestoreProductDocument = gql`
+  mutation RestoreProduct($id: Int!) {
+    restoreProduct(id: $id) {
+      id
+      reference
+      name
+      shortDescription
+      description
+      price
+      brand {
+        id
+        name
+        description
+        logo
+      }
+      isPublished
+      categories {
+        id
+        name
+      }
+      deletedAt
+    }
+  }
+`;
+export type RestoreProductMutationFn = Apollo.MutationFunction<
+  RestoreProductMutation,
+  RestoreProductMutationVariables
+>;
+
+/**
+ * __useRestoreProductMutation__
+ *
+ * To run a mutation, you first call `useRestoreProductMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useRestoreProductMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [restoreProductMutation, { data, loading, error }] = useRestoreProductMutation({
+ *   variables: {
+ *      id: // value for 'id'
+ *   },
+ * });
+ */
+export function useRestoreProductMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    RestoreProductMutation,
+    RestoreProductMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    RestoreProductMutation,
+    RestoreProductMutationVariables
+  >(RestoreProductDocument, options);
+}
+export type RestoreProductMutationHookResult = ReturnType<
+  typeof useRestoreProductMutation
+>;
+export type RestoreProductMutationResult =
+  Apollo.MutationResult<RestoreProductMutation>;
+export type RestoreProductMutationOptions = Apollo.BaseMutationOptions<
+  RestoreProductMutation,
+  RestoreProductMutationVariables
 >;
 export const CreateCategoryDocument = gql`
   mutation CreateCategory($input: CreateCategoryInput!) {
@@ -1338,6 +1509,7 @@ export const GetAllProductsDocument = gql`
       shortDescription
       description
       price
+      deletedAt
       brand {
         id
         name
@@ -1433,6 +1605,7 @@ export const GetProductByIdDocument = gql`
       description
       price
       isPublished
+      deletedAt
       categories {
         id
         name

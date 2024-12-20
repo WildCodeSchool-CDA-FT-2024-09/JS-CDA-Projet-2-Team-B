@@ -9,14 +9,17 @@ import { Brand } from '../entity/brand.entities';
 export default class ProductResolver {
   @Query(() => [Product])
   async getAllProducts(
-    @Arg('search', { nullable: true }) search: string
+    @Arg('search', { nullable: true }) search: string,
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
   ): Promise<Product[]> {
     const query = {
       where: search ? { name: ILike(`%${search}%`) } : {},
       relations: {
         categories: true,
         brand: true
-      }
+      },
+      withDeleted: includeDeleted
     };
 
     return Product.find(query);
@@ -63,11 +66,14 @@ export default class ProductResolver {
 
   @Query(() => Product, { nullable: true })
   async getProductById(
-    @Arg('id', () => Int) id: number
+    @Arg('id', () => Int) id: number,
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
   ): Promise<Product | null> {
     return await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand']
+      relations: ['categories', 'brand'],
+      withDeleted: includeDeleted
     });
   }
 
@@ -105,5 +111,49 @@ export default class ProductResolver {
     }
 
     return await product.save();
+  }
+
+  @Mutation(() => Boolean)
+  async deleteProduct(@Arg('id', () => Int) id: number): Promise<boolean> {
+    try {
+      const product = await Product.findOne({
+        where: { id }
+      });
+
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      await product.softRemove();
+
+      return true;
+    } catch (error) {
+      console.error('Error while deleting product:', error);
+      throw error;
+    }
+  }
+
+  @Mutation(() => Product)
+  async restoreProduct(@Arg('id', () => Int) id: number): Promise<Product> {
+    try {
+      const product = await Product.findOne({
+        where: { id },
+        withDeleted: true,
+        relations: {
+          brand: true,
+          categories: true
+        }
+      });
+
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      await product.recover();
+      return product;
+    } catch (error) {
+      console.error('Error restoring Tag:', error);
+      throw error;
+    }
   }
 }

@@ -10,6 +10,7 @@ export const GET_PRODUCT = gql`
       shortDescription
       description
       price
+      deletedAt
       brand {
         id
         name
@@ -35,6 +36,7 @@ export const GET_PRODUCT_BY_ID = gql`
       description
       price
       isPublished
+      deletedAt
       categories {
         id
         name
