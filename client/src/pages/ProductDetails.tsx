@@ -180,6 +180,30 @@ export default function ProductDetails() {
       noValidate
       autoComplete="off"
     >
+      <FormControlLabel
+        control={
+          <CustomSwitch
+            checked={product.isActive}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setProduct((prev) => ({
+                ...prev,
+                isActive: e.target.checked
+              }));
+            }}
+          />
+        }
+        label={
+          <Typography
+            sx={{
+              color: product.isActive ? 'success.main' : 'error.main',
+              fontWeight: 'bold'
+            }}
+          >
+            {product.isActive ? 'Activé' : 'Désactivé'}
+          </Typography>
+        }
+        sx={{ mt: 2, mb: 2 }}
+      />
       <Typography
         sx={{
           marginLeft: '2px',
@@ -391,30 +415,6 @@ export default function ProductDetails() {
           <MenuItem value="true">Publié</MenuItem>
         </Select>
       </FormControl>
-      <FormControlLabel
-        control={
-          <CustomSwitch
-            checked={product.isActive}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setProduct((prev) => ({
-                ...prev,
-                isActive: e.target.checked
-              }));
-            }}
-          />
-        }
-        label={
-          <Typography
-            sx={{
-              color: product.isActive ? 'success.main' : 'error.main',
-              fontWeight: 'bold'
-            }}
-          >
-            {product.isActive ? 'Activé' : 'Désactivé'}
-          </Typography>
-        }
-        sx={{ mt: 2, mb: 2 }}
-      />
 
       <Button
         variant="contained"
