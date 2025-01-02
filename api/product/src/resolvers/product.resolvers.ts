@@ -4,6 +4,7 @@ import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
 import { Category } from '../entity/category.entities';
 import { ILike, In } from 'typeorm';
 import { Brand } from '../entity/brand.entities';
+import { Tag } from '../entity/tag.entities';
 
 @Resolver(Product)
 export default class ProductResolver {
@@ -18,7 +19,8 @@ export default class ProductResolver {
       relations: {
         categories: true,
         brand: true,
-        images: true
+        images: true,
+        tags: true
       },
       withDeleted: includeDeleted
     };
@@ -62,6 +64,13 @@ export default class ProductResolver {
       product.categories = categories;
     }
 
+    if (newProduct.tagIds) {
+      const tags = await Tag.findBy({
+        id: In(newProduct.tagIds)
+      });
+      product.tags = tags;
+    }
+
     return await product.save();
   }
 
@@ -73,7 +82,7 @@ export default class ProductResolver {
   ): Promise<Product | null> {
     return await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand', 'images'],
+      relations: ['categories', 'brand', 'images', 'tags'],
       withDeleted: includeDeleted
     });
   }
@@ -86,7 +95,7 @@ export default class ProductResolver {
 
     const product = await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand', 'images']
+      relations: ['categories', 'brand', 'images', 'tags']
     });
 
     if (!product) {
@@ -113,6 +122,13 @@ export default class ProductResolver {
         id: In(newDataProduct.categoryIds)
       });
       product.categories = categories;
+    }
+
+    if (newDataProduct.tagIds) {
+      const tags = await Tag.findBy({
+        id: In(newDataProduct.tagIds)
+      });
+      product.tags = tags;
     }
 
     // if (newDataProduct.imageIds && newDataProduct.imageIds.length > 0) {
@@ -152,7 +168,8 @@ export default class ProductResolver {
         withDeleted: true,
         relations: {
           brand: true,
-          categories: true
+          categories: true,
+          tags: true
         }
       });
 

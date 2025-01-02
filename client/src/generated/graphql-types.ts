@@ -210,6 +210,7 @@ export type Product = {
   price?: Maybe<Scalars['Float']['output']>;
   reference: Scalars['String']['output'];
   shortDescription?: Maybe<Scalars['String']['output']>;
+  tags?: Maybe<Array<Tag>>;
 };
 
 export type ProductInput = {
@@ -221,6 +222,7 @@ export type ProductInput = {
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
   shortDescription: Scalars['String']['input'];
+  tagIds?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 export type ProductUpdateInput = {
@@ -233,6 +235,7 @@ export type ProductUpdateInput = {
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
   shortDescription: Scalars['String']['input'];
+  tagIds?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 export type Query = {
@@ -402,6 +405,7 @@ export type UpdateProductMutation = {
       id: number;
       name: string;
     }> | null;
+    tags?: Array<{ __typename?: 'Tag'; id: number; name: string }> | null;
   };
 };
 
@@ -583,6 +587,7 @@ export type GetProductByIdQuery = {
       id: number;
       name: string;
     }> | null;
+    tags?: Array<{ __typename?: 'Tag'; id: number; name: string }> | null;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -917,6 +922,10 @@ export const UpdateProductDocument = gql`
       }
       isPublished
       categories {
+        id
+        name
+      }
+      tags {
         id
         name
       }
@@ -1672,6 +1681,10 @@ export const GetProductByIdDocument = gql`
       isPublished
       deletedAt
       categories {
+        id
+        name
+      }
+      tags {
         id
         name
       }

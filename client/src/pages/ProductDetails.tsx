@@ -17,6 +17,7 @@ import {
   GetAllBrandsDocument,
   useDeleteProductMutation,
   useGetAllCategoriesQuery,
+  useGetAllTagsQuery,
   useGetProductByIdQuery,
   useRestoreProductMutation,
   useUpdateProductMutation
@@ -32,6 +33,7 @@ interface ProductDetailsReq {
   price: number;
   isPublished: boolean;
   categories?: { id: number; name: string }[] | null;
+  tags?: { id: number; name: string }[] | null;
   brand: { id: number; name: string } | null;
   isActive: boolean;
 }
@@ -41,6 +43,7 @@ export default function ProductDetails() {
   const [error, setError] = useState<string | null>('');
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
+  const { data: tagsData } = useGetAllTagsQuery();
   const [brandInputValue, setBrandInputValue] = useState('');
   const [deleteProduct] = useDeleteProductMutation();
   const [restoreProduct] = useRestoreProductMutation();
@@ -58,6 +61,7 @@ export default function ProductDetails() {
     price: 0,
     isPublished: true,
     categories: [],
+    tags: [],
     brand: null,
     isActive: true
   });
@@ -143,6 +147,7 @@ export default function ProductDetails() {
             price: product.price,
             isPublished: product.isPublished,
             categoryIds: product.categories?.map((cat) => cat.id) || [],
+            tagIds: product.tags?.map((tag) => tag.id) || [],
             brand: product.brand!.id
           }
         }
@@ -163,6 +168,7 @@ export default function ProductDetails() {
           price: data.updateProduct.price ?? 0,
           isPublished: data.updateProduct.isPublished ?? true,
           categories: data.updateProduct.categories || [],
+          tags: data.updateProduct.tags || [],
           brand: data.updateProduct.brand as { id: number; name: string },
           isActive: product.isActive
         });
@@ -183,6 +189,7 @@ export default function ProductDetails() {
         price: data.getProductById.price || 0,
         isPublished: data.getProductById.isPublished,
         categories: data.getProductById.categories || [],
+        tags: data.getProductById.tags || [],
         brand: data.getProductById.brand as { id: number; name: string },
         isActive: !data.getProductById.deletedAt
       });
@@ -397,6 +404,99 @@ export default function ProductDetails() {
         ) : (
           <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
             Aucune catégorie associée
+          </Typography>
+        )}
+      </Box>
+      <Typography sx={{ marginLeft: '2px', fontWeight: 'bold' }}>
+        Tags
+      </Typography>
+      <FormControl fullWidth>
+        <Autocomplete
+          multiple
+          options={tagsData?.getAllTags || []}
+          getOptionLabel={(option) => option.name}
+          value={[]}
+          onChange={(_, newValue) => {
+            if (newValue.length > 0) {
+              const newTags = newValue.filter(
+                (newTag) =>
+                  !product.tags?.some(
+                    (existingTag) => existingTag.id === newTag.id
+                  )
+              );
+
+              setProduct((prev) => ({
+                ...prev,
+                tags: [...(prev.tags || []), ...newTags]
+              }));
+            }
+          }}
+          filterOptions={(options) =>
+            options.filter(
+              (option) => !product.tags?.some((tag) => tag.id === option.id)
+            )
+          }
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder="Rechercher des tags"
+              size="small"
+            />
+          )}
+        />
+      </FormControl>
+      <Box
+        sx={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 1,
+          minHeight: '40px',
+          padding: '8px',
+          border: 'none',
+          borderRadius: '4px'
+        }}
+      >
+        {product.tags && product.tags.length > 0 ? (
+          product.tags.map((tag) => (
+            <Chip
+              key={tag.id}
+              label={tag.name}
+              variant="filled"
+              color="secondary"
+              onDelete={() => {
+                setProduct((prev) => ({
+                  ...prev,
+                  tags: prev.tags?.filter((t) => t.id !== tag.id) || []
+                }));
+              }}
+              sx={{
+                backgroundColor: '#e3f2fd',
+                borderRadius: '20px',
+                marginTop: '4px',
+                padding: '4px 8px',
+                boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                transition: 'transform 0.2s ease-in-out',
+                '&:hover': {
+                  transform: 'scale(1.05)',
+                  backgroundColor: '#e3f2fd'
+                },
+                '& .MuiChip-label': {
+                  color: 'text.primary'
+                },
+                '& .MuiChip-deleteIcon': {
+                  color: '#1976d2',
+                  '&:hover': {
+                    color: '#1976d2',
+                    backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                    borderRadius: '50%'
+                  }
+                }
+              }}
+            />
+          ))
+        ) : (
+          <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+            Aucun tag associé
           </Typography>
         )}
       </Box>
