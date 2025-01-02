@@ -6,6 +6,8 @@ COPY *.json ./
 
 RUN npm install
 
+COPY public public
+
 COPY src src
 
 COPY tests tests
