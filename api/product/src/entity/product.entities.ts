@@ -5,13 +5,15 @@ import {
   Column,
   ManyToMany,
   JoinTable,
-  ManyToOne
+  ManyToOne,
+  DeleteDateColumn
 } from 'typeorm';
 import { ObjectType, Field, Float } from 'type-graphql';
 import { Length, Min } from 'class-validator';
 import { Image } from './image.entities';
 import { Category } from './category.entities';
 import { Brand } from './brand.entities';
+import { GraphQLDateTime } from 'graphql-scalars';
 
 @ObjectType()
 @Entity('products')
@@ -64,4 +66,8 @@ export class Product extends BaseEntity {
   @Field(() => Brand, { nullable: true })
   @ManyToOne(() => Brand, (brand) => brand.id)
   brand: Brand;
+
+  @Field(() => GraphQLDateTime, { nullable: true })
+  @DeleteDateColumn()
+  deletedAt?: Date;
 }

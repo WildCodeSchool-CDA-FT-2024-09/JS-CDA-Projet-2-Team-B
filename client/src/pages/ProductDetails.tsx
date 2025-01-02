@@ -8,17 +8,20 @@ import {
   Autocomplete,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  FormControlLabel
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   GetAllBrandsDocument,
+  useDeleteProductMutation,
   useGetAllCategoriesQuery,
   useGetProductByIdQuery,
   useUpdateProductMutation
 } from '../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
+import { CustomSwitch } from '../ui/Switch';
 
 interface ProductDetailsReq {
   name: string;
@@ -29,6 +32,7 @@ interface ProductDetailsReq {
   isPublished: boolean;
   categories?: { id: number; name: string }[] | null;
   brand: { id: number; name: string } | null;
+  isActive: boolean;
 }
 
 export default function ProductDetails() {
@@ -37,6 +41,8 @@ export default function ProductDetails() {
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
   const [brandInputValue, setBrandInputValue] = useState('');
+  const [deleteProduct] = useDeleteProductMutation();
+
   const [brandOptions, setBrandOptions] = useState<
     Array<{ id: number; name: string }>
   >([]);
@@ -50,7 +56,8 @@ export default function ProductDetails() {
     price: 0,
     isPublished: true,
     categories: [],
-    brand: null
+    brand: null,
+    isActive: true
   });
 
   const {
@@ -110,6 +117,12 @@ export default function ProductDetails() {
         }
       });
 
+      if (!product.isActive) {
+        await deleteProduct({
+          variables: { id: parseInt(id!) }
+        });
+      }
+
       if (data?.updateProduct) {
         setProduct({
           name: data.updateProduct.name,
@@ -119,7 +132,8 @@ export default function ProductDetails() {
           price: data.updateProduct.price ?? 0,
           isPublished: data.updateProduct.isPublished ?? true,
           categories: data.updateProduct.categories || [],
-          brand: data.updateProduct.brand as { id: number; name: string }
+          brand: data.updateProduct.brand as { id: number; name: string },
+          isActive: product.isActive
         });
         setError(null);
       }
@@ -138,7 +152,8 @@ export default function ProductDetails() {
         price: data.getProductById.price || 0,
         isPublished: data.getProductById.isPublished,
         categories: data.getProductById.categories || [],
-        brand: data.getProductById.brand as { id: number; name: string }
+        brand: data.getProductById.brand as { id: number; name: string },
+        isActive: true
       });
     } else if (fetchError) {
       setError(fetchError.message);
@@ -165,6 +180,30 @@ export default function ProductDetails() {
       noValidate
       autoComplete="off"
     >
+      <FormControlLabel
+        control={
+          <CustomSwitch
+            checked={product.isActive}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+              setProduct((prev) => ({
+                ...prev,
+                isActive: e.target.checked
+              }));
+            }}
+          />
+        }
+        label={
+          <Typography
+            sx={{
+              color: product.isActive ? 'success.main' : 'error.main',
+              fontWeight: 'bold'
+            }}
+          >
+            {product.isActive ? 'Activé' : 'Désactivé'}
+          </Typography>
+        }
+        sx={{ mt: 2, mb: 2 }}
+      />
       <Typography
         sx={{
           marginLeft: '2px',
@@ -376,6 +415,7 @@ export default function ProductDetails() {
           <MenuItem value="true">Publié</MenuItem>
         </Select>
       </FormControl>
+
       <Button
         variant="contained"
         disabled={updateLoading}

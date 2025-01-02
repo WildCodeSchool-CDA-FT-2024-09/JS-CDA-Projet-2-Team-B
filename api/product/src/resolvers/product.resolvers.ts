@@ -1,7 +1,6 @@
 import { ProductInput, ProductUpdateInput } from '../types/product.types';
 import { Product } from '../entity/product.entities';
 import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
-import { Image } from '../entity/image.entities';
 import { Category } from '../entity/category.entities';
 import { ILike, In } from 'typeorm';
 import { Brand } from '../entity/brand.entities';
@@ -106,12 +105,32 @@ export default class ProductResolver {
       product.categories = categories;
     }
 
-    if (newDataProduct.imageIds && newDataProduct.imageIds.length > 0) {
-      const images = await Image.findBy({ id: In(newDataProduct.imageIds) });
+    // if (newDataProduct.imageIds && newDataProduct.imageIds.length > 0) {
+    //   const images = await Image.findBy({ id: In(newDataProduct.imageIds) });
 
-      product.images = images;
-    }
+    //   product.images = images;
+    // }
 
     return await product.save();
+  }
+
+  @Mutation(() => Boolean)
+  async deleteProduct(@Arg('id', () => Int) id: number): Promise<boolean> {
+    try {
+      const product = await Product.findOne({
+        where: { id }
+      });
+
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      await product.softRemove();
+
+      return true;
+    } catch (error) {
+      console.error('Error while deleting product:', error);
+      throw error;
+    }
   }
 }

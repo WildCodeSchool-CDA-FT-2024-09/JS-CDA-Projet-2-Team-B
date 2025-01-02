@@ -146,3 +146,9 @@ export const DISABLE_CHARACTERISTIC = gql`
     disableCharacteristic(id: $disableCharacteristicId)
   }
 `;
+
+export const DELETE_PRODUCT = gql`
+  mutation DeleteProduct($id: Int!) {
+    deleteProduct(id: $id)
+  }
+`;
