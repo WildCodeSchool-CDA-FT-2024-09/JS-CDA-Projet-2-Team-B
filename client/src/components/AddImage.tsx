@@ -86,9 +86,7 @@ const AddImage = ({ productId, handleBlock }: Props) => {
         marginTop: 5
       }}
     >
-      <Typography>
-        <h3>Ajouter une Image</h3>
-      </Typography>
+      <Typography>Ajouter une Image</Typography>
       <Box sx={{ marginBottom: 2 }}>
         <Button
           component="label"
