@@ -2,13 +2,8 @@ import Card from '@mui/material/Card';
 import { Link as RouterLink } from 'react-router-dom';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Button, Link as MUILink } from '@mui/material';
+import { Link as MUILink } from '@mui/material';
 import { Grid } from '@mui/system';
-import {
-  useActivateBrandMutation,
-  useDeactivateBrandMutation
-} from '../generated/graphql-types';
-import { useState } from 'react';
 
 const styleButton = {
   padding: '4px 10px',
@@ -29,47 +24,7 @@ type Brand = {
   refetch: () => void;
 };
 
-export default function BrandCard({
-  id,
-  name,
-  logo,
-  deletedAt,
-  refetch
-}: Brand) {
-  const [deactivateBrand, { error, loading: deactivationLoading }] =
-    useDeactivateBrandMutation();
-  const [activateBrand, { loading: activationLoading }] =
-    useActivateBrandMutation();
-  const [isActive, setIsActive] = useState(deletedAt === null);
-
-  const handleActivation = async (brandId: number, isActive: boolean) => {
-    try {
-      if (isActive) {
-        const { data } = await deactivateBrand({
-          variables: { deactivateBrandId: brandId }
-        });
-
-        if (data?.deactivateBrand) {
-          setIsActive(false);
-          refetch();
-        }
-      } else {
-        const { data } = await activateBrand({
-          variables: { activateBrandId: brandId }
-        });
-
-        if (data?.activateBrand) {
-          setIsActive(true);
-          refetch();
-        }
-      }
-    } catch (err) {
-      console.error('Error deactivating brand: ', err);
-    }
-  };
-
-  if (error) return <p>{error.message}</p>;
-
+export default function BrandCard({ id, name, logo }: Brand) {
   return (
     <Card
       sx={{
@@ -99,16 +54,6 @@ export default function BrandCard({
         >
           Modifier
         </MUILink>
-        <Button
-          disabled={deactivationLoading || activationLoading}
-          onClick={() => handleActivation(id, isActive)}
-          sx={{
-            ...styleButton,
-            backgroundColor: isActive ? 'red' : 'info.main'
-          }}
-        >
-          {isActive ? 'Désactiver' : 'Activer'}
-        </Button>
       </Grid>
     </Card>
   );
