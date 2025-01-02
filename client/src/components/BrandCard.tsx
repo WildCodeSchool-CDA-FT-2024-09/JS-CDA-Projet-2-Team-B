@@ -2,9 +2,8 @@ import Card from '@mui/material/Card';
 import { Link as RouterLink } from 'react-router-dom';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Button, Link as MUILink } from '@mui/material';
+import { Link as MUILink } from '@mui/material';
 import { Grid } from '@mui/system';
-import { useDeactivateBrandMutation } from '../generated/graphql-types';
 
 const styleButton = {
   padding: '4px 10px',
@@ -25,31 +24,7 @@ type Brand = {
   refetch: () => void;
 };
 
-export default function BrandCard({
-  id,
-  name,
-  logo,
-  deletedAt,
-  refetch
-}: Brand) {
-  const [deactivateBrand, { error, loading }] = useDeactivateBrandMutation();
-
-  const handleActivation = async (brandId: number) => {
-    try {
-      const { data } = await deactivateBrand({
-        variables: { deactivateBrandId: brandId }
-      });
-
-      if (data?.deactivateBrand) {
-        refetch();
-      }
-    } catch (err) {
-      console.error('Error deactivating brand: ', err);
-    }
-  };
-
-  if (error) return <p>{error.message}</p>;
-
+export default function BrandCard({ id, name, logo }: Brand) {
   return (
     <Card
       sx={{
@@ -79,17 +54,6 @@ export default function BrandCard({
         >
           Modifier
         </MUILink>
-        <Button
-          disabled={loading}
-          value={id}
-          onClick={() => handleActivation(id)}
-          sx={{
-            ...styleButton,
-            backgroundColor: deletedAt === null ? 'red' : 'info.main'
-          }}
-        >
-          {deletedAt === null ? 'Désactiver' : 'Activer'}
-        </Button>
       </Grid>
     </Card>
   );

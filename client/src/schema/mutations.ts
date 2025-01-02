@@ -172,6 +172,12 @@ export const DEACTIVATE_BRAND = gql`
   }
 `;
 
+export const ACTIVATE_BRAND = gql`
+  mutation ActivateBrand($activateBrandId: Int!) {
+    activateBrand(id: $activateBrandId)
+  }
+`;
+
 export const DISABLE_CHARACTERISTIC = gql`
   mutation DisableCharactertistic($disableCharacteristicId: Int!) {
     disableCharacteristic(id: $disableCharacteristicId)

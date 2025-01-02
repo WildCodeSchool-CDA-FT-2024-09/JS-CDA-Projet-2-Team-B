@@ -1,6 +1,7 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import {
+  useActivateBrandMutation,
   useDeactivateBrandMutation,
   useGetBrandByIdQuery,
   useUpdateBrandMutation
@@ -15,22 +16,28 @@ interface BrandReq {
   deletedAt: Date | null;
 }
 
+const initialState = {
+  name: '',
+  description: '',
+  logo: '',
+  deletedAt: null
+};
+
 export default function BrandDetails() {
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState<string | null>('');
-  const [brand, setBrand] = useState<BrandReq>({
-    name: '',
-    description: '',
-    logo: '',
-    deletedAt: null
-  });
+  const [brand, setBrand] = useState<BrandReq>(initialState);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [
     deactivateBrand,
     { error: deactivateError, loading: deactivateLoading }
   ] = useDeactivateBrandMutation();
+  const [
+    activateBrand,
+    { error: activationError, loading: activationLoading }
+  ] = useActivateBrandMutation();
   const [updateBrand, { loading: updateLoading, error: updateError }] =
     useUpdateBrandMutation();
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const {
     loading,
@@ -90,10 +97,21 @@ export default function BrandDetails() {
         setError('Erreur lors de la désactivation de la marque.');
       }
     } else {
-      setBrand((prev) => ({
-        ...prev,
-        deletedAt: null
-      }));
+      const { data } = await activateBrand({
+        variables: { activateBrandId: brandId }
+      });
+
+      if (data?.activateBrand) {
+        setBrand((prev) => ({
+          ...prev,
+          deletedAt: null
+        }));
+        setSuccessMessage('Marque activée avec succès.');
+        await refetch();
+      } else if (activationError!.message) {
+        setSuccessMessage(null);
+        setError('Erreur lors de la désactivation de la marque.');
+      }
     }
   };
 
@@ -144,7 +162,7 @@ export default function BrandDetails() {
       <GreenSwitch
         checked={brand.deletedAt === null}
         onChange={handleSwitchChange}
-        disabled={deactivateLoading}
+        disabled={deactivateLoading || activationLoading}
       />
       <Box
         component="form"

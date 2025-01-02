@@ -95,6 +95,7 @@ export type Image = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  activateBrand: Scalars['Boolean']['output'];
   createBrand: Brand;
   createCategory: Category;
   createNewCharacteristic: Characteristic;
@@ -114,6 +115,10 @@ export type Mutation = {
   updateCategory: Category;
   updateProduct: Product;
   updateTag: Tag;
+};
+
+export type MutationActivateBrandArgs = {
+  id: Scalars['Int']['input'];
 };
 
 export type MutationCreateBrandArgs = {
@@ -505,6 +510,15 @@ export type DeactivateBrandMutationVariables = Exact<{
 export type DeactivateBrandMutation = {
   __typename?: 'Mutation';
   deactivateBrand: boolean;
+};
+
+export type ActivateBrandMutationVariables = Exact<{
+  activateBrandId: Scalars['Int']['input'];
+}>;
+
+export type ActivateBrandMutation = {
+  __typename?: 'Mutation';
+  activateBrand: boolean;
 };
 
 export type DisableCharactertisticMutationVariables = Exact<{
@@ -1453,6 +1467,54 @@ export type DeactivateBrandMutationResult =
 export type DeactivateBrandMutationOptions = Apollo.BaseMutationOptions<
   DeactivateBrandMutation,
   DeactivateBrandMutationVariables
+>;
+export const ActivateBrandDocument = gql`
+  mutation ActivateBrand($activateBrandId: Int!) {
+    activateBrand(id: $activateBrandId)
+  }
+`;
+export type ActivateBrandMutationFn = Apollo.MutationFunction<
+  ActivateBrandMutation,
+  ActivateBrandMutationVariables
+>;
+
+/**
+ * __useActivateBrandMutation__
+ *
+ * To run a mutation, you first call `useActivateBrandMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useActivateBrandMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [activateBrandMutation, { data, loading, error }] = useActivateBrandMutation({
+ *   variables: {
+ *      activateBrandId: // value for 'activateBrandId'
+ *   },
+ * });
+ */
+export function useActivateBrandMutation(
+  baseOptions?: Apollo.MutationHookOptions<
+    ActivateBrandMutation,
+    ActivateBrandMutationVariables
+  >
+) {
+  const options = { ...defaultOptions, ...baseOptions };
+  return Apollo.useMutation<
+    ActivateBrandMutation,
+    ActivateBrandMutationVariables
+  >(ActivateBrandDocument, options);
+}
+export type ActivateBrandMutationHookResult = ReturnType<
+  typeof useActivateBrandMutation
+>;
+export type ActivateBrandMutationResult =
+  Apollo.MutationResult<ActivateBrandMutation>;
+export type ActivateBrandMutationOptions = Apollo.BaseMutationOptions<
+  ActivateBrandMutation,
+  ActivateBrandMutationVariables
 >;
 export const DisableCharactertisticDocument = gql`
   mutation DisableCharactertistic($disableCharacteristicId: Int!) {

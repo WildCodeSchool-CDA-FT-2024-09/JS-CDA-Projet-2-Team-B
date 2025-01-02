@@ -93,4 +93,24 @@ export default class BrandResolver {
       throw error;
     }
   }
+
+  @Mutation(() => Boolean)
+  async activateBrand(@Arg('id', () => Int) id: number): Promise<boolean> {
+    try {
+      const brand = await Brand.findOne({
+        where: { id },
+        withDeleted: true
+      });
+
+      if (!brand) {
+        throw new Error("La marque n'a pas été trouvée.");
+      }
+
+      await brand.recover();
+      return true;
+    } catch (error) {
+      console.error('Erreur lors de la restauration de la marque : ', error);
+      throw error;
+    }
+  }
 }
