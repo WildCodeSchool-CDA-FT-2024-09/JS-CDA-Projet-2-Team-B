@@ -40,8 +40,6 @@ services:
     volumes:
       - ./api/uploadimage/src:/app/src
       - ./api/uploadimage/uploads:/app/uploads
-    ports:
-      - 3000:3000
     depends_on:
       db:
         condition: service_healthy

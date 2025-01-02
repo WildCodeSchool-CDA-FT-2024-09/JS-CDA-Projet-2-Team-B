@@ -89,6 +89,7 @@ export type Image = {
   __typename?: 'Image';
   id: Scalars['Float']['output'];
   isMain: Scalars['Boolean']['output'];
+  products: Array<Product>;
   url: Scalars['String']['output'];
 };
 
@@ -193,10 +194,12 @@ export type Product = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
-  isPublished: Scalars['Boolean']['output'];
+  images: Array<Image>;
   name: Scalars['String']['output'];
   price?: Maybe<Scalars['Float']['output']>;
+  price?: Maybe<Scalars['Float']['output']>;
   reference: Scalars['String']['output'];
+  shortDescription?: Maybe<Scalars['String']['output']>;
   shortDescription?: Maybe<Scalars['String']['output']>;
 };
 
@@ -216,7 +219,7 @@ export type ProductUpdateInput = {
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
-  isPublished: Scalars['Boolean']['input'];
+  imageIds: Array<Scalars['Float']['input']>;
   name: Scalars['String']['input'];
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
@@ -296,19 +299,6 @@ export type CreateNewProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
-    isPublished: boolean;
-    brand?: {
-      __typename?: 'Brand';
-      id: number;
-      name: string;
-      description: string;
-      logo: string;
-    } | null;
-    categories?: Array<{
-      __typename?: 'Category';
-      id: number;
-      name: string;
-    }> | null;
   };
 };
 
@@ -335,19 +325,6 @@ export type UpdateProductMutation = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
-    isPublished: boolean;
-    brand?: {
-      __typename?: 'Brand';
-      id: number;
-      name: string;
-      description: string;
-      logo: string;
-    } | null;
-    categories?: Array<{
-      __typename?: 'Category';
-      id: number;
-      name: string;
-    }> | null;
   };
 };
 
@@ -487,22 +464,10 @@ export type GetAllProductsQuery = {
     id: number;
     name: string;
     price?: number | null;
+    price?: number | null;
     reference: string;
     shortDescription?: string | null;
     description?: string | null;
-    isPublished: boolean;
-    brand?: {
-      __typename?: 'Brand';
-      id: number;
-      name: string;
-      description: string;
-      logo: string;
-    } | null;
-    categories?: Array<{
-      __typename?: 'Category';
-      id: number;
-      name: string;
-    }> | null;
   }>;
 };
 
@@ -520,18 +485,6 @@ export type GetProductByIdQuery = {
     shortDescription?: string | null;
     description?: string | null;
     price?: number | null;
-    isPublished: boolean;
-    categories?: Array<{
-      __typename?: 'Category';
-      id: number;
-      name: string;
-    }> | null;
-    brand?: {
-      __typename?: 'Brand';
-      id: number;
-      name: string;
-      deletedAt?: undefined | null;
-    } | null;
   } | null;
 };
 
