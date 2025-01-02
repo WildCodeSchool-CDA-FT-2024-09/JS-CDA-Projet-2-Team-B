@@ -89,6 +89,7 @@ export type Image = {
   __typename?: 'Image';
   id: Scalars['Float']['output'];
   isMain: Scalars['Boolean']['output'];
+  products: Array<Product>;
   url: Scalars['String']['output'];
 };
 
@@ -198,6 +199,7 @@ export type Product = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
+  images: Array<Image>;
   isPublished: Scalars['Boolean']['output'];
   name: Scalars['String']['output'];
   price?: Maybe<Scalars['Float']['output']>;
@@ -547,6 +549,7 @@ export type GetAllProductsQuery = {
 
 export type GetProductByIdQueryVariables = Exact<{
   getProductByIdId: Scalars['Int']['input'];
+  includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
 }>;
 
 export type GetProductByIdQuery = {
@@ -1596,8 +1599,8 @@ export type GetAllProductsQueryResult = Apollo.QueryResult<
   GetAllProductsQueryVariables
 >;
 export const GetProductByIdDocument = gql`
-  query getProductById($getProductByIdId: Int!) {
-    getProductById(id: $getProductByIdId) {
+  query getProductById($getProductByIdId: Int!, $includeDeleted: Boolean) {
+    getProductById(id: $getProductByIdId, includeDeleted: $includeDeleted) {
       id
       reference
       name
@@ -1632,6 +1635,7 @@ export const GetProductByIdDocument = gql`
  * const { data, loading, error } = useGetProductByIdQuery({
  *   variables: {
  *      getProductByIdId: // value for 'getProductByIdId'
+ *      includeDeleted: // value for 'includeDeleted'
  *   },
  * });
  */

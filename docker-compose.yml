@@ -39,9 +39,7 @@ services:
       - VITE_API_URL=http://localhost:5050/upload
     volumes:
       - ./api/uploadimage/src:/app/src
-      - ./api/uploadimage/uploads:/app/uploads
-    ports:
-      - 3000:3000
+      - ./api/uploadimage/public:/app/public
     depends_on:
       db:
         condition: service_healthy

@@ -17,7 +17,8 @@ export default class ProductResolver {
       where: search ? { name: ILike(`%${search}%`) } : {},
       relations: {
         categories: true,
-        brand: true
+        brand: true,
+        images: true
       },
       withDeleted: includeDeleted
     };
@@ -72,7 +73,7 @@ export default class ProductResolver {
   ): Promise<Product | null> {
     return await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand'],
+      relations: ['categories', 'brand', 'images'],
       withDeleted: includeDeleted
     });
   }
@@ -85,7 +86,7 @@ export default class ProductResolver {
 
     const product = await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand']
+      relations: ['categories', 'brand', 'images']
     });
 
     if (!product) {
@@ -109,6 +110,12 @@ export default class ProductResolver {
       });
       product.categories = categories;
     }
+
+    // if (newDataProduct.imageIds && newDataProduct.imageIds.length > 0) {
+    //   const images = await Image.findBy({ id: In(newDataProduct.imageIds) });
+
+    //   product.images = images;
+    // }
 
     return await product.save();
   }

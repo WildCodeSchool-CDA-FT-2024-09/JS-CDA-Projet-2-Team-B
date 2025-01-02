@@ -27,8 +27,8 @@ export const GET_PRODUCT = gql`
 `;
 
 export const GET_PRODUCT_BY_ID = gql`
-  query getProductById($getProductByIdId: Int!) {
-    getProductById(id: $getProductByIdId) {
+  query getProductById($getProductByIdId: Int!, $includeDeleted: Boolean) {
+    getProductById(id: $getProductByIdId, includeDeleted: $includeDeleted) {
       id
       reference
       name
