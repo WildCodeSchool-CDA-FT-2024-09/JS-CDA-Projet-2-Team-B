@@ -24,6 +24,37 @@ export const CREATE_PRODUCT = gql`
   }
 `;
 
+export const DELETE_PRODUCT = gql`
+  mutation DeleteProduct($id: Int!) {
+    deleteProduct(id: $id)
+  }
+`;
+
+export const RESTORE_PRODUCT = gql`
+  mutation RestoreProduct($id: Int!) {
+    restoreProduct(id: $id) {
+      id
+      reference
+      name
+      shortDescription
+      description
+      price
+      brand {
+        id
+        name
+        description
+        logo
+      }
+      isPublished
+      categories {
+        id
+        name
+      }
+      deletedAt
+    }
+  }
+`;
+
 export const CREATE_CATEGORY = gql`
   mutation CreateCategory($input: CreateCategoryInput!) {
     createCategory(input: $input) {
@@ -150,11 +181,5 @@ export const ACTIVATE_BRAND = gql`
 export const DISABLE_CHARACTERISTIC = gql`
   mutation DisableCharactertistic($disableCharacteristicId: Int!) {
     disableCharacteristic(id: $disableCharacteristicId)
-  }
-`;
-
-export const DELETE_PRODUCT = gql`
-  mutation DeleteProduct($id: Int!) {
-    deleteProduct(id: $id)
   }
 `;

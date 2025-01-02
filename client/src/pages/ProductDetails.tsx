@@ -18,6 +18,7 @@ import {
   useDeleteProductMutation,
   useGetAllCategoriesQuery,
   useGetProductByIdQuery,
+  useRestoreProductMutation,
   useUpdateProductMutation
 } from '../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
@@ -42,6 +43,7 @@ export default function ProductDetails() {
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
   const [brandInputValue, setBrandInputValue] = useState('');
   const [deleteProduct] = useDeleteProductMutation();
+  const [restoreProduct] = useRestoreProductMutation();
 
   const [brandOptions, setBrandOptions] = useState<
     Array<{ id: number; name: string }>
@@ -65,7 +67,7 @@ export default function ProductDetails() {
     error: fetchError,
     data
   } = useGetProductByIdQuery({
-    variables: { getProductByIdId: parseInt(id!) }
+    variables: { getProductByIdId: parseInt(id!), includeDeleted: true }
   });
 
   useEffect(() => {
@@ -90,6 +92,35 @@ export default function ProductDetails() {
       ...prev,
       [name]: name === 'price' ? parseFloat(value) || 0 : value
     }));
+  };
+
+  const handleSwitchChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const isActive = e.target.checked;
+
+    try {
+      if (isActive) {
+        await restoreProduct({
+          variables: { id: parseInt(id!) },
+          refetchQueries: ['GetProductById']
+        });
+      } else {
+        await deleteProduct({
+          variables: { id: parseInt(id!) },
+          refetchQueries: ['GetProductById']
+        });
+      }
+
+      setProduct((prev) => ({
+        ...prev,
+        isActive
+      }));
+    } catch (err) {
+      console.error('Error updating product status:', err);
+      setProduct((prev) => ({
+        ...prev,
+        isActive: !isActive
+      }));
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -153,7 +184,7 @@ export default function ProductDetails() {
         isPublished: data.getProductById.isPublished,
         categories: data.getProductById.categories || [],
         brand: data.getProductById.brand as { id: number; name: string },
-        isActive: true
+        isActive: !data.getProductById.deletedAt
       });
     } else if (fetchError) {
       setError(fetchError.message);
@@ -184,12 +215,7 @@ export default function ProductDetails() {
         control={
           <CustomSwitch
             checked={product.isActive}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
-              setProduct((prev) => ({
-                ...prev,
-                isActive: e.target.checked
-              }));
-            }}
+            onChange={handleSwitchChange}
           />
         }
         label={
