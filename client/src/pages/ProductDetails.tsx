@@ -215,7 +215,7 @@ export default function ProductDetails() {
         control={
           <CustomSwitch
             checked={product.isActive}
-            onChange={handleSwitchChange} // Nouvelle fonction
+            onChange={handleSwitchChange}
           />
         }
         label={
