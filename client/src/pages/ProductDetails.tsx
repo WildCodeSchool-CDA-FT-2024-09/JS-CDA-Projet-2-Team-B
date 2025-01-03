@@ -9,7 +9,9 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel
+  FormControlLabel,
+  Card,
+  CardMedia
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -36,7 +38,10 @@ interface ProductDetailsReq {
   tags?: { id: number; name: string }[] | null;
   brand: { id: number; name: string } | null;
   isActive: boolean;
+  images?: { id: number; url: string; isMain: boolean }[];
 }
+
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
@@ -63,7 +68,8 @@ export default function ProductDetails() {
     categories: [],
     tags: [],
     brand: null,
-    isActive: true
+    isActive: true,
+    images: []
   });
 
   const {
@@ -191,6 +197,7 @@ export default function ProductDetails() {
         categories: data.getProductById.categories || [],
         tags: data.getProductById.tags || [],
         brand: data.getProductById.brand as { id: number; name: string },
+        images: data.getProductById.images || [],
         isActive: !data.getProductById.deletedAt
       });
     } else if (fetchError) {
@@ -311,6 +318,23 @@ export default function ProductDetails() {
         onChange={handleChange}
         placeholder="Prix"
       />
+      <Typography sx={{ marginLeft: '2px', fontWeight: 'bold' }}>
+        Images
+      </Typography>
+      {product.images && product.images.length > 0 && (
+        <Card sx={{ padding: 5 }}>
+          <CardMedia
+            component="img"
+            height="100%"
+            image={
+              product.images.find((img) => img.isMain)?.url
+                ? `${BASE_URL}${product.images.find((img) => img.isMain)?.url}`
+                : `${BASE_URL}${product.images[0].url}`
+            }
+            alt="image du produit"
+          />
+        </Card>
+      )}
       <Typography sx={{ marginLeft: '2px', fontWeight: 'bold' }}>
         Catégorie
       </Typography>

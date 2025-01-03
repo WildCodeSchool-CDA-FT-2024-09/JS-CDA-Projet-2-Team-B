@@ -49,6 +49,11 @@ export const GET_PRODUCT_BY_ID = gql`
         name
         deletedAt
       }
+      images {
+        id
+        url
+        isMain
+      }
     }
   }
 `;

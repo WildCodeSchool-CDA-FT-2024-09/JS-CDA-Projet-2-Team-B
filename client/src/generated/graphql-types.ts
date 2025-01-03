@@ -357,7 +357,6 @@ export type RestoreProductMutation = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
@@ -588,6 +587,12 @@ export type GetProductByIdQuery = {
       name: string;
       deletedAt?: undefined | null;
     } | null;
+    images: Array<{
+      __typename?: 'Image';
+      id: number;
+      url: string;
+      isMain: boolean;
+    }>;
   } | null;
 };
 
@@ -791,7 +796,6 @@ export const RestoreProductDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -1679,6 +1683,11 @@ export const GetProductByIdDocument = gql`
         id
         name
         deletedAt
+      }
+      images {
+        id
+        url
+        isMain
       }
     }
   }
