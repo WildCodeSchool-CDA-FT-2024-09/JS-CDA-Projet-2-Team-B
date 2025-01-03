@@ -46,16 +46,7 @@ export const imageByProduct = async (imageId: number, productId: string) => {
   }
 };
 
-type ImageProps = {
-  id: number;
-  url: string;
-  isMain: boolean;
-};
-
-export const updateBrandImage = async (
-  imageId: ImageProps,
-  brandId: string
-) => {
+export const updateBrandImage = async (imageId: number, brandId: string) => {
   const query = 'UPDATE brand SET "image_id" = $1 WHERE "id" = $2';
 
   try {
