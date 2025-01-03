@@ -4,20 +4,25 @@ import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
 import { Category } from '../entity/category.entities';
 import { ILike, In } from 'typeorm';
 import { Brand } from '../entity/brand.entities';
+import { Tag } from '../entity/tag.entities';
 
 @Resolver(Product)
 export default class ProductResolver {
   @Query(() => [Product])
   async getAllProducts(
-    @Arg('search', { nullable: true }) search: string
+    @Arg('search', { nullable: true }) search: string,
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
   ): Promise<Product[]> {
     const query = {
       where: search ? { name: ILike(`%${search}%`) } : {},
       relations: {
         categories: true,
         brand: true,
-        images: true
-      }
+        images: true,
+        tags: true
+      },
+      withDeleted: includeDeleted
     };
 
     return Product.find(query);
@@ -59,16 +64,26 @@ export default class ProductResolver {
       product.categories = categories;
     }
 
+    if (newProduct.tagIds) {
+      const tags = await Tag.findBy({
+        id: In(newProduct.tagIds)
+      });
+      product.tags = tags;
+    }
+
     return await product.save();
   }
 
   @Query(() => Product, { nullable: true })
   async getProductById(
-    @Arg('id', () => Int) id: number
+    @Arg('id', () => Int) id: number,
+    @Arg('includeDeleted', () => Boolean, { nullable: true })
+    includeDeleted = false
   ): Promise<Product | null> {
     return await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand', 'images']
+      relations: ['categories', 'brand', 'images', 'tags'],
+      withDeleted: includeDeleted
     });
   }
 
@@ -80,7 +95,7 @@ export default class ProductResolver {
 
     const product = await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand', 'images']
+      relations: ['categories', 'brand', 'images', 'tags']
     });
 
     if (!product) {
@@ -109,6 +124,13 @@ export default class ProductResolver {
       product.categories = categories;
     }
 
+    if (newDataProduct.tagIds) {
+      const tags = await Tag.findBy({
+        id: In(newDataProduct.tagIds)
+      });
+      product.tags = tags;
+    }
+
     // if (newDataProduct.imageIds && newDataProduct.imageIds.length > 0) {
     //   const images = await Image.findBy({ id: In(newDataProduct.imageIds) });
 
@@ -134,6 +156,31 @@ export default class ProductResolver {
       return true;
     } catch (error) {
       console.error('Error while deleting product:', error);
+      throw error;
+    }
+  }
+
+  @Mutation(() => Product)
+  async restoreProduct(@Arg('id', () => Int) id: number): Promise<Product> {
+    try {
+      const product = await Product.findOne({
+        where: { id },
+        withDeleted: true,
+        relations: {
+          brand: true,
+          categories: true,
+          tags: true
+        }
+      });
+
+      if (!product) {
+        throw new Error('Product not found');
+      }
+
+      await product.recover();
+      return product;
+    } catch (error) {
+      console.error('Error restoring Tag:', error);
       throw error;
     }
   }

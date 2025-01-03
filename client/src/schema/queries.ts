@@ -10,11 +10,11 @@ export const GET_PRODUCT = gql`
       shortDescription
       description
       price
+      deletedAt
       brand {
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -26,8 +26,8 @@ export const GET_PRODUCT = gql`
 `;
 
 export const GET_PRODUCT_BY_ID = gql`
-  query getProductById($getProductByIdId: Int!) {
-    getProductById(id: $getProductByIdId) {
+  query getProductById($getProductByIdId: Int!, $includeDeleted: Boolean) {
+    getProductById(id: $getProductByIdId, includeDeleted: $includeDeleted) {
       id
       reference
       name
@@ -35,7 +35,12 @@ export const GET_PRODUCT_BY_ID = gql`
       description
       price
       isPublished
+      deletedAt
       categories {
+        id
+        name
+      }
+      tags {
         id
         name
       }
@@ -96,7 +101,6 @@ export const GET_ALL_BRANDS = gql`
       id
       name
       description
-      logo
       deletedAt
     }
   }
@@ -108,7 +112,6 @@ export const GET_BRAND_BY_ID = gql`
       id
       name
       description
-      logo
       deletedAt
     }
   }

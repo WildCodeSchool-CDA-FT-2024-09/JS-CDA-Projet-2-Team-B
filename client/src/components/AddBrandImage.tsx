@@ -2,16 +2,13 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Card, Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-// import { Check } from '@mui/icons-material';
 
 interface UploadResponse {
   id: string;
 }
 
 type Props = {
-  productId: number;
-
-  handleBlock: (isBlock: boolean) => void;
+  brandId: number | null;
 };
 
 const VisuallyHiddenInput = styled('input')({
@@ -24,13 +21,12 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 });
 
-const AddImage = ({ productId, handleBlock }: Props) => {
+const AddBrandImage = ({ brandId }: Props) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<UploadResponse | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isMain, setIsMain] = useState<boolean>(false);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -48,15 +44,14 @@ const AddImage = ({ productId, handleBlock }: Props) => {
 
     const formData = new FormData();
     formData.append('image', imageFile);
-    formData.append('product_id', productId.toString());
-    formData.append('isMain', isMain.toString());
+    formData.append('brand_id', brandId!.toString());
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.post<UploadResponse>(
-        '/upload/products',
+      const response = await axios.patch<UploadResponse>(
+        '/upload/brands',
         formData,
         {
           headers: {
@@ -68,8 +63,6 @@ const AddImage = ({ productId, handleBlock }: Props) => {
       setData(response.data);
       setImageFile(null);
       setImagePreview(null);
-      const isBlocked = false;
-      handleBlock(isBlocked);
     } catch (e) {
       setError(e as Error);
     } finally {
@@ -122,35 +115,6 @@ const AddImage = ({ productId, handleBlock }: Props) => {
         />
       )}
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        {/*<Box sx={{ marginBottom: 2 }}>
-          <Typography>Product ID</Typography>
-          <input
-            type="text"
-            value={productId}
-            onChange={(e) => setProductId(e.target.value)}
-            placeholder="Entrer l'ID du produit"
-            style={{
-              width: '100%',
-              padding: '8px',
-              marginTop: '8px',
-              borderRadius: '4px',
-              border: '1px solid #ccc'
-            }}
-          />
-        </Box>*/}
-
-        <Box sx={{ marginBottom: 2 }}>
-          <Typography>Image principale ?</Typography>
-          <input
-            type="checkbox"
-            checked={isMain}
-            onChange={(e) => setIsMain(e.target.checked)}
-            style={{ marginTop: '8px' }}
-          />
-        </Box>
-      </Box>
-
       <Button
         type="submit"
         onClick={handleAddImage}
@@ -179,4 +143,4 @@ const AddImage = ({ productId, handleBlock }: Props) => {
   );
 };
 
-export default AddImage;
+export default AddBrandImage;

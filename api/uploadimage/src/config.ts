@@ -2,7 +2,7 @@ import express from 'express';
 import { json } from 'express';
 import path from 'path';
 import { corsMiddleware } from './middlewares/cors';
-import { uploadRoutes } from './routes/upload.routes';
+import { uploadRouter } from './routes/upload.routes';
 
 const app = express();
 
@@ -11,7 +11,7 @@ app.use(corsMiddleware);
 
 // Serve server resources
 
-app.use('/upload', uploadRoutes);
+app.use('/upload', uploadRouter);
 
 app.get('/upload/:filename', (req: express.Request, res: express.Response) => {
   const imagePath = path.join(__dirname, '/../public', req.params.filename);
