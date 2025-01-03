@@ -209,18 +209,11 @@ export default function ProductDetails() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      sx={{}}
-      noValidate
-      autoComplete="off"
-    >
+    <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
       <Box
         sx={{
           display: 'flex',
           flexDirection: 'row-reverse',
-
           gap: 5
         }}
       >
