@@ -357,7 +357,6 @@ export type RestoreProductMutation = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
@@ -797,7 +796,6 @@ export const RestoreProductDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {

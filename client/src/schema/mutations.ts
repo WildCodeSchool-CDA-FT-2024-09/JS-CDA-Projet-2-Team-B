@@ -42,7 +42,6 @@ export const RESTORE_PRODUCT = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
