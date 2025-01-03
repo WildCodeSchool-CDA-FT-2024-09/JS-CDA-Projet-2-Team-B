@@ -4,6 +4,8 @@ import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
 import { Category } from '../entity/category.entities';
 import { ILike, In } from 'typeorm';
 import { Brand } from '../entity/brand.entities';
+import { ProductCharacteristic } from '../entity/productCharacteristic.entities';
+import { Characteristic } from '../entity/characteristic.entities';
 
 @Resolver(Product)
 export default class ProductResolver {
@@ -18,7 +20,10 @@ export default class ProductResolver {
       relations: {
         categories: true,
         brand: true,
-        images: true
+        images: true,
+        characteristicValues: {
+          characteristic: true
+        }
       },
       withDeleted: includeDeleted
     };
@@ -62,7 +67,27 @@ export default class ProductResolver {
       product.categories = categories;
     }
 
-    return await product.save();
+    await product.save();
+
+    if (newProduct.characteristicValues?.length) {
+      const characteristicValues = await Promise.all(
+        newProduct.characteristicValues.map(async (char) => {
+          const characteristicDef = await Characteristic.findOneByOrFail({
+            id: char.characteristicId
+          });
+
+          const characteristicValue = ProductCharacteristic.create({
+            product,
+            characteristic: characteristicDef,
+            value: char.value
+          });
+          return characteristicValue.save();
+        })
+      );
+      product.characteristicValues = characteristicValues;
+    }
+
+    return product;
   }
 
   @Query(() => Product, { nullable: true })
@@ -73,7 +98,13 @@ export default class ProductResolver {
   ): Promise<Product | null> {
     return await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand', 'images'],
+      relations: [
+        'categories',
+        'brand',
+        'images',
+        'characteristicValues',
+        'characteristicValues.characteristic'
+      ],
       withDeleted: includeDeleted
     });
   }

@@ -70,11 +70,17 @@ export type Characteristic = {
   deletedDate?: Maybe<Scalars['DateTime']['output']>;
   id: Scalars['Int']['output'];
   name: Scalars['String']['output'];
+  products?: Maybe<Array<Product>>;
 };
 
 export type CharacteristicInput = {
   id?: InputMaybe<Scalars['Float']['input']>;
   name: Scalars['String']['input'];
+};
+
+export type CharacteristicValueInput = {
+  characteristicId: Scalars['Int']['input'];
+  value: Scalars['String']['input'];
 };
 
 export type CreateCategoryInput = {
@@ -201,6 +207,7 @@ export type Product = {
   __typename?: 'Product';
   brand?: Maybe<Brand>;
   categories?: Maybe<Array<Category>>;
+  characteristicValues?: Maybe<Array<ProductCharacteristic>>;
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description?: Maybe<Scalars['String']['output']>;
   id: Scalars['Float']['output'];
@@ -212,9 +219,18 @@ export type Product = {
   shortDescription?: Maybe<Scalars['String']['output']>;
 };
 
+export type ProductCharacteristic = {
+  __typename?: 'ProductCharacteristic';
+  characteristic: Characteristic;
+  id: Scalars['Float']['output'];
+  product: Product;
+  value: Scalars['String']['output'];
+};
+
 export type ProductInput = {
   brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+  characteristicValues?: InputMaybe<Array<CharacteristicValueInput>>;
   description: Scalars['String']['input'];
   isPublished: Scalars['Boolean']['input'];
   name: Scalars['String']['input'];
@@ -311,6 +327,7 @@ export type CreateNewProductMutation = {
     description?: string | null;
     price?: number | null;
     isPublished: boolean;
+    deletedAt?: undefined | null;
     brand?: {
       __typename?: 'Brand';
       id: number;
@@ -322,6 +339,16 @@ export type CreateNewProductMutation = {
       __typename?: 'Category';
       id: number;
       name: string;
+    }> | null;
+    characteristicValues?: Array<{
+      __typename?: 'ProductCharacteristic';
+      id: number;
+      value: string;
+      characteristic: {
+        __typename?: 'Characteristic';
+        id: number;
+        name: string;
+      };
     }> | null;
   };
 };
@@ -688,6 +715,15 @@ export const CreateNewProductDocument = gql`
         id
         name
       }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
+      }
+      deletedAt
     }
   }
 `;

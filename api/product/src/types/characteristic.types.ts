@@ -1,5 +1,5 @@
 import { IsNumber } from 'class-validator';
-import { Field, InputType } from 'type-graphql';
+import { Field, InputType, Int } from 'type-graphql';
 
 @InputType()
 export class CharacteristicInput {
@@ -9,4 +9,13 @@ export class CharacteristicInput {
 
   @Field()
   name: string;
+}
+
+@InputType()
+export class CharacteristicValueInput {
+  @Field(() => Int)
+  characteristicId: number;
+
+  @Field()
+  value: string;
 }
