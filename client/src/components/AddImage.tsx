@@ -55,11 +55,15 @@ const AddImage = ({ productId, handleBlock }: Props) => {
     setError(null);
 
     try {
-      const response = await axios.post<UploadResponse>('/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
+      const response = await axios.post<UploadResponse>(
+        '/upload/products',
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
         }
-      });
+      );
 
       setData(response.data);
       setImageFile(null);
