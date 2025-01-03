@@ -212,18 +212,16 @@ export default function ProductDetails() {
     <Box
       component="form"
       onSubmit={handleSubmit}
-      sx={{
-        m: 1,
-        display: 'flex',
-        justifyContent: 'space-around'
-      }}
+      sx={{}}
       noValidate
       autoComplete="off"
     >
       <Box
         sx={{
           display: 'flex',
-          gap: 20
+          flexDirection: 'row-reverse',
+
+          gap: 5
         }}
       >
         {product.images && product.images.length > 0 && (
@@ -231,13 +229,13 @@ export default function ProductDetails() {
             sx={{
               boxShadow: 'none',
               backgroundColor: 'transparent',
-              margin: 'auto'
+              marginTop: '5rem',
+              width: '20%'
             }}
           >
             <CardMedia
               component="img"
               height="auto"
-              width="40%"
               image={
                 product.images.find((img) => img.isMain)?.url
                   ? `${BASE_URL}${product.images.find((img) => img.isMain)?.url}`
@@ -247,7 +245,14 @@ export default function ProductDetails() {
             />
           </Card>
         )}
-        <Box sx={{ width: '150%' }}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            width: '80%',
+            padding: '5rem'
+          }}
+        >
           <FormControlLabel
             control={
               <CustomSwitch

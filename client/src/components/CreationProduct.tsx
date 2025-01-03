@@ -44,7 +44,7 @@ const initialValue: newProduct = {
   reference: '',
   shortDescription: '',
   description: '',
-  price: '',
+  price: null,
   brand: null as { id: number; name: string } | null,
   categories: [] as Array<{ id: number; name: string }>,
   tags: [] as Array<{ id: number; name: string }>,
