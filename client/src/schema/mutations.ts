@@ -84,6 +84,10 @@ export const PUT_PRODUCT = gql`
         id
         name
       }
+      tags {
+        id
+        name
+      }
     }
   }
 `;
