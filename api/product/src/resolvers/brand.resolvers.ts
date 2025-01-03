@@ -13,7 +13,8 @@ export default class BrandResolver {
   ): Promise<Brand[]> {
     const query = {
       where: search ? { name: ILike(`%${search}%`) } : {},
-      withDeleted: includeDeleted
+      withDeleted: includeDeleted,
+      relations: ['image']
     };
 
     return Brand.find(query);
@@ -27,7 +28,8 @@ export default class BrandResolver {
   ): Promise<Brand | null> {
     return await Brand.findOne({
       where: { id },
-      withDeleted: includeDeleted
+      withDeleted: includeDeleted,
+      relations: ['image']
     });
   }
 

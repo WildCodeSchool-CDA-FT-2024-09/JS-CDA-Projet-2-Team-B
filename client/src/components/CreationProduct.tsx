@@ -17,7 +17,8 @@ import {
   GetAllBrandsDocument,
   GetAllProductsDocument,
   useCreateNewProductMutation,
-  useGetAllCategoriesQuery
+  useGetAllCategoriesQuery,
+  useGetAllTagsQuery
 } from '../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
 
@@ -29,6 +30,7 @@ type newProduct = {
   price: number;
   brand: { id: number; name: string } | null;
   categories: Array<{ id: number; name: string }>;
+  tags: Array<{ id: number; name: string }>;
   isPublished: boolean;
 };
 
@@ -45,6 +47,7 @@ const initialValue: newProduct = {
   price: 0,
   brand: null as { id: number; name: string } | null,
   categories: [] as Array<{ id: number; name: string }>,
+  tags: [] as Array<{ id: number; name: string }>,
   isPublished: true
 };
 
@@ -59,6 +62,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
     Array<{ id: number; name: string }>
   >([]);
   const { data: categoriesData } = useGetAllCategoriesQuery();
+  const { data: tagsData } = useGetAllTagsQuery();
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
 
   useEffect(() => {
@@ -96,6 +100,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
       description,
       price,
       categories,
+      tags,
       brand,
       isPublished
     } = formProduct;
@@ -120,6 +125,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             price,
             isPublished,
             categoryIds: categories.map((cat) => cat.id),
+            tagIds: tags.map((tag) => tag.id),
             brand: brand ? brand.id : null
           }
         },
@@ -160,6 +166,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
         price: 0,
         isPublished: true,
         categories: [],
+        tags: [],
         brand: null
       });
       if (data?.createNewProduct?.id) {
@@ -307,6 +314,89 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             ) : (
               <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
                 Aucune catégorie sélectionnée
+              </Typography>
+            )}
+          </Box>
+          <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
+            <Autocomplete
+              multiple
+              options={
+                tagsData?.getAllTags?.filter(
+                  (tag) =>
+                    !formProduct.tags.some((selected) => selected.id === tag.id)
+                ) || []
+              }
+              getOptionLabel={(option) => option.name}
+              value={[]}
+              onChange={(_, newValue) => {
+                if (newValue.length > 0) {
+                  const lastSelected = newValue[newValue.length - 1];
+
+                  if (
+                    !formProduct.tags.some((tag) => tag.id === lastSelected.id)
+                  ) {
+                    setFormProduct((prev) => ({
+                      ...prev,
+                      tags: [...prev.tags, lastSelected]
+                    }));
+                  }
+                }
+              }}
+              filterOptions={(options) =>
+                options.filter(
+                  (option) =>
+                    !formProduct.tags.some((tag) => tag.id === option.id)
+                )
+              }
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  placeholder="Sélectionner un tag"
+                  size="small"
+                />
+              )}
+            />
+          </FormControl>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+            {formProduct.tags.length > 0 ? (
+              formProduct.tags.map((tag) => (
+                <Chip
+                  key={tag.id}
+                  label={tag.name}
+                  onDelete={() => {
+                    setFormProduct((prev) => ({
+                      ...prev,
+                      tags: prev.tags.filter((t) => t.id !== tag.id)
+                    }));
+                  }}
+                  sx={{
+                    backgroundColor: '#e3f2fd',
+                    borderRadius: '20px',
+                    margin: '4px',
+                    padding: '4px 8px',
+                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+                    transition: 'transform 0.2s ease-in-out',
+                    '&:hover': {
+                      transform: 'scale(1.05)',
+                      backgroundColor: '#e3f2fd'
+                    },
+                    '& .MuiChip-label': {
+                      color: 'text.primary'
+                    },
+                    '& .MuiChip-deleteIcon': {
+                      color: '#1976d2',
+                      '&:hover': {
+                        color: '#1976d2',
+                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
+                        borderRadius: '50%'
+                      }
+                    }
+                  }}
+                />
+              ))
+            ) : (
+              <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                Aucun tag sélectionné
               </Typography>
             )}
           </Box>
