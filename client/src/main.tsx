@@ -1,7 +1,6 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import { UpdateProvider } from './context/UpdateContext.tsx';
 import { ApolloProvider } from '@apollo/client';
 import client from './services/connexion.ts';
 import App from './App.tsx';
@@ -60,9 +59,7 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ApolloProvider client={client}>
-      <UpdateProvider>
-        <RouterProvider router={router} />
-      </UpdateProvider>
+      <RouterProvider router={router} />
     </ApolloProvider>
   </StrictMode>
 );
