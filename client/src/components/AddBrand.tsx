@@ -6,14 +6,12 @@ import AddBrandImage from './AddBrandImage';
 interface BrandReq {
   name: string;
   description: string;
-  logo: string;
 }
 
 export default function AddBrand() {
   const [brand, setBrand] = useState<BrandReq>({
     name: '',
-    description: '',
-    logo: ''
+    description: ''
   });
   const [createBrand, { loading, error }] = useCreateBrandMutation();
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -42,8 +40,7 @@ export default function AddBrand() {
         variables: {
           data: {
             name: brand.name,
-            description: brand.description,
-            logo: brand.logo
+            description: brand.description
           }
         }
       });
