@@ -15,7 +15,6 @@ export const GET_PRODUCT = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -97,7 +96,6 @@ export const GET_ALL_BRANDS = gql`
       id
       name
       description
-      logo
       deletedAt
     }
   }
@@ -109,7 +107,6 @@ export const GET_BRAND_BY_ID = gql`
       id
       name
       description
-      logo
       deletedAt
     }
   }

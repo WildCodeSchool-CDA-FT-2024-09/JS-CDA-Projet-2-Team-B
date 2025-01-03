@@ -37,7 +37,7 @@ export type Brand = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['Float']['output'];
-  logo: Scalars['String']['output'];
+  image?: Maybe<Image>;
   name: Scalars['String']['output'];
   products?: Maybe<Array<Product>>;
 };
@@ -45,7 +45,6 @@ export type Brand = {
 export type BrandCreationInput = {
   deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description: Scalars['String']['input'];
-  logo: Scalars['String']['input'];
   name: Scalars['String']['input'];
 };
 
@@ -53,7 +52,6 @@ export type BrandUpdateInput = {
   deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Float']['input'];
-  logo?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -87,6 +85,7 @@ export type CreateTagInput = {
 
 export type Image = {
   __typename?: 'Image';
+  brand?: Maybe<Brand>;
   id: Scalars['Float']['output'];
   isMain: Scalars['Boolean']['output'];
   products: Array<Product>;
@@ -319,7 +318,6 @@ export type CreateNewProductMutation = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
@@ -398,7 +396,6 @@ export type UpdateProductMutation = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
@@ -473,7 +470,6 @@ export type CreateBrandMutation = {
     id: number;
     name: string;
     description: string;
-    logo: string;
   };
 };
 
@@ -488,7 +484,6 @@ export type UpdateBrandMutation = {
     id: number;
     name: string;
     description: string;
-    logo: string;
   };
 };
 
@@ -555,7 +550,6 @@ export type GetAllProductsQuery = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
@@ -652,7 +646,6 @@ export type GetAllBrandsQuery = {
     id: number;
     name: string;
     description: string;
-    logo: string;
     deletedAt?: undefined | null;
   }>;
 };
@@ -668,7 +661,6 @@ export type GetBrandByIdQuery = {
     id: number;
     name: string;
     description: string;
-    logo: string;
     deletedAt?: undefined | null;
   } | null;
 };
@@ -686,7 +678,6 @@ export const CreateNewProductDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -918,7 +909,6 @@ export const UpdateProductDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -1232,7 +1222,6 @@ export const CreateBrandDocument = gql`
       id
       name
       description
-      logo
     }
   }
 `;
@@ -1285,7 +1274,6 @@ export const UpdateBrandDocument = gql`
       id
       name
       description
-      logo
     }
   }
 `;
@@ -1588,7 +1576,6 @@ export const GetAllProductsDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -2086,7 +2073,6 @@ export const GetAllBrandsDocument = gql`
       id
       name
       description
-      logo
       deletedAt
     }
   }
@@ -2169,7 +2155,6 @@ export const GetBrandByIdDocument = gql`
       id
       name
       description
-      logo
       deletedAt
     }
   }

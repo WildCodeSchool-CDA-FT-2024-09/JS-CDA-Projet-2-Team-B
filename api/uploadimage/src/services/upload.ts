@@ -45,3 +45,18 @@ export const imageByProduct = async (imageId: number, productId: string) => {
     throw error;
   }
 };
+
+export const updateBrandImage = async (imageId: number, brandId: string) => {
+  const query = 'UPDATE brand SET "image_id" = $1 WHERE "id" = $2';
+
+  try {
+    await pool.query(query, [imageId, brandId]);
+    console.info("L'image a correctement été associée à la marque.");
+  } catch (error) {
+    console.error(
+      "Erreur lors de l'association de l'image à la marque : ",
+      error
+    );
+    throw error;
+  }
+};
