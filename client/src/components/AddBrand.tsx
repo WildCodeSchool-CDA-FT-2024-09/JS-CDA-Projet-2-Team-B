@@ -48,8 +48,7 @@ export default function AddBrand() {
       if (data?.createBrand) {
         setBrand({
           name: '',
-          description: '',
-          logo: ''
+          description: ''
         });
         setSuccessMessage('Marque créée avec succès !');
         setImageSelection(true);
