@@ -44,7 +44,7 @@ const initialValue: newProduct = {
   reference: '',
   shortDescription: '',
   description: '',
-  price: 0,
+  price: '',
   brand: null as { id: number; name: string } | null,
   categories: [] as Array<{ id: number; name: string }>,
   tags: [] as Array<{ id: number; name: string }>,
@@ -84,7 +84,8 @@ export default function CreationProduct({ handleProductId, block }: Props) {
       const { name, value } = event.target;
       setFormProduct((prev) => ({
         ...prev,
-        [name]: name === 'price' ? parseFloat(value) || 0 : value
+        [name]:
+          name === 'price' ? (value === '' ? '' : parseFloat(value)) : value
       }));
     } else {
       setError('Veuillez choisir une image avant de passer à la suite');
@@ -109,7 +110,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
       setError('Veuillez remplir tous les champs obligatoires.');
       return;
     }
-    if (price < 0) {
+    if (typeof price === 'number' && price < 0) {
       setError('Le prix doit être un nombre positif.');
       return;
     }
@@ -227,6 +228,19 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             onChange={handleChange}
             fullWidth
             margin="normal"
+            sx={{
+              '& input[type=number]': {
+                '-moz-appearance': 'textfield',
+                '-webkit-appearance': 'none',
+                margin: 0
+              },
+              '& input[type=number]::-webkit-inner-spin-button': {
+                '-webkit-appearance': 'none'
+              },
+              '& input[type=number]::-webkit-outer-spin-button': {
+                '-webkit-appearance': 'none'
+              }
+            }}
           />
           <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
             <Autocomplete
