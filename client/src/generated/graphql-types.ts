@@ -548,6 +548,12 @@ export type GetProductByIdQuery = {
       name: string;
       deletedAt?: undefined | null;
     } | null;
+    images: Array<{
+      __typename?: 'Image';
+      id: number;
+      url: string;
+      isMain: boolean;
+    }>;
   } | null;
 };
 
@@ -1569,6 +1575,11 @@ export const GetProductByIdDocument = gql`
         id
         name
         deletedAt
+      }
+      images {
+        id
+        url
+        isMain
       }
     }
   }
