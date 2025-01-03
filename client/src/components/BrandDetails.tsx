@@ -7,12 +7,11 @@ import {
   useUpdateBrandMutation
 } from '../generated/graphql-types';
 import { useParams } from 'react-router-dom';
-import GreenSwitch from '../ui/Switch';
+import { CustomSwitch } from '../ui/Switch';
 
 interface BrandReq {
   name: string;
   description: string;
-  logo: string;
   deletedAt: Date | null;
 }
 
@@ -53,7 +52,6 @@ export default function BrandDetails() {
       setBrand({
         name: data.getBrandById.name,
         description: data.getBrandById.description,
-        logo: data.getBrandById.logo,
         deletedAt: data.getBrandById.deletedAt || null
       });
     } else if (fetchError) {
@@ -159,11 +157,27 @@ export default function BrandDetails() {
 
   return (
     <>
-      <GreenSwitch
-        checked={brand.deletedAt === null}
-        onChange={handleSwitchChange}
-        disabled={deactivateLoading || activationLoading}
-      />
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: 1
+        }}
+      >
+        <CustomSwitch
+          checked={brand.deletedAt === null}
+          onChange={handleSwitchChange}
+          disabled={deactivateLoading || activationLoading}
+        />
+        <Typography
+          sx={{
+            color: brand.deletedAt ? 'error.main' : 'success.main',
+            fontWeight: 'bold'
+          }}
+        >
+          {brand.deletedAt ? 'Désactivée' : 'Activée'}
+        </Typography>
+      </Box>
       <Box
         component="form"
         onSubmit={handleSubmit}
