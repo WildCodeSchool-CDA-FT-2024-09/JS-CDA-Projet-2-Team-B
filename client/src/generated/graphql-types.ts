@@ -601,6 +601,7 @@ export type GetAllBrandsQuery = {
     name: string;
     description: string;
     deletedAt?: undefined | null;
+    image?: { __typename?: 'Image'; id: number; url: string } | null;
   }>;
 };
 
@@ -616,6 +617,7 @@ export type GetBrandByIdQuery = {
     name: string;
     description: string;
     deletedAt?: undefined | null;
+    image?: { __typename?: 'Image'; id: number; url: string } | null;
   } | null;
 };
 
@@ -1950,6 +1952,10 @@ export const GetAllBrandsDocument = gql`
       name
       description
       deletedAt
+      image {
+        id
+        url
+      }
     }
   }
 `;
@@ -2032,6 +2038,10 @@ export const GetBrandByIdDocument = gql`
       name
       description
       deletedAt
+      image {
+        id
+        url
+      }
     }
   }
 `;
