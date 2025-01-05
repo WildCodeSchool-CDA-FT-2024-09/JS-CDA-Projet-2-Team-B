@@ -147,7 +147,13 @@ export default function AddBrand() {
           </Typography>
         )}
       </Box>
-      {imageSelection && <AddBrandImage brandId={brandId} />}
+      {imageSelection && (
+        <AddBrandImage
+          brandId={brandId}
+          setIsModifying={setImageSelection}
+          refetch={() => {}}
+        />
+      )}
     </>
   );
 }
