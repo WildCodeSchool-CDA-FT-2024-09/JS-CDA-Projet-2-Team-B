@@ -9,8 +9,6 @@ const app = express();
 app.use(json());
 app.use(corsMiddleware);
 
-// Serve server resources
-
 app.use('/upload', uploadRouter);
 
 app.get('/upload/:filename', (req: express.Request, res: express.Response) => {
