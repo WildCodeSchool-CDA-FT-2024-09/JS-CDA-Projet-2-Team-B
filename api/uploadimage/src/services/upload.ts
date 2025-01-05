@@ -1,5 +1,8 @@
 import fs from 'fs';
 import { pool } from '../database/pg.client';
+import path from 'path';
+
+const PUBLIC_DIR = path.resolve(__dirname, '../../public');
 
 export const saveImageToDatabase = async (
   url: string,
@@ -57,6 +60,87 @@ export const updateBrandImage = async (imageId: number, brandId: string) => {
       "Erreur lors de l'association de l'image à la marque : ",
       error
     );
+    throw error;
+  }
+};
+
+export const checkIfBrandHasImage = async (brandId: string) => {
+  const query = 'SELECT * FROM brand WHERE "id" = $1';
+
+  try {
+    const result = await pool.query(query, [brandId]);
+    return result.rows[0];
+  } catch (error) {
+    console.error('Erreur lors de vérification : ', error);
+    throw error;
+  }
+};
+
+export const getBrandImage = async (imageId: string) => {
+  const query = 'SELECT * FROM image WHERE "id" = $1';
+
+  try {
+    const result = await pool.query(query, [imageId]);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Erreur lors de la recherche de l'image", error);
+    throw error;
+  }
+};
+
+export const updateBrandImageToNull = async (brandId: string) => {
+  const brandQuery = 'UPDATE brand SET "image_id" = null WHERE "id" = $1';
+
+  try {
+    await pool.query(brandQuery, [brandId]);
+  } catch (error) {
+    console.error("Erreur lors de suppression de l'image : ", error);
+    throw error;
+  }
+};
+
+export const deleteBrandImageFromDatabase = async (imageId: number) => {
+  const imageQuery = 'DELETE FROM image WHERE "id" = $1';
+
+  try {
+    await pool.query(imageQuery, [imageId]);
+  } catch (error) {
+    console.error("Erreur lors de suppression de l'image : ", error);
+    throw error;
+  }
+};
+
+export const deleteBrandImageFile = async (url: string) => {
+  const imagePath = path.join(PUBLIC_DIR, url);
+
+  try {
+    await fs.promises.unlink(imagePath);
+    console.info(`Image supprimée : ${imagePath}`);
+    return true;
+  } catch (err: unknown) {
+    if (err instanceof Error && err.message.includes('ENOENT')) {
+      console.warn(`Image non trouvée : ${imagePath}`);
+      return { error: 'Image non trouvée' };
+    }
+    console.error(
+      "Erreur lors de la suppression de l'image : " +
+        (err instanceof Error ? err.message : String(err))
+    );
+    return {
+      error: 'Erreur lors de la suppression du fichier',
+      details: err instanceof Error ? err.message : 'Erreur inconnue'
+    };
+  }
+};
+
+export const getBrandByImageId = async (imageId: number) => {
+  const query = 'SELECT * FROM brand WHERE "image_id" = $1';
+
+  try {
+    const result = await pool.query(query, [imageId]);
+    return result.rows[0];
+  } catch (error) {
+    console.error('Erreur lors de la recherche de la marque', error);
     throw error;
   }
 };
