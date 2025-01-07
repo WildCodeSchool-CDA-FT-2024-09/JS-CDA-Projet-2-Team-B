@@ -1,0 +1,22 @@
+name: dev
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+    branches:
+      - pre-deploy
+
+jobs:
+  api-integration-test:
+    name: Run Integration test for Graph APIs
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Step 1 Check out git repo
+        uses: actions/checkout@v4
+
+      - name: Setup Docker
+        uses: docker/setup-buildx-action@v2
+
+      - name: Run integration test
+        run: docker compose -f docker-compose.api.yml up --build --exit-code-from integration-product
