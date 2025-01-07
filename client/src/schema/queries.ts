@@ -46,6 +46,14 @@ export const GET_PRODUCT_BY_ID = gql`
         name
         deletedAt
       }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
+      }
     }
   }
 `;

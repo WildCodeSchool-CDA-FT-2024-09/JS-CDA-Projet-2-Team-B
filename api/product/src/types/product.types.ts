@@ -1,5 +1,6 @@
 import { Field, InputType, Int } from 'type-graphql';
 import { CharacteristicValueInput } from './characteristic.types';
+import { CharacteristicValueUpdateInput } from './characteristic.types';
 
 @InputType()
 export class ProductInput {
@@ -59,6 +60,9 @@ export class ProductUpdateInput {
 
   @Field(() => Number, { nullable: true })
   brand: number;
+
+  @Field(() => [CharacteristicValueUpdateInput], { nullable: true })
+  characteristicValues?: CharacteristicValueUpdateInput[];
 
   // @Field(() => [Number])
   // imageIds?: number[];

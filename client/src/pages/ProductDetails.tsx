@@ -9,14 +9,17 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  FormControlLabel
+  FormControlLabel,
+  IconButton
 } from '@mui/material';
+import { Delete as DeleteIcon } from '@mui/icons-material';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   GetAllBrandsDocument,
   useDeleteProductMutation,
   useGetAllCategoriesQuery,
+  useGetAllCharacteristicQuery,
   useGetProductByIdQuery,
   useRestoreProductMutation,
   useUpdateProductMutation
@@ -34,12 +37,23 @@ interface ProductDetailsReq {
   categories?: { id: number; name: string }[] | null;
   brand: { id: number; name: string } | null;
   isActive: boolean;
+  characteristicValues?:
+    | {
+        id: number;
+        value: string;
+        characteristic: {
+          id: number;
+          name: string;
+        };
+      }[]
+    | null;
 }
 
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState<string | null>('');
   const { data: categoriesData } = useGetAllCategoriesQuery();
+  const { data: characteristicsData } = useGetAllCharacteristicQuery();
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
   const [brandInputValue, setBrandInputValue] = useState('');
   const [deleteProduct] = useDeleteProductMutation();
@@ -143,7 +157,11 @@ export default function ProductDetails() {
             price: product.price,
             isPublished: product.isPublished,
             categoryIds: product.categories?.map((cat) => cat.id) || [],
-            brand: product.brand!.id
+            brand: product.brand!.id,
+            characteristicValues: product.characteristicValues?.map((char) => ({
+              characteristicId: char.characteristic.id,
+              value: char.value
+            }))
           }
         }
       });
@@ -164,7 +182,8 @@ export default function ProductDetails() {
           isPublished: data.updateProduct.isPublished ?? true,
           categories: data.updateProduct.categories || [],
           brand: data.updateProduct.brand as { id: number; name: string },
-          isActive: product.isActive
+          isActive: product.isActive,
+          characteristicValues: data.updateProduct.characteristicValues || []
         });
         setError(null);
       }
@@ -184,7 +203,8 @@ export default function ProductDetails() {
         isPublished: data.getProductById.isPublished,
         categories: data.getProductById.categories || [],
         brand: data.getProductById.brand as { id: number; name: string },
-        isActive: !data.getProductById.deletedAt
+        isActive: !data.getProductById.deletedAt,
+        characteristicValues: data.getProductById.characteristicValues || []
       });
     } else if (fetchError) {
       setError(fetchError.message);
@@ -304,6 +324,99 @@ export default function ProductDetails() {
         onChange={handleChange}
         placeholder="Prix"
       />
+      <Typography sx={{ marginLeft: '2px', fontWeight: 'bold' }}>
+        Caractéristiques
+      </Typography>
+      <FormControl fullWidth>
+        <Autocomplete
+          options={characteristicsData?.getAllCharacteristic || []}
+          getOptionLabel={(option) => option.name}
+          value={null}
+          onChange={(_, newValue) => {
+            if (newValue) {
+              if (
+                !product.characteristicValues?.some(
+                  (char) => char.characteristic.id === newValue.id
+                )
+              ) {
+                setProduct((prev) => ({
+                  ...prev,
+                  characteristicValues: [
+                    ...(prev.characteristicValues || []),
+                    {
+                      id: 0,
+                      value: '',
+                      characteristic: {
+                        id: newValue.id,
+                        name: newValue.name
+                      }
+                    }
+                  ]
+                }));
+              }
+            }
+          }}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              placeholder="Ajouter une caractéristique"
+              size="small"
+            />
+          )}
+        />
+      </FormControl>
+
+      <Box sx={{ mt: 2 }}>
+        {product.characteristicValues?.map((char) => (
+          <Box
+            key={char.characteristic.id}
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 2,
+              mb: 2,
+              backgroundColor: 'background.paper',
+              p: 2,
+              borderRadius: 1
+            }}
+          >
+            <Typography sx={{ minWidth: 150, fontWeight: 'medium' }}>
+              {char.characteristic.name}
+            </Typography>
+            <TextField
+              fullWidth
+              size="small"
+              value={char.value}
+              onChange={(e) => {
+                setProduct((prev) => ({
+                  ...prev,
+                  characteristicValues:
+                    prev.characteristicValues?.map((c) =>
+                      c.characteristic.id === char.characteristic.id
+                        ? { ...c, value: e.target.value }
+                        : c
+                    ) || []
+                }));
+              }}
+              placeholder="Entrer une valeur"
+            />
+            <IconButton
+              onClick={() => {
+                setProduct((prev) => ({
+                  ...prev,
+                  characteristicValues: prev.characteristicValues?.filter(
+                    (c) => c.characteristic.id !== char.characteristic.id
+                  )
+                }));
+              }}
+              color="error"
+              size="small"
+            >
+              <DeleteIcon />
+            </IconButton>
+          </Box>
+        ))}
+      </Box>
       <Typography sx={{ marginLeft: '2px', fontWeight: 'bold' }}>
         Catégorie
       </Typography>

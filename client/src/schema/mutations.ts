@@ -93,6 +93,14 @@ export const PUT_PRODUCT = gql`
         id
         name
       }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
+      }
     }
   }
 `;

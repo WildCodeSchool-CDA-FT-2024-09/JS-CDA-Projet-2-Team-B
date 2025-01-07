@@ -19,3 +19,15 @@ export class CharacteristicValueInput {
   @Field()
   value: string;
 }
+
+@InputType()
+export class CharacteristicValueUpdateInput {
+  @Field(() => Int)
+  characteristicId: number;
+
+  @Field()
+  value: string;
+
+  @Field(() => Int, { nullable: true })
+  productCharacteristicId?: number;
+}

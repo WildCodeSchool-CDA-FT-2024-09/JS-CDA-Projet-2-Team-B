@@ -83,6 +83,12 @@ export type CharacteristicValueInput = {
   value: Scalars['String']['input'];
 };
 
+export type CharacteristicValueUpdateInput = {
+  characteristicId: Scalars['Int']['input'];
+  productCharacteristicId?: InputMaybe<Scalars['Int']['input']>;
+  value: Scalars['String']['input'];
+};
+
 export type CreateCategoryInput = {
   name: Scalars['String']['input'];
 };
@@ -242,6 +248,7 @@ export type ProductInput = {
 export type ProductUpdateInput = {
   brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
+  characteristicValues?: InputMaybe<Array<CharacteristicValueUpdateInput>>;
   description: Scalars['String']['input'];
   id: Scalars['Float']['input'];
   isPublished: Scalars['Boolean']['input'];
@@ -428,6 +435,16 @@ export type UpdateProductMutation = {
       __typename?: 'Category';
       id: number;
       name: string;
+    }> | null;
+    characteristicValues?: Array<{
+      __typename?: 'ProductCharacteristic';
+      id: number;
+      value: string;
+      characteristic: {
+        __typename?: 'Characteristic';
+        id: number;
+        name: string;
+      };
     }> | null;
   };
 };
@@ -616,6 +633,16 @@ export type GetProductByIdQuery = {
       name: string;
       deletedAt?: undefined | null;
     } | null;
+    characteristicValues?: Array<{
+      __typename?: 'ProductCharacteristic';
+      id: number;
+      value: string;
+      characteristic: {
+        __typename?: 'Characteristic';
+        id: number;
+        name: string;
+      };
+    }> | null;
   } | null;
 };
 
@@ -955,6 +982,14 @@ export const UpdateProductDocument = gql`
       categories {
         id
         name
+      }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
       }
     }
   }
@@ -1715,6 +1750,14 @@ export const GetProductByIdDocument = gql`
         id
         name
         deletedAt
+      }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
       }
     }
   }
