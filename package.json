@@ -24,8 +24,10 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepare": "husky",
     "lint": "lint-staged",
+    "test-client-unit": "echo 'TODO: Run Unit Tests on client'",
+    "test-product-unit": "echo 'TODO: Run Unit Tests on Api product'",
     "test-client": "cd ./client && npm run test",
-    "test-product": "cd ./product && npm run test",
+    "test-product": "cd ./api/product && npm run test",
     "fullinstall": "npm install && cd ./client && npm install  && cd ../api/product && npm install && cd ../auth && npm install && cd ../email && npm install && cd ../uploadimage && npm install"
   },
   "lint-staged": {
