@@ -28,8 +28,7 @@ export default function Catalog() {
   const { loading, error, data, refetch } = useQuery(GetAllProductsDocument, {
     variables: {
       search: searchProduct,
-      brands: selectedBrands,
-      isPublished: true
+      brands: selectedBrands
     }
   });
 
