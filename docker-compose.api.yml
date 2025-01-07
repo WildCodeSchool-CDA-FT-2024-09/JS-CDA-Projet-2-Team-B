@@ -1,0 +1,31 @@
+services:
+  integration-db:
+    image: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=user
+      - POSTGRES_DB=db
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  integration-product:
+    build: ./api/product
+    command: npm run test
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=user
+      - POSTGRES_DB=db
+    depends_on:
+      integration-db:
+        condition: service_healthy
+
+
+
+
+
+

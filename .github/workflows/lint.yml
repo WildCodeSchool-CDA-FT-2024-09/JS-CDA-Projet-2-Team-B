@@ -4,9 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
-      - main
       - dev
-      - pre-deploy
 
 jobs:
   lint:
