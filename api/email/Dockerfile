@@ -12,6 +12,6 @@ COPY tests tests
 
 COPY jest.config.ts jest.config.ts
 
-EXPOSE 6000
+EXPOSE 8000
 
 CMD ["npm", "run", "dev"]
