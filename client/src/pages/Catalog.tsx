@@ -2,7 +2,14 @@ import CardProduct from '../components/CardProduct';
 import Grid from '@mui/material/Grid2';
 import { GetAllProductsDocument } from '../generated/graphql-types';
 import { useEffect, useState, ChangeEvent } from 'react';
-import { TextField } from '@mui/material';
+import {
+  TextField,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Box,
+  Typography
+} from '@mui/material';
 import { useQuery } from '@apollo/client';
 
 interface Product {
@@ -16,14 +23,34 @@ interface Product {
 
 export default function Catalog() {
   const [searchProduct, setSearchProduct] = useState('');
+  const [selectedBrands, setSelectedBrands] = useState<string[]>([]);
 
-  const { loading, error, data } = useQuery(GetAllProductsDocument);
+  const { loading, error, data, refetch } = useQuery(GetAllProductsDocument, {
+    variables: {
+      search: searchProduct,
+      brands: selectedBrands,
+      isPublished: true
+    }
+  });
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setSearchProduct(event.target.value);
+    refetch({ search: event.target.value, brands: selectedBrands });
   };
 
-  useEffect(() => {}, [searchProduct]);
+  const handleBrandChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const brand = event.target.name;
+    setSelectedBrands((prev) =>
+      event.target.checked ? [...prev, brand] : prev.filter((b) => b !== brand)
+    );
+  };
+
+  useEffect(() => {
+    refetch({
+      search: searchProduct,
+      brands: selectedBrands
+    });
+  }, [searchProduct, selectedBrands, refetch]);
 
   console.info('Données chargées :', data?.getAllProducts);
 
@@ -32,41 +59,74 @@ export default function Catalog() {
 
   return (
     <>
-      <TextField
-        label="Rechercher un Produit"
-        variant="outlined"
-        margin="normal"
-        value={searchProduct}
-        onChange={handleChange}
-        sx={{
-          display: 'flex',
-          width: '20%',
-          marginLeft: 90,
-          marginTop: 6
-        }}
-      />
-
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          marginTop: 6,
-          marginRight: 10,
-          justifyContent: 'right'
-        }}
-      >
-        {data?.getAllProducts.map((produit: Product) => (
-          <CardProduct
-            key={produit.id}
-            id={produit.id}
-            name={produit.name}
-            price={produit.price ?? 0}
-            reference={produit.reference}
-            shortDescription={produit.shortDescription ?? ''}
-            description={produit.description ?? ''}
+      <Box sx={{ display: 'flex' }}>
+        <Box>
+          <Box
+            sx={{
+              width: '100%',
+              padding: 2,
+              backgroundColor: '#f5f5f5',
+              marginTop: 15
+            }}
+          >
+            <Typography variant="h6">Filtrer par marque</Typography>
+            <FormGroup>
+              {['Apple', 'Samsung', 'Dell', 'HP', 'Seagate', 'Canon'].map(
+                (brand) => (
+                  <FormControlLabel
+                    key={brand}
+                    control={
+                      <Checkbox
+                        checked={selectedBrands.includes(brand)}
+                        onChange={handleBrandChange}
+                        name={brand}
+                      />
+                    }
+                    label={brand}
+                  />
+                )
+              )}
+            </FormGroup>
+          </Box>
+        </Box>
+        <Box sx={{ width: '80%' }}>
+          <TextField
+            label="Rechercher un Produit"
+            variant="outlined"
+            margin="normal"
+            value={searchProduct}
+            onChange={handleChange}
+            sx={{
+              display: 'flex',
+              width: '20%',
+              marginLeft: 90,
+              marginTop: 6
+            }}
           />
-        ))}
-      </Grid>
+
+          <Grid
+            container
+            spacing={2}
+            sx={{
+              marginTop: 6,
+              marginRight: 10,
+              justifyContent: 'right'
+            }}
+          >
+            {data?.getAllProducts.map((produit: Product) => (
+              <CardProduct
+                key={produit.id}
+                id={produit.id}
+                name={produit.name}
+                price={produit.price ?? 0}
+                reference={produit.reference}
+                shortDescription={produit.shortDescription ?? ''}
+                description={produit.description ?? ''}
+              />
+            ))}
+          </Grid>
+        </Box>
+      </Box>
     </>
   );
 }
