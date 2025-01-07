@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Card, Button, Typography, Box, styled } from '@mui/material';
+import { Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 
 interface UploadResponse {
@@ -9,6 +9,8 @@ interface UploadResponse {
 
 type Props = {
   brandId: number | null;
+  setIsModifying: (value: boolean) => void;
+  refetch: () => void;
 };
 
 const VisuallyHiddenInput = styled('input')({
@@ -21,12 +23,16 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 });
 
-const AddBrandImage = ({ brandId }: Props) => {
+const AddBrandImage = ({ brandId, setIsModifying, refetch }: Props) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<UploadResponse | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+
+  const handleClick = () => {
+    setIsModifying(false);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -59,10 +65,11 @@ const AddBrandImage = ({ brandId }: Props) => {
           }
         }
       );
-
       setData(response.data);
       setImageFile(null);
       setImagePreview(null);
+      refetch();
+      setIsModifying(false);
     } catch (e) {
       setError(e as Error);
     } finally {
@@ -71,16 +78,12 @@ const AddBrandImage = ({ brandId }: Props) => {
   };
 
   return (
-    <Card
+    <Box
       sx={{
         maxWidth: 600,
-        padding: 3,
-        textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        margin: 'auto',
-        marginTop: 5
+        alignItems: 'center'
       }}
     >
       <Typography>Ajouter une Image</Typography>
@@ -89,6 +92,10 @@ const AddBrandImage = ({ brandId }: Props) => {
           component="label"
           variant="contained"
           startIcon={<CloudUploadIcon />}
+          sx={{
+            borderRadius: '10px',
+            marginTop: '10px'
+          }}
         >
           Choisir un fichier
           <VisuallyHiddenInput
@@ -98,7 +105,6 @@ const AddBrandImage = ({ brandId }: Props) => {
           />
         </Button>
       </Box>
-
       {imagePreview && (
         <Box
           component="img"
@@ -106,11 +112,9 @@ const AddBrandImage = ({ brandId }: Props) => {
           alt="Prévisualisation"
           sx={{
             display: 'flex',
-            maxWidth: '60%',
+            maxWidth: '200px',
             height: 'auto',
-            marginBottom: 2,
-            borderRadius: 1,
-            border: '1px solid #ccc'
+            marginBottom: 2
           }}
         />
       )}
@@ -121,11 +125,33 @@ const AddBrandImage = ({ brandId }: Props) => {
         sx={{
           marginTop: 2,
           backgroundColor: 'green',
-          color: 'white'
+          borderRadius: '10px',
+          padding: '5px 20px',
+          color: 'white',
+          '&:disabled': {
+            backgroundColor: 'darkgrey',
+            color: 'black'
+          }
         }}
         disabled={loading || !imageFile}
       >
-        {loading ? 'Ajout en cours...' : 'Ajouter +'}
+        {loading ? 'Ajout en cours...' : 'Ajouter'}
+      </Button>
+      <Button
+        onClick={handleClick}
+        sx={{
+          marginTop: 1,
+          backgroundColor: 'red',
+          borderRadius: '10px',
+          padding: '5px 20px',
+          color: 'white',
+          '&:disabled': {
+            backgroundColor: 'darkgrey',
+            color: 'black'
+          }
+        }}
+      >
+        Annuler
       </Button>
 
       {error && (
@@ -139,7 +165,7 @@ const AddBrandImage = ({ brandId }: Props) => {
           Image ajoutée avec succès {data.id}
         </Typography>
       )}
-    </Card>
+    </Box>
   );
 };
 

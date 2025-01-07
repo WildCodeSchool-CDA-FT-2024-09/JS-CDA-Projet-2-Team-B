@@ -1,5 +1,8 @@
 import { Grid } from '@mui/material';
-import { Brand, useGetAllBrandsQuery } from '../generated/graphql-types';
+import {
+  GetAllBrandsQuery,
+  useGetAllBrandsQuery
+} from '../generated/graphql-types';
 import { useEffect, useState } from 'react';
 import BrandCard from './BrandCard';
 
@@ -7,7 +10,7 @@ export default function BrandCatalog() {
   const { loading, error, data, refetch } = useGetAllBrandsQuery({
     variables: { includeDeleted: true }
   });
-  const [brands, setBrands] = useState<Brand[]>([]);
+  const [brands, setBrands] = useState<GetAllBrandsQuery['getAllBrands']>([]);
 
   useEffect(() => {
     if (data && data.getAllBrands) {
@@ -34,7 +37,7 @@ export default function BrandCatalog() {
             id={brand.id}
             name={brand.name}
             description={brand.description}
-            logo={brand.logo}
+            image={brand.image}
             deletedAt={brand.deletedAt as Date | null}
             refetch={refetch}
           />

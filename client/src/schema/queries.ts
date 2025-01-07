@@ -102,6 +102,10 @@ export const GET_ALL_BRANDS = gql`
       name
       description
       deletedAt
+      image {
+        id
+        url
+      }
     }
   }
 `;
@@ -113,6 +117,10 @@ export const GET_BRAND_BY_ID = gql`
       name
       description
       deletedAt
+      image {
+        id
+        url
+      }
     }
   }
 `;

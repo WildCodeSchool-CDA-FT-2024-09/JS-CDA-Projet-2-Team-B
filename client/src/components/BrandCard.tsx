@@ -2,7 +2,7 @@ import Card from '@mui/material/Card';
 import { Link as RouterLink } from 'react-router-dom';
 import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
-import { Link as MUILink } from '@mui/material';
+import { CardMedia, Link as MUILink } from '@mui/material';
 import { Grid } from '@mui/system';
 
 const styleButton = {
@@ -19,15 +19,21 @@ type Brand = {
   id: number;
   name: string;
   description: string;
-  logo: string;
   deletedAt: Date | null;
+  image?: {
+    id: number;
+    url: string;
+  } | null;
   refetch: () => void;
 };
 
-export default function BrandCard({ id, name, logo }: Brand) {
+const BASE_URL = import.meta.env.VITE_BASE_URL;
+
+export default function BrandCard({ id, name, image }: Brand) {
   return (
     <Card
       sx={{
+        minWidth: 150,
         maxWidth: 300,
         margin: 1,
         display: 'flex',
@@ -38,15 +44,43 @@ export default function BrandCard({ id, name, logo }: Brand) {
       <CardContent
         sx={{
           display: 'flex',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          flexDirection: 'column'
         }}
       >
-        <Typography variant="h6" sx={{ marginBottom: 1 }}>
+        <Typography
+          variant="h6"
+          sx={{
+            marginBottom: 1,
+            display: 'flex',
+            justifyContent: 'center'
+          }}
+        >
           {name}
         </Typography>
-        <Typography variant="body2"> {logo}</Typography>
+        <Typography variant="body2">
+          {image && (
+            <CardMedia
+              component="img"
+              height="100%"
+              image={`${BASE_URL}${image.url}`}
+              style={{
+                maxWidth: '80px',
+                maxHeight: '100px',
+                minWidth: '80px',
+                minHeight: '50px',
+                width: 'auto',
+                height: 'auto',
+                margin: '0 auto'
+              }}
+              alt="logo de la marque"
+            />
+          )}
+        </Typography>
       </CardContent>
-      <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
+      <Grid
+        sx={{ display: 'flex', justifyContent: 'center', marginTop: 'auto' }}
+      >
         <MUILink
           component={RouterLink}
           to={`/brand/${id}/edit`}
