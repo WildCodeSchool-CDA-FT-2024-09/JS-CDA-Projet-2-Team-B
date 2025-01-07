@@ -123,23 +123,6 @@ const AddImage = ({ productId, handleBlock }: Props) => {
       )}
 
       <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        {/*<Box sx={{ marginBottom: 2 }}>
-          <Typography>Product ID</Typography>
-          <input
-            type="text"
-            value={productId}
-            onChange={(e) => setProductId(e.target.value)}
-            placeholder="Entrer l'ID du produit"
-            style={{
-              width: '100%',
-              padding: '8px',
-              marginTop: '8px',
-              borderRadius: '4px',
-              border: '1px solid #ccc'
-            }}
-          />
-        </Box>*/}
-
         <Box sx={{ marginBottom: 2 }}>
           <Typography>Image principale ?</Typography>
           <input
