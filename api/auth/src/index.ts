@@ -2,10 +2,16 @@ import express, { json } from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import { pool } from './database/pg.client';
+import apiRouter from 'routers/index.routers';
+
+const PORT = process.env.PORT;
 
 const app = express();
 
 app.use(json());
+app.use(express.urlencoded({ extended: true }));
+
+app.use('/api', apiRouter);
 
 const corsOptions = {
   credentials: true,
@@ -13,8 +19,6 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
-
-const PORT = process.env.PORT;
 
 app.listen(PORT, async () => {
   console.info(`Listening on port ${PORT}`);
