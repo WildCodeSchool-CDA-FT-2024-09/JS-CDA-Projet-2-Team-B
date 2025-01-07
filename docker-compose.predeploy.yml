@@ -1,0 +1,76 @@
+services:
+  predeploy-db:
+    image: postgres
+    env_file: .env
+    restart: always
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  predeploy-adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: adminer
+    restart: always
+    depends_on:
+      predeploy-db:
+        condition: service_healthy
+
+  predeploy-product:
+    image: pierredlc/japn-crew_product_service
+    command: npm run dev
+    restart: always
+    env_file: .env
+    depends_on:
+      predeploy-db:
+        condition: service_healthy
+
+  predeploy-uploadimage:
+    image: pierredlc/japn-crew_upload_service
+    command: npm run dev
+    restart: always
+    env_file: .env
+    depends_on:
+      predeploy-db:
+        condition: service_healthy
+
+  predeploy-auth:
+    image: pierredlc/japn-crew_auth_service
+    command: npm run dev
+    restart: always
+    env_file: .env
+    depends_on:
+      predeploy-db:
+        condition: service_healthy
+
+  predeploy-email:
+    image: pierredlc/japn-crew_email_service
+    command: npm run dev
+    restart: always
+    env_file: .env
+    depends_on:
+      predeploy-db:
+        condition: service_healthy
+
+  predeploy-client:
+    image: pierredlc/japn-crew_client_service
+    command: npm run dev
+    restart: always
+    environment:
+      - VITE_API_URL=/graph
+
+  predeploy-gateway:
+    image: nginx
+    ports:
+      - 8000:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - predeploy-product
+      - predeploy-uploadimage
+      - predeploy-auth
+      - predeploy-email
+      - predeploy-client

@@ -33,7 +33,7 @@ jobs:
 
       # build an push the newly created image
       - uses: docker/build-push-action@v2
-        name: Build and push
+        name: Build and push client
         with:
           context: ./client
           file: ./client/Dockerfile
@@ -42,7 +42,7 @@ jobs:
 
         # build an push the newly created image
       - uses: docker/build-push-action@v2
-        name: Build and push
+        name: Build and push product
         with:
           context: ./api/product
           file: ./api/product/dockerfile
@@ -51,7 +51,7 @@ jobs:
 
       # build an push the newly created image
       - uses: docker/build-push-action@v2
-        name: Build and push
+        name: Build and push upload
         with:
           context: ./api/uploadimage
           file: ./api/uploadimage/Dockerfile
@@ -60,7 +60,7 @@ jobs:
 
       # build an push the newly created image
       - uses: docker/build-push-action@v2
-        name: Build and push
+        name: Build and push email
         with:
           context: ./api/email
           file: ./api/email/Dockerfile
@@ -69,7 +69,7 @@ jobs:
 
       # build an push the newly created image
       - uses: docker/build-push-action@v2
-        name: Build and push
+        name: Build and push auth
         with:
           context: ./api/auth
           file: ./api/auth/Dockerfile
