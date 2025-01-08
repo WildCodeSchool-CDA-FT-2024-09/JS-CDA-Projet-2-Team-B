@@ -6,6 +6,7 @@ export interface EntityDatamapperReq {
   pool: Pool;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
+  findByPk(id: number): Promise<EntityDatamapperReq['data']>;
   findBySpecificField(
     field: string,
     value: string
