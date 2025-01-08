@@ -1,4 +1,4 @@
-import { TableNames } from 'helpers/TableNames';
+import { TableNames } from '../../helpers/TableNames';
 import { EntityDatamapperReq } from './EntityDatamapperReq';
 
 export interface UserDatamapperReq extends EntityDatamapperReq {
