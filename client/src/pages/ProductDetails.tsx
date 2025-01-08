@@ -12,7 +12,12 @@ import {
   FormControlLabel,
   Card,
   CardMedia,
-  IconButton
+  IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useEffect, useState } from 'react';
@@ -49,6 +54,11 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 export default function ProductDetails() {
   const { id } = useParams<{ id: string }>();
   const [error, setError] = useState<string | null>('');
+  const [openDialog, setOpenDialog] = useState(false);
+  const [imageToDelete, setImageToDelete] = useState<{
+    productId: string;
+    imageId: number;
+  } | null>(null);
   const { data: categoriesData } = useGetAllCategoriesQuery();
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
   const { data: tagsData } = useGetAllTagsQuery();
@@ -189,16 +199,33 @@ export default function ProductDetails() {
   };
 
   const handleDeleteImage = async (productId: string, imageId: number) => {
-    try {
-      await axios.delete(`${BASE_URL}/products/${productId}/images/${imageId}`);
+    setImageToDelete({ productId, imageId });
+    setOpenDialog(true);
+  };
 
-      setProduct((prev) => ({
-        ...prev,
-        images: prev.images?.filter((img) => img.id !== imageId) || []
-      }));
+  const confirmDelete = async () => {
+    if (!imageToDelete) return;
+
+    try {
+      const response = await axios.delete(
+        `${BASE_URL}/products/${imageToDelete.productId}/images/${imageToDelete.imageId}`
+      );
+
+      if (response.data.status === 'success') {
+        setProduct((prev) => ({
+          ...prev,
+          images:
+            prev.images?.filter((img) => img.id !== imageToDelete.imageId) || []
+        }));
+      } else {
+        throw new Error(response.data.message);
+      }
     } catch (error) {
       console.error('Error deleting image:', error);
       setError("Erreur lors de la suppression de l'image");
+    } finally {
+      setOpenDialog(false);
+      setImageToDelete(null);
     }
   };
 
@@ -660,6 +687,30 @@ export default function ProductDetails() {
           </Button>
         </Box>
       </Box>
+      <Dialog
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle id="alert-dialog-title">
+          Confirmer la suppression
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            Êtes-vous sûr de vouloir supprimer cette image ? Cette action ne
+            peut pas être annulée.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setOpenDialog(false)} color="primary">
+            Annuler
+          </Button>
+          <Button onClick={confirmDelete} color="error" autoFocus>
+            Supprimer
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }
