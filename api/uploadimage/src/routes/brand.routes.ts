@@ -18,6 +18,7 @@ brandRouter
   .patch(
     '/',
     multer.single('image'),
+    // Review Validation de données en middleware (req.body)
     async (req: Request, res: Response): Promise<void> => {
       console.info('Headers:', req.headers);
       console.info('Body:', req.body);
@@ -60,6 +61,7 @@ brandRouter
       }
     }
   )
+  // Review Validation de données en middleware (req.body)
   .delete('/', async (req: Request, res: Response): Promise<void> => {
     const { image_id } = req.body;
 
@@ -85,3 +87,4 @@ brandRouter
   });
 
 export default brandRouter;
+// Review Renommer en product.controllers.ts

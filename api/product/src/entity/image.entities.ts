@@ -11,6 +11,7 @@ import {
 import { Product } from './product.entities';
 import { Brand } from './brand.entities';
 
+// Review validation de donnée si resolver avec InputType
 @ObjectType()
 @Entity('image')
 export class Image extends BaseEntity {

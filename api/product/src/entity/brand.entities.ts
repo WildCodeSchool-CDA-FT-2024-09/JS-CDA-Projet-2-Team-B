@@ -13,6 +13,7 @@ import { Product } from './product.entities';
 import { GraphQLDateTime } from 'graphql-scalars';
 import { Image } from './image.entities';
 
+// Review validation de donnée si resolver avec InputType
 @ObjectType()
 @Entity('brand')
 export class Brand extends BaseEntity {

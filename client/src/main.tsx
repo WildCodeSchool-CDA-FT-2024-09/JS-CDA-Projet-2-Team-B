@@ -13,6 +13,8 @@ import AddBrand from './components/AddBrand.tsx';
 import BrandCatalog from './components/BrandCatalog.tsx';
 import BrandDetails from './components/BrandDetails.tsx';
 
+
+// Review Penser à mettre en place les portected route durant l'Auth avec Admin / Collaborator
 const router = createBrowserRouter([
   {
     path: '/',
@@ -23,11 +25,11 @@ const router = createBrowserRouter([
         element: <Catalog />
       },
       {
-        path: '/managementProduct',
+        path: '/managementProduct',// Review ???
         element: <ManagementProduct />
       },
       {
-        path: '/addProduct',
+        path: '/addProduct',// Review ???
         element: <AddProduct />
       },
       {

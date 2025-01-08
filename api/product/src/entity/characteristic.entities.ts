@@ -8,6 +8,7 @@ import {
   PrimaryGeneratedColumn
 } from 'typeorm';
 
+// Review validation de donnée si resolver avec InputType
 @ObjectType()
 @Entity('characteristics')
 export class Characteristic extends BaseEntity {

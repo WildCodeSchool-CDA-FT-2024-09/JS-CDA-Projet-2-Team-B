@@ -19,5 +19,5 @@ export const AppDataSource = new DataSource({
   password: POSTGRES_PASSWORD,
   database: POSTGRES_DB,
   entities: [Product, Category, Characteristic, Image, Tag, Brand],
-  synchronize: true
+  synchronize: true// Review: attention à mettre en variable d'environnement PROD false
 });

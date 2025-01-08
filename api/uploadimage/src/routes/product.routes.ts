@@ -11,6 +11,7 @@ const productRouter = Router();
 productRouter.post(
   '/',
   multer.single('image'),
+  // Review Validation de données en middleware (req.body)
   async (req: Request, res: Response): Promise<void> => {
     console.info('Headers:', req.headers);
     console.info('Body:', req.body);
@@ -44,3 +45,4 @@ productRouter.post(
 );
 
 export default productRouter;
+// Review Renommer en product.controllers.ts

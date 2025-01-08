@@ -16,6 +16,7 @@ import { Brand } from './brand.entities';
 import { GraphQLDateTime } from 'graphql-scalars';
 import { Tag } from './tag.entities';
 
+// Review validation de donnée si resolver avec InputType
 @ObjectType()
 @Entity('products')
 export class Product extends BaseEntity {

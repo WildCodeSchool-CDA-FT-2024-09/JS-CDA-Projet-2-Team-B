@@ -8,3 +8,4 @@ uploadRouter.use('/products', productRouter);
 uploadRouter.use('/brands', brandRouter);
 
 export { uploadRouter };
+// Review, voir pour renommer en routes.js
