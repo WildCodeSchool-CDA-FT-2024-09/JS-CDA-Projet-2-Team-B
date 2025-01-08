@@ -2,7 +2,7 @@ import express, { json } from 'express';
 import cors from 'cors';
 import 'dotenv/config';
 import { pool } from './database/pg.client';
-import apiRouter from 'routers/index.routers';
+import apiRouter from './routers/index.routers';
 
 const PORT = process.env.PORT;
 
