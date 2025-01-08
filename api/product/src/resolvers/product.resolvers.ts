@@ -85,11 +85,10 @@ export default class ProductResolver {
             id: char.characteristicId
           });
 
-          const characteristicValue = ProductCharacteristic.create({
-            product,
-            characteristic: characteristicDef,
-            value: char.value
-          });
+          const characteristicValue = new ProductCharacteristic();
+          characteristicValue.product = product;
+          characteristicValue.characteristic = characteristicDef;
+          characteristicValue.value = char.value;
           return characteristicValue.save();
         })
       );
