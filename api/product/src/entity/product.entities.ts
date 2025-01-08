@@ -16,6 +16,7 @@ import { Category } from './category.entities';
 import { Brand } from './brand.entities';
 import { GraphQLDateTime } from 'graphql-scalars';
 import { ProductCharacteristic } from './productCharacteristic.entities';
+import { Tag } from './tag.entities';
 
 @ObjectType()
 @Entity('products')
@@ -64,6 +65,11 @@ export class Product extends BaseEntity {
   @ManyToMany(() => Category)
   @JoinTable()
   categories?: Category[];
+
+  @Field(() => [Tag], { nullable: true })
+  @ManyToMany(() => Tag)
+  @JoinTable()
+  tags?: Tag[];
 
   @Field(() => Brand, { nullable: true })
   @ManyToOne(() => Brand, (brand) => brand.id)

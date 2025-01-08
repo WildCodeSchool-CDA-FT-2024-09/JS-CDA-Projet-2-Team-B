@@ -13,7 +13,6 @@ export const CREATE_PRODUCT = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -52,7 +51,6 @@ export const RESTORE_PRODUCT = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -86,10 +84,13 @@ export const PUT_PRODUCT = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
+        id
+        name
+      }
+      tags {
         id
         name
       }
@@ -152,7 +153,6 @@ export const CREATE_BRAND = gql`
       id
       name
       description
-      logo
     }
   }
 `;
@@ -163,7 +163,6 @@ export const PUT_BRAND = gql`
       id
       name
       description
-      logo
     }
   }
 `;

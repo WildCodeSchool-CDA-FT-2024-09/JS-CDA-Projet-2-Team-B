@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import { Card, Button, Typography, Box, styled } from '@mui/material';
+import { Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-// import { Check } from '@mui/icons-material';
 
 interface UploadResponse {
   id: string;
 }
 
 type Props = {
-  productId: number;
-
-  handleBlock: (isBlock: boolean) => void;
+  brandId: number | null;
+  setIsModifying: (value: boolean) => void;
+  refetch: () => void;
 };
 
 const VisuallyHiddenInput = styled('input')({
@@ -24,13 +23,16 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 });
 
-const AddImage = ({ productId, handleBlock }: Props) => {
+const AddBrandImage = ({ brandId, setIsModifying, refetch }: Props) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<UploadResponse | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isMain, setIsMain] = useState<boolean>(false);
+
+  const handleClick = () => {
+    setIsModifying(false);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -48,15 +50,14 @@ const AddImage = ({ productId, handleBlock }: Props) => {
 
     const formData = new FormData();
     formData.append('image', imageFile);
-    formData.append('product_id', productId.toString());
-    formData.append('isMain', isMain.toString());
+    formData.append('brand_id', brandId!.toString());
 
     setLoading(true);
     setError(null);
 
     try {
-      const response = await axios.post<UploadResponse>(
-        '/upload/products',
+      const response = await axios.patch<UploadResponse>(
+        '/upload/brands',
         formData,
         {
           headers: {
@@ -64,12 +65,11 @@ const AddImage = ({ productId, handleBlock }: Props) => {
           }
         }
       );
-
       setData(response.data);
       setImageFile(null);
       setImagePreview(null);
-      const isBlocked = false;
-      handleBlock(isBlocked);
+      refetch();
+      setIsModifying(false);
     } catch (e) {
       setError(e as Error);
     } finally {
@@ -78,16 +78,12 @@ const AddImage = ({ productId, handleBlock }: Props) => {
   };
 
   return (
-    <Card
+    <Box
       sx={{
         maxWidth: 600,
-        padding: 3,
-        textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center',
-        margin: 'auto',
-        marginTop: 5
+        alignItems: 'center'
       }}
     >
       <Typography>Ajouter une Image</Typography>
@@ -96,6 +92,10 @@ const AddImage = ({ productId, handleBlock }: Props) => {
           component="label"
           variant="contained"
           startIcon={<CloudUploadIcon />}
+          sx={{
+            borderRadius: '10px',
+            marginTop: '10px'
+          }}
         >
           Choisir un fichier
           <VisuallyHiddenInput
@@ -105,7 +105,6 @@ const AddImage = ({ productId, handleBlock }: Props) => {
           />
         </Button>
       </Box>
-
       {imagePreview && (
         <Box
           component="img"
@@ -113,26 +112,12 @@ const AddImage = ({ productId, handleBlock }: Props) => {
           alt="Prévisualisation"
           sx={{
             display: 'flex',
-            maxWidth: '60%',
+            maxWidth: '200px',
             height: 'auto',
-            marginBottom: 2,
-            borderRadius: 1,
-            border: '1px solid #ccc'
+            marginBottom: 2
           }}
         />
       )}
-
-      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        <Box sx={{ marginBottom: 2 }}>
-          <Typography>Image principale ?</Typography>
-          <input
-            type="checkbox"
-            checked={isMain}
-            onChange={(e) => setIsMain(e.target.checked)}
-            style={{ marginTop: '8px' }}
-          />
-        </Box>
-      </Box>
 
       <Button
         type="submit"
@@ -140,11 +125,33 @@ const AddImage = ({ productId, handleBlock }: Props) => {
         sx={{
           marginTop: 2,
           backgroundColor: 'green',
-          color: 'white'
+          borderRadius: '10px',
+          padding: '5px 20px',
+          color: 'white',
+          '&:disabled': {
+            backgroundColor: 'darkgrey',
+            color: 'black'
+          }
         }}
         disabled={loading || !imageFile}
       >
-        {loading ? 'Ajout en cours...' : 'Ajouter +'}
+        {loading ? 'Ajout en cours...' : 'Ajouter'}
+      </Button>
+      <Button
+        onClick={handleClick}
+        sx={{
+          marginTop: 1,
+          backgroundColor: 'red',
+          borderRadius: '10px',
+          padding: '5px 20px',
+          color: 'white',
+          '&:disabled': {
+            backgroundColor: 'darkgrey',
+            color: 'black'
+          }
+        }}
+      >
+        Annuler
       </Button>
 
       {error && (
@@ -158,8 +165,8 @@ const AddImage = ({ productId, handleBlock }: Props) => {
           Image ajoutée avec succès {data.id}
         </Typography>
       )}
-    </Card>
+    </Box>
   );
 };
 
-export default AddImage;
+export default AddBrandImage;

@@ -37,7 +37,7 @@ export type Brand = {
   deletedAt?: Maybe<Scalars['DateTime']['output']>;
   description: Scalars['String']['output'];
   id: Scalars['Float']['output'];
-  logo: Scalars['String']['output'];
+  image?: Maybe<Image>;
   name: Scalars['String']['output'];
   products?: Maybe<Array<Product>>;
 };
@@ -45,7 +45,6 @@ export type Brand = {
 export type BrandCreationInput = {
   deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description: Scalars['String']['input'];
-  logo: Scalars['String']['input'];
   name: Scalars['String']['input'];
 };
 
@@ -53,7 +52,6 @@ export type BrandUpdateInput = {
   deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Float']['input'];
-  logo?: InputMaybe<Scalars['String']['input']>;
   name?: InputMaybe<Scalars['String']['input']>;
 };
 
@@ -99,6 +97,7 @@ export type CreateTagInput = {
 
 export type Image = {
   __typename?: 'Image';
+  brand?: Maybe<Brand>;
   id: Scalars['Float']['output'];
   isMain: Scalars['Boolean']['output'];
   products: Array<Product>;
@@ -223,6 +222,7 @@ export type Product = {
   price?: Maybe<Scalars['Float']['output']>;
   reference: Scalars['String']['output'];
   shortDescription?: Maybe<Scalars['String']['output']>;
+  tags?: Maybe<Array<Tag>>;
 };
 
 export type ProductCharacteristic = {
@@ -243,6 +243,7 @@ export type ProductInput = {
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
   shortDescription: Scalars['String']['input'];
+  tagIds?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 export type ProductUpdateInput = {
@@ -256,6 +257,7 @@ export type ProductUpdateInput = {
   price: Scalars['Float']['input'];
   reference: Scalars['String']['input'];
   shortDescription: Scalars['String']['input'];
+  tagIds?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
 export type Query = {
@@ -340,7 +342,6 @@ export type CreateNewProductMutation = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
@@ -390,7 +391,6 @@ export type RestoreProductMutation = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
@@ -429,13 +429,13 @@ export type UpdateProductMutation = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
       id: number;
       name: string;
     }> | null;
+    tags?: Array<{ __typename?: 'Tag'; id: number; name: string }> | null;
     characteristicValues?: Array<{
       __typename?: 'ProductCharacteristic';
       id: number;
@@ -513,7 +513,6 @@ export type CreateBrandMutation = {
     id: number;
     name: string;
     description: string;
-    logo: string;
   };
 };
 
@@ -528,7 +527,6 @@ export type UpdateBrandMutation = {
     id: number;
     name: string;
     description: string;
-    logo: string;
   };
 };
 
@@ -595,7 +593,6 @@ export type GetAllProductsQuery = {
       id: number;
       name: string;
       description: string;
-      logo: string;
     } | null;
     categories?: Array<{
       __typename?: 'Category';
@@ -627,12 +624,19 @@ export type GetProductByIdQuery = {
       id: number;
       name: string;
     }> | null;
+    tags?: Array<{ __typename?: 'Tag'; id: number; name: string }> | null;
     brand?: {
       __typename?: 'Brand';
       id: number;
       name: string;
       deletedAt?: undefined | null;
     } | null;
+    images: Array<{
+      __typename?: 'Image';
+      id: number;
+      url: string;
+      isMain: boolean;
+    }>;
     characteristicValues?: Array<{
       __typename?: 'ProductCharacteristic';
       id: number;
@@ -701,8 +705,8 @@ export type GetAllBrandsQuery = {
     id: number;
     name: string;
     description: string;
-    logo: string;
     deletedAt?: undefined | null;
+    image?: { __typename?: 'Image'; id: number; url: string } | null;
   }>;
 };
 
@@ -717,8 +721,8 @@ export type GetBrandByIdQuery = {
     id: number;
     name: string;
     description: string;
-    logo: string;
     deletedAt?: undefined | null;
+    image?: { __typename?: 'Image'; id: number; url: string } | null;
   } | null;
 };
 
@@ -735,7 +739,6 @@ export const CreateNewProductDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -858,7 +861,6 @@ export const RestoreProductDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -976,10 +978,13 @@ export const UpdateProductDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
+        id
+        name
+      }
+      tags {
         id
         name
       }
@@ -1294,7 +1299,6 @@ export const CreateBrandDocument = gql`
       id
       name
       description
-      logo
     }
   }
 `;
@@ -1347,7 +1351,6 @@ export const UpdateBrandDocument = gql`
       id
       name
       description
-      logo
     }
   }
 `;
@@ -1650,7 +1653,6 @@ export const GetAllProductsDocument = gql`
         id
         name
         description
-        logo
       }
       isPublished
       categories {
@@ -1746,10 +1748,19 @@ export const GetProductByIdDocument = gql`
         id
         name
       }
+      tags {
+        id
+        name
+      }
       brand {
         id
         name
         deletedAt
+      }
+      images {
+        id
+        url
+        isMain
       }
       characteristicValues {
         id
@@ -2152,8 +2163,11 @@ export const GetAllBrandsDocument = gql`
       id
       name
       description
-      logo
       deletedAt
+      image {
+        id
+        url
+      }
     }
   }
 `;
@@ -2235,8 +2249,11 @@ export const GetBrandByIdDocument = gql`
       id
       name
       description
-      logo
       deletedAt
+      image {
+        id
+        url
+      }
     }
   }
 `;

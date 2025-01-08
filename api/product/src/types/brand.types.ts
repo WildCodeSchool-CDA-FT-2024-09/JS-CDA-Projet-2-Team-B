@@ -9,9 +9,6 @@ export class BrandCreationInput implements Partial<Brand> {
   @Field()
   description: string;
 
-  @Field()
-  logo: string;
-
   @Field({ nullable: true })
   deletedAt?: Date;
 }
@@ -26,9 +23,6 @@ export class BrandUpdateInput implements Partial<Brand> {
 
   @Field({ nullable: true })
   description: string;
-
-  @Field({ nullable: true })
-  logo: string;
 
   @Field({ nullable: true })
   deletedAt?: Date;

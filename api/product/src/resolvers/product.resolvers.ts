@@ -6,6 +6,7 @@ import { ILike, In } from 'typeorm';
 import { Brand } from '../entity/brand.entities';
 import { ProductCharacteristic } from '../entity/productCharacteristic.entities';
 import { Characteristic } from '../entity/characteristic.entities';
+import { Tag } from '../entity/tag.entities';
 
 @Resolver(Product)
 export default class ProductResolver {
@@ -23,7 +24,8 @@ export default class ProductResolver {
         images: true,
         characteristicValues: {
           characteristic: true
-        }
+        },
+        tags: true
       },
       withDeleted: includeDeleted
     };
@@ -67,6 +69,13 @@ export default class ProductResolver {
       product.categories = categories;
     }
 
+    if (newProduct.tagIds) {
+      const tags = await Tag.findBy({
+        id: In(newProduct.tagIds)
+      });
+      product.tags = tags;
+    }
+
     await product.save();
 
     if (newProduct.characteristicValues?.length) {
@@ -102,6 +111,7 @@ export default class ProductResolver {
         'categories',
         'brand',
         'images',
+        'tags',
         'characteristicValues',
         'characteristicValues.characteristic'
       ],
@@ -122,7 +132,8 @@ export default class ProductResolver {
         'brand',
         'images',
         'characteristicValues',
-        'characteristicValues.characteristic'
+        'characteristicValues.characteristic',
+        'tags'
       ]
     });
 
@@ -150,6 +161,13 @@ export default class ProductResolver {
         id: In(newDataProduct.categoryIds)
       });
       product.categories = categories;
+    }
+
+    if (newDataProduct.tagIds) {
+      const tags = await Tag.findBy({
+        id: In(newDataProduct.tagIds)
+      });
+      product.tags = tags;
     }
 
     // if (newDataProduct.imageIds && newDataProduct.imageIds.length > 0) {
@@ -260,7 +278,8 @@ export default class ProductResolver {
         withDeleted: true,
         relations: {
           brand: true,
-          categories: true
+          categories: true,
+          tags: true
         }
       });
 

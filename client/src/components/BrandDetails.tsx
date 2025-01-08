@@ -7,20 +7,25 @@ import {
   useUpdateBrandMutation
 } from '../generated/graphql-types';
 import { useParams } from 'react-router-dom';
-import GreenSwitch from '../ui/Switch';
+import { CustomSwitch } from '../ui/Switch';
+import DisplayBrandImage from './DisplayBrandImage';
+import AddBrandImage from './AddBrandImage';
 
 interface BrandReq {
   name: string;
   description: string;
-  logo: string;
   deletedAt: Date | null;
+  image?: {
+    id: number;
+    url: string;
+  } | null;
 }
 
 const initialState = {
   name: '',
   description: '',
-  logo: '',
-  deletedAt: null
+  deletedAt: null,
+  image: null
 };
 
 export default function BrandDetails() {
@@ -28,6 +33,7 @@ export default function BrandDetails() {
   const [error, setError] = useState<string | null>('');
   const [brand, setBrand] = useState<BrandReq>(initialState);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const [isModifying, setIsModifying] = useState(false);
   const [
     deactivateBrand,
     { error: deactivateError, loading: deactivateLoading }
@@ -50,11 +56,17 @@ export default function BrandDetails() {
 
   useEffect(() => {
     if (data?.getBrandById) {
+      const { name, description, deletedAt, image } = data.getBrandById;
       setBrand({
-        name: data.getBrandById.name,
-        description: data.getBrandById.description,
-        logo: data.getBrandById.logo,
-        deletedAt: data.getBrandById.deletedAt || null
+        name: name,
+        description: description,
+        deletedAt: deletedAt || null,
+        image: image
+          ? {
+              id: data.getBrandById.image!.id,
+              url: data.getBrandById.image!.url
+            }
+          : null
       });
     } else if (fetchError) {
       setError(fetchError.message);
@@ -128,8 +140,7 @@ export default function BrandDetails() {
           data: {
             id: parseInt(id!),
             name: brand.name,
-            description: brand.description,
-            logo: brand.logo
+            description: brand.description
           }
         }
       });
@@ -138,7 +149,6 @@ export default function BrandDetails() {
         setBrand({
           name: '',
           description: '',
-          logo: '',
           deletedAt: null
         });
         setSuccessMessage('Marque mise à jour avec succès !');
@@ -158,97 +168,164 @@ export default function BrandDetails() {
   if (loading || updateLoading) return <p>Loading...</p>;
 
   return (
-    <>
-      <GreenSwitch
-        checked={brand.deletedAt === null}
-        onChange={handleSwitchChange}
-        disabled={deactivateLoading || activationLoading}
-      />
+    <Box
+      sx={{
+        display: 'flex'
+      }}
+    >
       <Box
-        component="form"
-        onSubmit={handleSubmit}
         sx={{
-          m: 1,
-          width: '60ch',
-          fontWeight: 'bold',
           display: 'flex',
-          flexDirection: 'column',
-          gap: 1,
-          maxWidth: 400,
-          margin: '0 auto'
+          alignItems: 'center'
         }}
-        noValidate
-        autoComplete="off"
       >
-        <Typography
-          sx={{
-            marginLeft: '2px',
-            fontWeight: 'bold'
-          }}
-        >
-          Nom
-        </Typography>
-        <TextField
-          required
-          id="outlined-required"
-          name="name"
-          value={brand.name}
-          onChange={handleChange}
-          placeholder="Nom"
-        />
-        <Typography
-          sx={{
-            marginLeft: '2px',
-            fontWeight: 'bold'
-          }}
-        >
-          Description
-        </Typography>
-        <TextField
-          required
-          id="outlined-required"
-          name="description"
-          value={brand.description}
-          onChange={handleChange}
-          placeholder="Description"
-        />
-        <Button
-          variant="contained"
-          disabled={loading}
-          color="primary"
-          type="submit"
-          sx={{
-            width: '20ch',
-            alignSelf: 'flex-end'
-          }}
-        >
-          Enregistrer
-        </Button>
-        {successMessage && (
-          <Typography
-            color="success.main"
-            variant="body2"
-            sx={{
-              display: 'flex',
-              justifyContent: 'end'
-            }}
-          >
-            {successMessage}
-          </Typography>
-        )}
-        {error && (
-          <Typography
-            color="error.main"
-            variant="body2"
-            sx={{
-              display: 'flex',
-              justifyContent: 'end'
-            }}
-          >
-            Une erreur s'est produite : {error}
-          </Typography>
+        {brand.image && !isModifying ? (
+          <DisplayBrandImage
+            image={brand.image}
+            isModifying={isModifying}
+            setIsModifying={setIsModifying}
+            refetch={refetch}
+          />
+        ) : (
+          <AddBrandImage
+            brandId={parseInt(id!, 10)}
+            setIsModifying={setIsModifying}
+            refetch={refetch}
+          />
         )}
       </Box>
-    </>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          margin: '0 50px',
+          gap: 1
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center'
+          }}
+        >
+          <CustomSwitch
+            checked={brand.deletedAt === null}
+            onChange={handleSwitchChange}
+            disabled={deactivateLoading || activationLoading}
+            sx={{
+              display: 'flex',
+              justifyContent: 'left'
+            }}
+          />
+          <Typography
+            sx={{
+              color: brand.deletedAt ? 'error.main' : 'success.main',
+              fontWeight: 'bold'
+            }}
+          >
+            {brand.deletedAt ? 'Désactivée' : 'Activée'}
+          </Typography>
+        </Box>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            m: 1,
+            width: '30ch',
+            fontWeight: 'bold',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: 1,
+            maxWidth: 400,
+            margin: '0 auto'
+          }}
+          noValidate
+          autoComplete="off"
+        >
+          <Typography
+            sx={{
+              marginLeft: '2px',
+              fontWeight: 'bold'
+            }}
+          >
+            Nom
+          </Typography>
+          <TextField
+            required
+            id="outlined-required"
+            name="name"
+            value={brand.name}
+            onChange={handleChange}
+            placeholder="Nom"
+            sx={{
+              '& .MuiInputBase-root': {
+                height: 40,
+                borderRadius: '10px'
+              }
+            }}
+          />
+          <Typography
+            sx={{
+              marginLeft: '2px',
+              fontWeight: 'bold'
+            }}
+          >
+            Description
+          </Typography>
+          <TextField
+            required
+            id="outlined-required"
+            name="description"
+            value={brand.description}
+            onChange={handleChange}
+            placeholder="Description"
+            sx={{
+              '& .MuiInputBase-root': {
+                height: 40,
+                borderRadius: '10px'
+              }
+            }}
+          />
+          <Button
+            variant="contained"
+            disabled={loading}
+            color="primary"
+            type="submit"
+            sx={{
+              width: '20ch',
+              alignSelf: 'flex-end',
+              borderRadius: '10px',
+              marginTop: '26px'
+            }}
+          >
+            Enregistrer
+          </Button>
+          {successMessage && (
+            <Typography
+              color="success.main"
+              variant="body2"
+              sx={{
+                display: 'flex',
+                justifyContent: 'end'
+              }}
+            >
+              {successMessage}
+            </Typography>
+          )}
+          {error && (
+            <Typography
+              color="error.main"
+              variant="body2"
+              sx={{
+                display: 'flex',
+                justifyContent: 'end'
+              }}
+            >
+              Une erreur s'est produite : {error}
+            </Typography>
+          )}
+        </Box>
+      </Box>
+    </Box>
   );
 }

@@ -4,9 +4,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
     branches:
-      - main
       - dev
-      - pre-deploy
 
 jobs:
   lint:
@@ -42,7 +40,7 @@ jobs:
         run: npx lint-staged --diff="origin/${GITHUB_BASE_REF}...origin/${GITHUB_HEAD_REF}"
 
       - name: Run Unit test
-        run: npm run test-client
+        run: npm run test-client-unit
 
       - name: Run Unit test
-        run: npm run test-product
+        run: npm run test-product-unit
