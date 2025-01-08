@@ -11,8 +11,10 @@ import {
   MenuItem,
   FormControlLabel,
   Card,
-  CardMedia
+  CardMedia,
+  IconButton
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -26,6 +28,7 @@ import {
 } from '../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
 import { CustomSwitch } from '../ui/Switch';
+import axios from 'axios';
 
 interface ProductDetailsReq {
   name: string;
@@ -185,6 +188,20 @@ export default function ProductDetails() {
     }
   };
 
+  const handleDeleteImage = async (productId: string, imageId: number) => {
+    try {
+      await axios.delete(`${BASE_URL}/products/${productId}/images/${imageId}`);
+
+      setProduct((prev) => ({
+        ...prev,
+        images: prev.images?.filter((img) => img.id !== imageId) || []
+      }));
+    } catch (error) {
+      console.error('Error deleting image:', error);
+      setError("Erreur lors de la suppression de l'image");
+    }
+  };
+
   useEffect(() => {
     if (data?.getProductById) {
       setProduct({
@@ -236,6 +253,25 @@ export default function ProductDetails() {
               }
               alt="image du produit"
             />
+            <Box
+              sx={{
+                justifyContent: 'center',
+                backgroundColor: 'rgba(255, 255, 255, 0.8)',
+                borderRadius: '50%'
+              }}
+            >
+              <IconButton
+                onClick={() => handleDeleteImage(id!, product.images![0].id)}
+                size="small"
+                sx={{
+                  '&:hover': {
+                    color: 'error.main'
+                  }
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
           </Card>
         )}
         <Box
