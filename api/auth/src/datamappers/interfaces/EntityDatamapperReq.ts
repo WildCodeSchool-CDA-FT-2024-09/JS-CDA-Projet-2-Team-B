@@ -11,7 +11,4 @@ export interface EntityDatamapperReq {
     field: string,
     value: string
   ): Promise<EntityDatamapperReq['data']>;
-  insert(
-    item: EntityDatamapperReq['data']
-  ): Promise<EntityDatamapperReq['data']>;
 }
