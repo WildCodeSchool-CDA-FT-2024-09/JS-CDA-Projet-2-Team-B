@@ -286,6 +286,7 @@ export type QueryGetAllCharacteristicArgs = {
 };
 
 export type QueryGetAllProductsArgs = {
+  brands?: InputMaybe<Array<Scalars['String']['input']>>;
   includeDeleted?: InputMaybe<Scalars['Boolean']['input']>;
   search?: InputMaybe<Scalars['String']['input']>;
 };
@@ -574,6 +575,9 @@ export type DisableCharactertisticMutation = {
 
 export type GetAllProductsQueryVariables = Exact<{
   search?: InputMaybe<Scalars['String']['input']>;
+  brands?: InputMaybe<
+    Array<Scalars['String']['input']> | Scalars['String']['input']
+  >;
 }>;
 
 export type GetAllProductsQuery = {
@@ -1639,8 +1643,8 @@ export type DisableCharactertisticMutationOptions = Apollo.BaseMutationOptions<
   DisableCharactertisticMutationVariables
 >;
 export const GetAllProductsDocument = gql`
-  query GetAllProducts($search: String) {
-    getAllProducts(search: $search) {
+  query GetAllProducts($search: String, $brands: [String!]) {
+    getAllProducts(search: $search, brands: $brands) {
       id
       name
       price
@@ -1676,6 +1680,7 @@ export const GetAllProductsDocument = gql`
  * const { data, loading, error } = useGetAllProductsQuery({
  *   variables: {
  *      search: // value for 'search'
+ *      brands: // value for 'brands'
  *   },
  * });
  */
