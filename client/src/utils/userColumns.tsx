@@ -82,7 +82,7 @@ export const userColumns = (
           <GridActionsCellItem
             icon={<ControlPoint />}
             label="Save"
-            onClick={() => handleSaveClick(e.row)} // Utilisation de la fonction passée en paramètre
+            onClick={() => handleSaveClick(e.row)}
           />
         ];
       }
