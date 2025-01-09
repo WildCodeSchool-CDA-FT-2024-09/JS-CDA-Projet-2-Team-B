@@ -5,8 +5,11 @@ import {
   Column,
   DeleteDateColumn,
   Entity,
+  JoinTable,
+  ManyToMany,
   PrimaryGeneratedColumn
 } from 'typeorm';
+import { Product } from './product.entities';
 
 @ObjectType()
 @Entity('characteristics')
@@ -18,6 +21,15 @@ export class Characteristic extends BaseEntity {
   @Field()
   @Column({ unique: true, length: 100 })
   name: string;
+
+  @Field(() => [Product], { nullable: true })
+  @ManyToMany(() => Product)
+  @JoinTable({
+    name: 'product_characteristics',
+    joinColumn: { name: 'characteristicId' },
+    inverseJoinColumn: { name: 'productId' }
+  })
+  products?: Product[];
 
   @Field(() => GraphQLDateTime, { nullable: true })
   @DeleteDateColumn()

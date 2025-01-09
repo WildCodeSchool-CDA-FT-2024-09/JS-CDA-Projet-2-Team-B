@@ -11,16 +11,25 @@ import {
   Chip,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  IconButton
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
   GetAllBrandsDocument,
   GetAllProductsDocument,
   useCreateNewProductMutation,
   useGetAllCategoriesQuery,
+  useGetAllCharacteristicQuery,
   useGetAllTagsQuery
 } from '../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
+
+type ProductCharacteristic = {
+  characteristicId: number;
+  name: string;
+  value: string;
+};
 
 type newProduct = {
   name: string;
@@ -32,6 +41,7 @@ type newProduct = {
   categories: Array<{ id: number; name: string }>;
   tags: Array<{ id: number; name: string }>;
   isPublished: boolean;
+  characteristics: ProductCharacteristic[];
 };
 
 type Props = {
@@ -48,7 +58,8 @@ const initialValue: newProduct = {
   brand: null as { id: number; name: string } | null,
   categories: [] as Array<{ id: number; name: string }>,
   tags: [] as Array<{ id: number; name: string }>,
-  isPublished: true
+  isPublished: true,
+  characteristics: []
 };
 
 export default function CreationProduct({ handleProductId, block }: Props) {
@@ -62,6 +73,8 @@ export default function CreationProduct({ handleProductId, block }: Props) {
     Array<{ id: number; name: string }>
   >([]);
   const { data: categoriesData } = useGetAllCategoriesQuery();
+  const { data: characteristicsData, loading: loadingCharacteristics } =
+    useGetAllCharacteristicQuery();
   const { data: tagsData } = useGetAllTagsQuery();
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
 
@@ -78,6 +91,50 @@ export default function CreationProduct({ handleProductId, block }: Props) {
       setBrandOptions(brandsData.getAllBrands);
     }
   }, [brandsData]);
+
+  const handleAddCharacteristic = (characteristic: {
+    id: number;
+    name: string;
+  }) => {
+    if (
+      !formProduct.characteristics.some(
+        (c) => c.characteristicId === characteristic.id
+      )
+    ) {
+      setFormProduct((prev) => ({
+        ...prev,
+        characteristics: [
+          ...prev.characteristics,
+          {
+            characteristicId: characteristic.id,
+            name: characteristic.name,
+            value: ''
+          }
+        ]
+      }));
+    }
+  };
+
+  const handleCharacteristicValueChange = (
+    characteristicId: number,
+    value: string
+  ) => {
+    setFormProduct((prev) => ({
+      ...prev,
+      characteristics: prev.characteristics.map((char) =>
+        char.characteristicId === characteristicId ? { ...char, value } : char
+      )
+    }));
+  };
+
+  const handleRemoveCharacteristic = (characteristicId: number) => {
+    setFormProduct((prev) => ({
+      ...prev,
+      characteristics: prev.characteristics.filter(
+        (char) => char.characteristicId !== characteristicId
+      )
+    }));
+  };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (!block) {
@@ -127,7 +184,11 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             isPublished,
             categoryIds: categories.map((cat) => cat.id),
             tagIds: tags.map((tag) => tag.id),
-            brand: brand ? brand.id : null
+            brand: brand ? brand.id : null,
+            characteristicValues: formProduct.characteristics.map((char) => ({
+              characteristicId: char.characteristicId,
+              value: char.value
+            }))
           }
         },
         update(cache, { data }) {
@@ -168,7 +229,8 @@ export default function CreationProduct({ handleProductId, block }: Props) {
         isPublished: true,
         categories: [],
         tags: [],
-        brand: null
+        brand: null,
+        characteristics: []
       });
       if (data?.createNewProduct?.id) {
         setSuccessMessage(
@@ -242,6 +304,74 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               }
             }}
           />
+          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
+            <Autocomplete
+              options={
+                characteristicsData?.getAllCharacteristic?.filter(
+                  (char) =>
+                    !formProduct.characteristics.some(
+                      (c) => c.characteristicId === char.id
+                    )
+                ) || []
+              }
+              getOptionLabel={(option) => option.name}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Ajouter une caractéristique"
+                  placeholder="Sélectionner une caractéristique"
+                />
+              )}
+              onChange={(_, newValue) => {
+                if (newValue) {
+                  handleAddCharacteristic(newValue);
+                }
+              }}
+              disabled={loading || loadingCharacteristics}
+            />
+          </FormControl>
+
+          {formProduct.characteristics.map((char) => (
+            <Box
+              key={char.characteristicId}
+              sx={{
+                display: 'flex',
+                gap: 2,
+                mb: 2,
+                alignItems: 'center',
+                backgroundColor: 'background.paper',
+                p: 2,
+                borderRadius: 1
+              }}
+            >
+              <Typography sx={{ minWidth: 150, fontWeight: 'medium' }}>
+                {char.name}
+              </Typography>
+              <TextField
+                fullWidth
+                size="small"
+                value={char.value}
+                onChange={(e) =>
+                  handleCharacteristicValueChange(
+                    char.characteristicId,
+                    e.target.value
+                  )
+                }
+                placeholder="Entrer une valeur"
+                disabled={loading}
+              />
+              <IconButton
+                onClick={() =>
+                  handleRemoveCharacteristic(char.characteristicId)
+                }
+                color="error"
+                size="small"
+                disabled={loading}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </Box>
+          ))}
           <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
             <Autocomplete
               multiple
