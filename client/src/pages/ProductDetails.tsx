@@ -100,7 +100,8 @@ export default function ProductDetails() {
   const {
     loading,
     error: fetchError,
-    data
+    data,
+    refetch
   } = useGetProductByIdQuery({
     variables: { getProductByIdId: parseInt(id!), includeDeleted: true }
   });
@@ -234,6 +235,7 @@ export default function ProductDetails() {
           images:
             prev.images?.filter((img) => img.id !== imageToDelete.imageId) || []
         }));
+        await refetch();
       } else {
         throw new Error(response.data.message);
       }
