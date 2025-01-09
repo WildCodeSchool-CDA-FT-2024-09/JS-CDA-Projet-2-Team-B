@@ -99,7 +99,7 @@ export const updateBrandImageToNull = async (brandId: string) => {
   }
 };
 
-export const deleteBrandImageFromDatabase = async (imageId: number) => {
+export const deleteImageFromDatabase = async (imageId: number) => {
   const imageQuery = 'DELETE FROM image WHERE "id" = $1';
 
   try {
@@ -110,7 +110,7 @@ export const deleteBrandImageFromDatabase = async (imageId: number) => {
   }
 };
 
-export const deleteBrandImageFile = async (url: string) => {
+export const deleteImageFile = async (url: string) => {
   const imagePath = path.join(PUBLIC_DIR, url);
 
   try {

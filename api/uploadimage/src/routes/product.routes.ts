@@ -1,7 +1,7 @@
 import { Router, Request, Response } from 'express';
 import {
-  deleteBrandImageFile,
-  deleteBrandImageFromDatabase,
+  deleteImageFile,
+  deleteImageFromDatabase,
   deleteProductImageRelation,
   getImageUsageCount,
   getProductImageById,
@@ -71,8 +71,8 @@ productRouter.delete(
       const usageCount = await getImageUsageCount(parseInt(imageId));
 
       if (usageCount === 0) {
-        await deleteBrandImageFromDatabase(parseInt(imageId));
-        await deleteBrandImageFile(image.url);
+        await deleteImageFromDatabase(parseInt(imageId));
+        await deleteImageFile(image.url);
 
         res.status(200).json({
           status: 'success',
