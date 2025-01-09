@@ -152,20 +152,20 @@ export default function UserManagement() {
   ];
 
   const handleSaveClick = async (e: UserRow) => {
-    const data = e;
+    const { id, isNew, ...dataCleaned } = e;
 
     try {
-      await axios.post('/auth/users', data, {
+      await axios.post('/auth/users', dataCleaned, {
         headers: {
           'Content-Type': 'application/json'
         }
       });
 
       const updatedUsers = users.map((user) => {
-        if (user.id === e.id) {
+        if (user.id === id) {
           return {
             ...user,
-            isNew: false
+            isNew: !isNew
           };
         }
         return user;
