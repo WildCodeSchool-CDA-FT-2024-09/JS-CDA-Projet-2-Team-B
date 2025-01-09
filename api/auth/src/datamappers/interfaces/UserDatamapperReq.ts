@@ -5,12 +5,12 @@ export interface UserDatamapperReq extends EntityDatamapperReq {
   tableName: TableNames.User;
   data: {
     id?: number;
-    lastName: string;
-    firstName: string;
+    last_name: string;
+    first_name: string;
     email: string;
     password: string;
     phone: string;
-    startingDate: Date;
-    endingDate: Date;
+    starting_date: Date;
+    ending_date: Date;
   };
 }
