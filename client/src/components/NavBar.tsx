@@ -7,6 +7,7 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import { Link as MUILink } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
+import logo from '../../public/logopmp.png'; // Assurez-vous que le chemin vers le logo est correct
 
 const pages = [
   { content: 'Gestion', to: '/managementProduct' },
@@ -20,17 +21,28 @@ export default function NavBAr() {
     <AppBar position="static" sx={{ backgroundColor: '#E3AB44' }}>
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <Typography
-            variant="h6"
-            component="a"
+          <Box
+            component={RouterLink}
+            to="/catalog"
             sx={{
-              fontWeight: 700,
-              color: 'black',
+              display: 'flex',
+              alignItems: 'center',
               textDecoration: 'none'
             }}
           >
-            PIMP
-          </Typography>
+            <img src={logo} alt="Logo" style={{ height: 80 }} />
+            <Typography
+              variant="h6"
+              component="span"
+              sx={{
+                fontWeight: 700,
+                color: 'black',
+                textDecoration: 'none'
+              }}
+            >
+              PIMP
+            </Typography>
+          </Box>
 
           <Box sx={{ flexGrow: 1, display: 'flex', justifyContent: 'right' }}>
             {pages.map((page) => (

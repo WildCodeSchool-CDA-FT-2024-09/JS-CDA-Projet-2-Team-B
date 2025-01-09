@@ -13,11 +13,18 @@ export default class ProductResolver {
   @Query(() => [Product])
   async getAllProducts(
     @Arg('search', { nullable: true }) search: string,
+    @Arg('brands', () => [String], { nullable: true }) brands: string[],
     @Arg('includeDeleted', () => Boolean, { nullable: true })
     includeDeleted = false
   ): Promise<Product[]> {
     const query = {
-      where: search ? { name: ILike(`%${search}%`) } : {},
+      where: {
+        ...(search && { name: ILike(`%${search}%`) }),
+        ...(brands &&
+          brands.length > 0 && {
+            brand: { name: ILike(`%${brands}%`) }
+          })
+      },
       relations: {
         categories: true,
         brand: true,

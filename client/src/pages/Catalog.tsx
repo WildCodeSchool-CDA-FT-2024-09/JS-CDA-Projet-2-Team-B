@@ -45,6 +45,10 @@ export default function Catalog() {
   };
 
   useEffect(() => {
+    console.info('Variables envoyées a la requete', {
+      search: searchProduct,
+      brands: selectedBrands
+    });
     refetch({
       search: searchProduct,
       brands: selectedBrands
@@ -54,7 +58,10 @@ export default function Catalog() {
   console.info('Données chargées :', data?.getAllProducts);
 
   if (loading) return <p> loading </p>;
-  if (error) return <p> error : </p>;
+  if (error) {
+    console.error('error GraphQL :', error);
+    return <p> Error :{error.message} </p>;
+  }
 
   return (
     <>
