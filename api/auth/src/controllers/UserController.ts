@@ -5,10 +5,10 @@ import {
   BadRequestError,
   DatabaseConnectionError
 } from '../errors/index.errors';
-import { UserDatamapperReq } from '../datamappers/interfaces/UserDatamapperReq';
 import { roleDatamapper } from '../datamappers/index.datamappers';
 import { NotFoundError } from '../errors/NotFoundError.error';
 import argon2 from 'argon2';
+import { generateRandomString } from '../helpers/generateRandomString.helper';
 
 export class UserController
   extends CoreController<UserControllerReq>
@@ -21,7 +21,7 @@ export class UserController
   }
 
   create = async (req: Request, res: Response): Promise<void> => {
-    const data: UserDatamapperReq['data'] = req.body;
+    const data = req.body;
 
     const checkIfExists = await this.datamapper.findBySpecificField(
       'email',
@@ -38,7 +38,9 @@ export class UserController
       throw new NotFoundError();
     }
 
-    const hashedPassword = await argon2.hash(data.password);
+    const password = await generateRandomString(10);
+
+    const hashedPassword = await argon2.hash(password);
 
     const newUser = {
       ...data,
