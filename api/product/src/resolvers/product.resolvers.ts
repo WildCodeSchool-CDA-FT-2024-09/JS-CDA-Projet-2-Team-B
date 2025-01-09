@@ -4,6 +4,8 @@ import { Resolver, Query, Mutation, Arg, Int } from 'type-graphql';
 import { Category } from '../entity/category.entities';
 import { ILike, In } from 'typeorm';
 import { Brand } from '../entity/brand.entities';
+import { ProductCharacteristic } from '../entity/productCharacteristic.entities';
+import { Characteristic } from '../entity/characteristic.entities';
 import { Tag } from '../entity/tag.entities';
 
 @Resolver(Product)
@@ -20,6 +22,9 @@ export default class ProductResolver {
         categories: true,
         brand: true,
         images: true,
+        characteristicValues: {
+          characteristic: true
+        },
         tags: true
       },
       withDeleted: includeDeleted
@@ -71,7 +76,26 @@ export default class ProductResolver {
       product.tags = tags;
     }
 
-    return await product.save();
+    await product.save();
+
+    if (newProduct.characteristicValues?.length) {
+      const characteristicValues = await Promise.all(
+        newProduct.characteristicValues.map(async (char) => {
+          const characteristicDef = await Characteristic.findOneByOrFail({
+            id: char.characteristicId
+          });
+
+          const characteristicValue = new ProductCharacteristic();
+          characteristicValue.product = product;
+          characteristicValue.characteristic = characteristicDef;
+          characteristicValue.value = char.value;
+          return characteristicValue.save();
+        })
+      );
+      product.characteristicValues = characteristicValues;
+    }
+
+    return product;
   }
 
   @Query(() => Product, { nullable: true })
@@ -82,7 +106,14 @@ export default class ProductResolver {
   ): Promise<Product | null> {
     return await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand', 'images', 'tags'],
+      relations: [
+        'categories',
+        'brand',
+        'images',
+        'tags',
+        'characteristicValues',
+        'characteristicValues.characteristic'
+      ],
       withDeleted: includeDeleted
     });
   }
@@ -95,7 +126,14 @@ export default class ProductResolver {
 
     const product = await Product.findOne({
       where: { id },
-      relations: ['categories', 'brand', 'images', 'tags']
+      relations: [
+        'categories',
+        'brand',
+        'images',
+        'characteristicValues',
+        'characteristicValues.characteristic',
+        'tags'
+      ]
     });
 
     if (!product) {
@@ -136,6 +174,77 @@ export default class ProductResolver {
 
     //   product.images = images;
     // }
+
+    // Gestion des caractéristiques
+    if (newDataProduct.characteristicValues) {
+      // 1. Vérifier les doublons dans les données d'entrée
+      const characteristicIds = newDataProduct.characteristicValues.map(
+        (char) => char.characteristicId
+      );
+      const uniqueIds = new Set(characteristicIds);
+
+      if (uniqueIds.size !== characteristicIds.length) {
+        throw new Error(
+          'Une caractéristique ne peut être ajoutée plusieurs fois pour un même produit'
+        );
+      }
+
+      // 2. Récupérer les caractéristiques existantes
+      const existingCharacteristics = await ProductCharacteristic.find({
+        where: { product: { id: product.id } },
+        relations: ['characteristic']
+      });
+
+      // 3. Mise à jour des caractéristiques
+      const updatedCharacteristics = await Promise.all(
+        newDataProduct.characteristicValues.map(async (newChar) => {
+          // Chercher si la caractéristique existe déjà
+          const existing = existingCharacteristics.find(
+            (ec) => ec.characteristic.id === newChar.characteristicId
+          );
+
+          if (existing) {
+            // Mettre à jour la valeur
+            existing.value = newChar.value;
+            return existing.save();
+          } else {
+            // Créer une nouvelle caractéristique
+            const characteristic = await Characteristic.findOne({
+              where: { id: newChar.characteristicId }
+            });
+
+            if (!characteristic) {
+              throw new Error(
+                `Characteristic with id ${newChar.characteristicId} not found`
+              );
+            }
+
+            return ProductCharacteristic.create({
+              product,
+              characteristic,
+              value: newChar.value
+            }).save();
+          }
+        })
+      );
+
+      // 4. Supprimer les caractéristiques qui ne sont plus dans la liste
+      if (existingCharacteristics.length > 0) {
+        const characteristicsToRemove = existingCharacteristics.filter(
+          (existing) =>
+            !newDataProduct.characteristicValues?.some(
+              (newChar) =>
+                newChar.characteristicId === existing.characteristic.id
+            )
+        );
+
+        if (characteristicsToRemove.length > 0) {
+          await ProductCharacteristic.remove(characteristicsToRemove);
+        }
+      }
+
+      product.characteristicValues = updatedCharacteristics;
+    }
 
     return await product.save();
   }

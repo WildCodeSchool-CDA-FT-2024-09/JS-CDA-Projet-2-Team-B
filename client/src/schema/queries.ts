@@ -54,6 +54,14 @@ export const GET_PRODUCT_BY_ID = gql`
         url
         isMain
       }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
+      }
     }
   }
 `;
