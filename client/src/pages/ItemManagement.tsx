@@ -3,7 +3,7 @@ import CategoryForm from '../components/CategoryForm';
 import TagForm from '../components/TagForm';
 import { Box } from '@mui/material';
 
-export default function ManagementProduct() {
+export default function ItemManagement() {
   return (
     <Box
       sx={{

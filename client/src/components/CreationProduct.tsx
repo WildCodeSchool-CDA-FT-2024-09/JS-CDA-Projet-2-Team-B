@@ -245,91 +245,83 @@ export default function CreationProduct({ handleProductId, block }: Props) {
   };
 
   return (
-    <Card sx={{ maxWidth: 600, padding: 3, margin: 'auto', marginTop: 5 }}>
+    <Card sx={{ maxWidth: 1200, padding: 3, margin: 'auto', marginTop: 5 }}>
       <CardContent>
-        <Box component="form" onSubmit={handleSubmit}>
-          <TextField
-            label="Nom du produit"
-            name="name"
-            value={formProduct.name}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Référence"
-            name="reference"
-            value={formProduct.reference}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Courte description"
-            name="shortDescription"
-            value={formProduct.shortDescription}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-          />
-          <TextField
-            label="Description"
-            name="description"
-            value={formProduct.description}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            multiline
-            rows={3}
-          />
-          <TextField
-            label="Prix (€)"
-            name="price"
-            type="number"
-            value={formProduct.price}
-            onChange={handleChange}
-            fullWidth
-            margin="normal"
-            sx={{
-              '& input[type=number]': {
-                '-moz-appearance': 'textfield',
-                '-webkit-appearance': 'none',
-                margin: 0
-              },
-              '& input[type=number]::-webkit-inner-spin-button': {
-                '-webkit-appearance': 'none'
-              },
-              '& input[type=number]::-webkit-outer-spin-button': {
-                '-webkit-appearance': 'none'
-              }
-            }}
-          />
-          <FormControl fullWidth sx={{ mb: 2, mt: 2 }}>
-            <Autocomplete
-              options={
-                characteristicsData?.getAllCharacteristic?.filter(
-                  (char) =>
-                    !formProduct.characteristics.some(
-                      (c) => c.characteristicId === char.id
-                    )
-                ) || []
-              }
-              getOptionLabel={(option) => option.name}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Ajouter une caractéristique"
-                  placeholder="Sélectionner une caractéristique"
-                />
-              )}
-              onChange={(_, newValue) => {
-                if (newValue) {
-                  handleAddCharacteristic(newValue);
-                }
-              }}
-              disabled={loading || loadingCharacteristics}
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}
+        >
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              label="Nom du produit"
+              name="name"
+              value={formProduct.name}
+              onChange={handleChange}
+              fullWidth
             />
-          </FormControl>
+            <TextField
+              label="Référence"
+              name="reference"
+              value={formProduct.reference}
+              onChange={handleChange}
+              fullWidth
+            />
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              label="Courte description"
+              name="shortDescription"
+              value={formProduct.shortDescription}
+              onChange={handleChange}
+              fullWidth
+            />
+            <TextField
+              label="Description"
+              name="description"
+              value={formProduct.description}
+              onChange={handleChange}
+              fullWidth
+              multiline
+              rows={1}
+            />
+          </Box>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <TextField
+              label="Prix (€)"
+              name="price"
+              type="number"
+              value={formProduct.price}
+              onChange={handleChange}
+              fullWidth
+            />
+            <FormControl fullWidth>
+              <Autocomplete
+                options={
+                  characteristicsData?.getAllCharacteristic?.filter(
+                    (char) =>
+                      !formProduct.characteristics.some(
+                        (c) => c.characteristicId === char.id
+                      )
+                  ) || []
+                }
+                getOptionLabel={(option) => option.name}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Ajouter une caractéristique"
+                    placeholder="Sélectionner une caractéristique"
+                  />
+                )}
+                onChange={(_, newValue) => {
+                  if (newValue) {
+                    handleAddCharacteristic(newValue);
+                  }
+                }}
+                disabled={loading || loadingCharacteristics}
+              />
+            </FormControl>
+          </Box>
 
           {formProduct.characteristics.map((char) => (
             <Box
@@ -337,7 +329,6 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               sx={{
                 display: 'flex',
                 gap: 2,
-                mb: 2,
                 alignItems: 'center',
                 backgroundColor: 'background.paper',
                 p: 2,
@@ -372,7 +363,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               </IconButton>
             </Box>
           ))}
-          <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
+          <FormControl fullWidth>
             <Autocomplete
               multiple
               options={
@@ -416,7 +407,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               )}
             />
           </FormControl>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {formProduct.categories.length > 0 ? (
               formProduct.categories.map((category) => (
                 <Chip
@@ -461,7 +452,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               </Typography>
             )}
           </Box>
-          <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
+          <FormControl fullWidth>
             <Autocomplete
               multiple
               options={
@@ -501,7 +492,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               )}
             />
           </FormControl>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1, mb: 2 }}>
+          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
             {formProduct.tags.length > 0 ? (
               formProduct.tags.map((tag) => (
                 <Chip
@@ -544,7 +535,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               </Typography>
             )}
           </Box>
-          <FormControl fullWidth sx={{ marginTop: 2, marginBottom: 2 }}>
+          <FormControl fullWidth>
             <Autocomplete
               options={brandOptions}
               getOptionLabel={(option) => option.name}
@@ -568,7 +559,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               )}
             />
           </FormControl>
-          <FormControl fullWidth margin="normal">
+          <FormControl fullWidth>
             <InputLabel id="status-label">Statut de publication</InputLabel>
             <Select
               labelId="status-label"
@@ -591,7 +582,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
             variant="contained"
             color="primary"
             disabled={loading}
-            sx={{ marginTop: 2, backgroundColor: 'green' }}
+            sx={{ backgroundColor: 'green' }}
           >
             {loading ? 'Création en cours...' : 'Ajouter le Produit'}
           </Button>

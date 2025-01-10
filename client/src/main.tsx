@@ -4,15 +4,16 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import client from './services/connexion.ts';
 import App from './App.tsx';
-import Catalog from './pages/Catalog.tsx';
-import ManagementProduct from './pages/ManagementProduct.tsx';
+import Catalog from './components/Catalog.tsx';
+import ItemManagement from './pages/ItemManagement.tsx';
 import ProductDetails from './pages/ProductDetails.tsx';
-import AddProduct from './pages/AddProduct.tsx';
+import AddProduct from './components/AddProduct.tsx';
 import BrandManagement from './pages/BrandManagement.tsx';
 import AddBrand from './components/AddBrand.tsx';
 import BrandCatalog from './components/BrandCatalog.tsx';
 import BrandDetails from './components/BrandDetails.tsx';
 import UserManagement from './pages/users/UserManagement.tsx';
+import ProductManagement from './pages/ProductManagement.tsx';
 
 const router = createBrowserRouter([
   {
@@ -24,20 +25,26 @@ const router = createBrowserRouter([
         element: <UserManagement />
       },
       {
-        path: '/catalog',
-        element: <Catalog />
+        path: '/product',
+        element: <ProductManagement />,
+        children: [
+          {
+            path: '/product/view',
+            element: <Catalog />
+          },
+          {
+            path: '/product/add',
+            element: <AddProduct />
+          },
+          {
+            path: '/product/:id/edit',
+            element: <ProductDetails />
+          }
+        ]
       },
       {
-        path: '/managementProduct',
-        element: <ManagementProduct />
-      },
-      {
-        path: '/addProduct',
-        element: <AddProduct />
-      },
-      {
-        path: '/product/:id/edit',
-        element: <ProductDetails />
+        path: '/itemmanagement',
+        element: <ItemManagement />
       },
       {
         path: '/brand',
