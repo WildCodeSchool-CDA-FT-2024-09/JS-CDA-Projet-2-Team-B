@@ -20,10 +20,7 @@ export default class ProductResolver {
     const query = {
       where: {
         ...(search && { name: ILike(`%${search}%`) }),
-        ...(brands &&
-          brands.length > 0 && {
-            brand: { name: ILike(`%${brands}%`) }
-          })
+        ...(brands && brands.length > 0 && { brand: { name: In(brands) } })
       },
       relations: {
         categories: true,

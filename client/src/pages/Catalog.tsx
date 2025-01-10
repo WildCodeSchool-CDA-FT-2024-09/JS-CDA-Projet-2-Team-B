@@ -37,10 +37,14 @@ export default function Catalog() {
     refetch({ search: event.target.value, brands: selectedBrands });
   };
 
-  const handleBrandChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const brand = event.target.name;
+  const handleBrandChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    brand: string
+  ) => {
     setSelectedBrands((prev) =>
-      event.target.checked ? [...prev, brand] : prev.filter((b) => b !== brand)
+      event.target.checked
+        ? [...prev, brand]
+        : prev.filter((name) => name !== brand)
     );
   };
 
@@ -84,7 +88,7 @@ export default function Catalog() {
                     control={
                       <Checkbox
                         checked={selectedBrands.includes(brand)}
-                        onChange={handleBrandChange}
+                        onChange={(event) => handleBrandChange(event, brand)}
                         name={brand}
                       />
                     }
