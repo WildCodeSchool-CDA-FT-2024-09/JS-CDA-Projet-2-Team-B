@@ -1,18 +1,6 @@
-import express, { json } from 'express';
-import cors from 'cors';
 import 'dotenv/config';
-import { pool } from './database/pg.client';
-
-const app = express();
-
-app.use(json());
-
-const corsOptions = {
-  credentials: true,
-  origin: 'http://localhost:5173'
-};
-
-app.use(cors(corsOptions));
+import { pool } from './src/database/pg.client';
+import app from './src/app';
 
 const PORT = process.env.PORT;
 
@@ -25,7 +13,5 @@ app.listen(PORT, async () => {
     client.release();
   } catch (error) {
     console.error('❌ Failed to connect to the database:', error);
-  } finally {
-    await pool.end();
   }
 });
