@@ -12,12 +12,17 @@ import BrandManagement from './pages/BrandManagement.tsx';
 import AddBrand from './components/AddBrand.tsx';
 import BrandCatalog from './components/BrandCatalog.tsx';
 import BrandDetails from './components/BrandDetails.tsx';
+import UserManagement from './pages/users/UserManagement.tsx';
 
 const router = createBrowserRouter([
   {
     path: '/',
     element: <App />,
     children: [
+      {
+        path: '/users',
+        element: <UserManagement />
+      },
       {
         path: '/catalog',
         element: <Catalog />
