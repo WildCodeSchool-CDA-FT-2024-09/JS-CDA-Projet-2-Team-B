@@ -37,14 +37,22 @@ export default function Catalog() {
     refetch({ search: event.target.value, brands: selectedBrands });
   };
 
-  const handleBrandChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const brand = event.target.name;
+  const handleBrandChange = (
+    event: ChangeEvent<HTMLInputElement>,
+    brand: string
+  ) => {
     setSelectedBrands((prev) =>
-      event.target.checked ? [...prev, brand] : prev.filter((b) => b !== brand)
+      event.target.checked
+        ? [...prev, brand]
+        : prev.filter((name) => name !== brand)
     );
   };
 
   useEffect(() => {
+    console.info('Variables envoyées a la requete', {
+      search: searchProduct,
+      brands: selectedBrands
+    });
     refetch({
       search: searchProduct,
       brands: selectedBrands
@@ -54,7 +62,10 @@ export default function Catalog() {
   console.info('Données chargées :', data?.getAllProducts);
 
   if (loading) return <p> loading </p>;
-  if (error) return <p> error : </p>;
+  if (error) {
+    console.error('error GraphQL :', error);
+    return <p> Error :{error.message} </p>;
+  }
 
   return (
     <>
@@ -77,7 +88,7 @@ export default function Catalog() {
                     control={
                       <Checkbox
                         checked={selectedBrands.includes(brand)}
-                        onChange={handleBrandChange}
+                        onChange={(event) => handleBrandChange(event, brand)}
                         name={brand}
                       />
                     }
