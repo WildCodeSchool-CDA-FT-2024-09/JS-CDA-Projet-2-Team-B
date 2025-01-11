@@ -64,6 +64,9 @@ export class UserController
       );
     }
 
-    res.status(201).json(createdItem);
+    const userWithoutPassword = { ...createdItem };
+    delete userWithoutPassword.password;
+
+    res.status(201).json(userWithoutPassword);
   };
 }
