@@ -8,7 +8,7 @@ export interface UserDatamapperReq extends EntityDatamapperReq {
     last_name: string;
     first_name: string;
     email: string;
-    password: string;
+    password?: string;
     phone: string;
     starting_date: Date;
     ending_date: Date;

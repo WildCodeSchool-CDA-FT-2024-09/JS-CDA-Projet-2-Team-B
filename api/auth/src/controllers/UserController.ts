@@ -3,12 +3,15 @@ import { CoreController } from './CoreController';
 import { UserControllerReq } from './interfaces/UserControllerReq';
 import {
   BadRequestError,
-  DatabaseConnectionError
+  DatabaseConnectionError,
+  NotFoundError
 } from '../errors/index.errors';
 import { roleDatamapper } from '../datamappers/index.datamappers';
-import { NotFoundError } from '../errors/NotFoundError.error';
 import argon2 from 'argon2';
-import { generateRandomString } from '../helpers/generateRandomString.helper';
+import {
+  generateRandomString,
+  sendPasswordEmail
+} from '../helpers/index.helpers';
 
 export class UserController
   extends CoreController<UserControllerReq>
@@ -55,6 +58,17 @@ export class UserController
       throw new DatabaseConnectionError();
     }
 
-    res.status(201).json(createdItem);
+    const { success } = await sendPasswordEmail(newUser.email, password);
+
+    if (!success) {
+      throw new BadRequestError(
+        "Une erreur est survenue lors de l'envoi de l'email contenant le mot de passe."
+      );
+    }
+
+    const userWithoutPassword = { ...createdItem };
+    delete userWithoutPassword.password;
+
+    res.status(201).json(userWithoutPassword);
   };
 }
