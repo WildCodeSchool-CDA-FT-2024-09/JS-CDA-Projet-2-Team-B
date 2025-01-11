@@ -9,6 +9,7 @@ import { roleDatamapper } from '../datamappers/index.datamappers';
 import { NotFoundError } from '../errors/NotFoundError.error';
 import argon2 from 'argon2';
 import { generateRandomString } from '../helpers/generateRandomString.helper';
+import { sendPasswordEmail } from '../helpers/sendPasswordEmail.util';
 
 export class UserController
   extends CoreController<UserControllerReq>
@@ -53,6 +54,14 @@ export class UserController
 
     if (!createdItem) {
       throw new DatabaseConnectionError();
+    }
+
+    const { success } = await sendPasswordEmail(newUser.email, password);
+
+    if (!success) {
+      throw new BadRequestError(
+        "Une erreur est survenue lors de l'envoi de l'email contenant le mot de passe."
+      );
     }
 
     res.status(201).json(createdItem);
