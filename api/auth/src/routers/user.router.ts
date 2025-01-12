@@ -8,6 +8,7 @@ const userRouter = Router();
 
 userRouter
   .route('/')
+  .get(errorCatcher(userController.getAll))
   .post(
     validateRequest('body', userCreateSchema),
     errorCatcher(userController.create)

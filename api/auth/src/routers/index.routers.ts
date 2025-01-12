@@ -1,8 +1,19 @@
 import express from 'express';
 import userRouter from './user.router';
+import { errorCatcher } from '../helpers/index.helpers';
+import { userController } from '../controllers/index.controllers';
+import { validateRequest } from '../middlewares/index.middlewares';
+import { userSigninSchema } from '../validation/index.validation';
 
-const apiRouter = express.Router();
+const indexRouter = express.Router();
 
-apiRouter.use('/users', userRouter);
+indexRouter
+  .route('/')
+  .post(
+    validateRequest('body', userSigninSchema),
+    errorCatcher(userController.signin)
+  );
 
-export default apiRouter;
+indexRouter.use('/users', userRouter);
+
+export default indexRouter;

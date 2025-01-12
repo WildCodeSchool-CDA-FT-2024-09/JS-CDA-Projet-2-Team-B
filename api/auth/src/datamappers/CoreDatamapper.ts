@@ -19,4 +19,9 @@ export abstract class CoreDatamapper<T extends EntityDatamapperReq> {
     );
     return result.rows[0];
   };
+
+  findAll = async () => {
+    const result = await this.pool.query(`SELECT * FROM "${this.tableName}";`);
+    return result.rows;
+  };
 }
