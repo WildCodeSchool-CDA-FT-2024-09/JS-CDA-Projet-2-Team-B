@@ -13,8 +13,14 @@ import AddBrand from './components/AddBrand.tsx';
 import BrandCatalog from './components/BrandCatalog.tsx';
 import BrandDetails from './components/BrandDetails.tsx';
 import UserManagement from './pages/users/UserManagement.tsx';
+import Portal from './pages/users/Portal.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
 
 const router = createBrowserRouter([
+  {
+    path: '/portal',
+    element: <Portal />
+  },
   {
     path: '/',
     element: <App />,
@@ -64,7 +70,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ApolloProvider client={client}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ApolloProvider>
   </StrictMode>
 );

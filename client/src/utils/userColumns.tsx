@@ -62,13 +62,21 @@ export const userColumns = (
     field: 'starting_date',
     headerName: 'Date de début',
     width: 110,
-    editable: true
+    editable: true,
+    valueGetter: (value, row) => {
+      const date = row.starting_date ? new Date(row.starting_date) : null;
+      return date ? new Intl.DateTimeFormat('fr-FR').format(date) : '';
+    }
   },
   {
     field: 'ending_date',
     headerName: 'Date de fin',
     width: 110,
-    editable: true
+    editable: true,
+    valueGetter: (value, row) => {
+      const date = row.ending_date ? new Date(row.ending_date) : '';
+      return date ? new Intl.DateTimeFormat('fr-FR').format(date) : '';
+    }
   },
   {
     field: 'actions',
