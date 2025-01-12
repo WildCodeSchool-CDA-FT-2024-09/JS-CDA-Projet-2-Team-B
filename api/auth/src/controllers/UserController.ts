@@ -38,7 +38,7 @@ export class UserController
     const defaultRole = await roleDatamapper.findByPk(2);
 
     if (!defaultRole) {
-      throw new NotFoundError();
+      throw new NotFoundError('Rôle par défaut non trouvé.');
     }
 
     const password = await generateRandomString(10);
@@ -78,7 +78,7 @@ export class UserController
     const user = await this.datamapper.findBySpecificField('email', data.email);
 
     if (!user) {
-      throw new NotFoundError();
+      throw new NotFoundError('Utilisateur non trouvé.');
     }
 
     const isPasswordValid = await argon2.verify(user.password, data.password);

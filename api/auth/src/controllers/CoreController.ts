@@ -9,7 +9,7 @@ export abstract class CoreController<T extends EntityControllerReq> {
     const itemsList = await this.datamapper.findAll();
 
     if (!itemsList) {
-      throw new NotFoundError();
+      throw new NotFoundError('Aucun élément trouvé.');
     }
 
     res.status(200).send(itemsList);
