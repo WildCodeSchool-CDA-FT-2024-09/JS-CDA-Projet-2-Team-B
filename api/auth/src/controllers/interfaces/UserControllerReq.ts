@@ -7,4 +7,5 @@ type UserControllerReqWithoutData = Omit<UserDatamapperReq, 'data'>;
 export interface UserControllerReq extends EntityControllerReq {
   datamapper: UserControllerReqWithoutData;
   create(req: Request, res: Response): Promise<void>;
+  signin(req: Request, res: Response): Promise<void>;
 }
