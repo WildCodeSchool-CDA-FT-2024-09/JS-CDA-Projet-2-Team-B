@@ -15,6 +15,7 @@ import BrandDetails from './components/BrandDetails.tsx';
 import UserManagement from './pages/users/UserManagement.tsx';
 import Portal from './pages/users/Portal.tsx';
 import { AuthProvider } from './context/AuthContext.tsx';
+import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
 
 const router = createBrowserRouter([
   {
@@ -27,39 +28,70 @@ const router = createBrowserRouter([
     children: [
       {
         path: '/users',
-        element: <UserManagement />
+        element: (
+          <RoleBasedRoute
+            allowedRole={['admin']}
+            element={<UserManagement />}
+          />
+        )
       },
       {
         path: '/catalog',
-        element: <Catalog />
+        element: <RoleBasedRoute allowedRole={['user']} element={<Catalog />} />
       },
       {
         path: '/managementProduct',
-        element: <ManagementProduct />
+        element: (
+          <RoleBasedRoute
+            allowedRole={['user']}
+            element={<ManagementProduct />}
+          />
+        )
       },
       {
         path: '/addProduct',
-        element: <AddProduct />
+        element: (
+          <RoleBasedRoute allowedRole={['user']} element={<AddProduct />} />
+        )
       },
       {
         path: '/product/:id/edit',
-        element: <ProductDetails />
+        element: (
+          <RoleBasedRoute allowedRole={['user']} element={<ProductDetails />} />
+        )
       },
       {
         path: '/brand',
-        element: <BrandManagement />,
+        element: (
+          <RoleBasedRoute
+            allowedRole={['user']}
+            element={<BrandManagement />}
+          />
+        ),
         children: [
           {
             path: '/brand/view',
-            element: <BrandCatalog />
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<BrandCatalog />}
+              />
+            )
           },
           {
             path: '/brand/add',
-            element: <AddBrand />
+            element: (
+              <RoleBasedRoute allowedRole={['user']} element={<AddBrand />} />
+            )
           },
           {
             path: '/brand/:id/edit',
-            element: <BrandDetails />
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<BrandDetails />}
+              />
+            )
           }
         ]
       }
