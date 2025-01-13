@@ -1,16 +1,16 @@
 import Router from 'express';
 import { userController } from '../controllers/index.controllers';
-import { errorCatcher } from '../helpers/errorCatcher.helper';
-import { validateRequest } from '../middlewares/validateRequest.middleware';
+import { errorCatcher } from '../helpers/index.helpers';
+import { validateRequest, requireAuth } from '../middlewares/index.middlewares';
 import { userCreateSchema } from '../validation/index.validation';
 
 const userRouter = Router();
 
 userRouter
   .route('/')
-  .get(errorCatcher(userController.getAll))
+  .get(errorCatcher(requireAuth), errorCatcher(userController.getAll))
   .post(
-    validateRequest('body', userCreateSchema),
+    errorCatcher(validateRequest('body', userCreateSchema)),
     errorCatcher(userController.create)
   );
 
