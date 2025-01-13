@@ -11,8 +11,8 @@ import logo from '../../public/logopmp.png'; // Assurez-vous que le chemin vers 
 
 const pages = [
   { content: 'Gestion', to: '/itemmanagement' },
-  { content: 'Produits', to: '/product' },
-  { content: 'Marque', to: '/brand' }
+  { content: 'Produits', to: '/product/view' },
+  { content: 'Marque', to: '/brand/view' }
 ];
 
 export default function NavBAr() {
