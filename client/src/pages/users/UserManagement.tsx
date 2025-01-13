@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { userColumns } from '../../utils/userColumns';
+import Cookies from 'js-cookie';
 import axios from 'axios';
 
 export type UserRow = {
@@ -22,7 +23,13 @@ export default function UserManagement() {
 
   const fetchUsers = async () => {
     try {
-      const response = await axios.get('/auth/users');
+      const token = Cookies.get('access_token');
+
+      const response = await axios.get('/auth/users', {
+        headers: {
+          authorization: `Bearer ${token}`
+        }
+      });
       setUsers(response.data);
     } catch (e) {
       console.error(e);
