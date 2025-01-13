@@ -10,7 +10,8 @@ import { roleDatamapper } from '../datamappers/index.datamappers';
 import argon2 from 'argon2';
 import {
   generateRandomString,
-  sendPasswordEmail
+  sendPasswordEmail,
+  Token
 } from '../helpers/index.helpers';
 
 export class UserController
@@ -100,19 +101,28 @@ export class UserController
 
     delete user.password;
 
-    const roleName = await roleDatamapper.findByPk(user.role_id);
+    const foundRole = await roleDatamapper.findByPk(user.role_id);
 
-    if (!roleName) {
+    if (!foundRole) {
       throw new NotFoundError('Rôle non trouvé.');
     }
 
     delete user.role_id;
+    const roleName = foundRole.name;
 
     const userWithRoleName = {
       ...user,
-      role: roleName.name
+      role: roleName
     };
 
-    res.status(200).json(userWithRoleName);
+    const userPayload = {
+      id: user.id,
+      email: user.email,
+      role: roleName
+    };
+
+    const accessToken = await Token.generateAccessToken(userPayload);
+
+    res.status(200).json({ user: userWithRoleName, accessToken });
   };
 }
