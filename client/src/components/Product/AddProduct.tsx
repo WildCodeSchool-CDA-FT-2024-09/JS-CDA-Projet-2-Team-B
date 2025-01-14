@@ -14,8 +14,8 @@ const AddProduct = () => {
   };
 
   const resetForm = () => {
-    setResetFormFlag(true); // Déclenche une réinitialisation dans CreationProduct
-    setTimeout(() => setResetFormFlag(false), 0); // Réinitialise le flag
+    setResetFormFlag(true);
+    setTimeout(() => setResetFormFlag(false), 0);
   };
   return (
     <Grid2 container spacing={2}>

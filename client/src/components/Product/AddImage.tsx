@@ -65,17 +65,14 @@ const AddImage = ({ productId, handleBlock, onImageAdded }: Props) => {
         }
       );
 
-      // Enregistrer la réponse
       setData(response.data);
 
-      // Réinitialiser les champs liés à l'image
       setImageFile(null);
       setImagePreview(null);
-      setIsMain(false); // Réinitialiser le champ "Image principale"
+      setIsMain(false);
 
       onImageAdded();
 
-      // Mettre à jour le blocage si nécessaire
       const isBlocked = false;
       handleBlock(isBlocked);
     } catch (e) {

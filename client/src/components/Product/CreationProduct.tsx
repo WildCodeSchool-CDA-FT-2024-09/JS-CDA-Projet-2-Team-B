@@ -338,7 +338,7 @@ export default function CreationProduct({
                 display: 'flex',
                 gap: 2,
                 alignItems: 'center',
-                justifyContent: 'flex-end', // Aligne les éléments à droite
+                justifyContent: 'flex-end',
                 backgroundColor: 'background.paper',
                 p: 2,
                 borderRadius: 1
