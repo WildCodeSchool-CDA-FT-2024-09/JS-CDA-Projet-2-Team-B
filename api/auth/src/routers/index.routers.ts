@@ -10,7 +10,7 @@ const indexRouter = express.Router();
 indexRouter
   .route('/')
   .post(
-    validateRequest('body', userSigninSchema),
+    errorCatcher(validateRequest('body', userSigninSchema)),
     errorCatcher(userController.signin)
   );
 

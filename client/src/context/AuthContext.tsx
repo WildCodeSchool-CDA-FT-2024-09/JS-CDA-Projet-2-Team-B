@@ -1,4 +1,5 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
+import Cookies from 'js-cookie';
 import axios from 'axios';
 
 interface User {
@@ -40,13 +41,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.status !== 200) {
         throw new Error('Erreur lors de la connexion');
       }
-      const data = response.data;
+      const { user: userData, accessToken } = response.data;
+
+      Cookies.set('access_token', accessToken, { expires: 0.5 / 24 });
 
       setUser({
-        id: data.id,
-        role: data.role
+        id: userData.id,
+        role: userData.role
       });
 
+      setError(null);
       return true;
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
