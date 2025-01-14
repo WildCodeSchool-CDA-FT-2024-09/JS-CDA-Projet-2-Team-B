@@ -42,7 +42,6 @@ export class UserController
     }
 
     const password = await generateRandomString(10);
-
     const hashedPassword = await argon2.hash(password);
 
     const newUser = {
@@ -68,8 +67,14 @@ export class UserController
 
     const userWithoutPassword = { ...createdItem };
     delete userWithoutPassword.password;
+    delete userWithoutPassword.role_id;
 
-    res.status(201).json(userWithoutPassword);
+    const userWithRoleName = {
+      ...userWithoutPassword,
+      role: defaultRole.name
+    };
+
+    res.status(201).json(userWithRoleName);
   };
 
   signin = async (req: Request, res: Response): Promise<void> => {
@@ -95,6 +100,19 @@ export class UserController
 
     delete user.password;
 
-    res.status(200).json(user);
+    const roleName = await roleDatamapper.findByPk(user.role_id);
+
+    if (!roleName) {
+      throw new NotFoundError('Rôle non trouvé.');
+    }
+
+    delete user.role_id;
+
+    const userWithRoleName = {
+      ...user,
+      role: roleName.name
+    };
+
+    res.status(200).json(userWithRoleName);
   };
 }

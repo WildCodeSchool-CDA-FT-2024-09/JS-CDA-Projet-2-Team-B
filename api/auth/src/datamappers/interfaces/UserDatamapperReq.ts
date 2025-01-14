@@ -12,7 +12,7 @@ export interface UserDatamapperReq extends EntityDatamapperReq {
     phone: string;
     starting_date: Date;
     ending_date: Date;
-    role_id: number;
+    role_id?: number;
   };
   insert(item: UserDatamapperReq['data']): Promise<UserDatamapperReq['data']>;
 }

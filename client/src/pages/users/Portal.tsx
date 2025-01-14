@@ -11,10 +11,10 @@ export default function Portal() {
 
   useEffect(() => {
     if (user) {
-      if (user.role === 1) {
-        // --> Admin role
+      if (user.role === 'admin') {
         navigate('/users');
       } else {
+        // user.role === 'user'
         navigate('/catalog');
       }
     }

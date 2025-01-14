@@ -3,7 +3,7 @@ import axios from 'axios';
 
 interface User {
   id: number;
-  role: number;
+  role: string;
 }
 
 interface AuthContextType {
@@ -40,13 +40,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       if (response.status !== 200) {
         throw new Error('Erreur lors de la connexion');
       }
-
       const data = response.data;
 
       setUser({
         id: data.id,
-        role: data.role_id
+        role: data.role
       });
+
+      return true;
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         const errorMessage =
@@ -59,6 +60,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.error(err);
         setError('Erreur inconnue');
       }
+
+      return false;
     }
   };
 
