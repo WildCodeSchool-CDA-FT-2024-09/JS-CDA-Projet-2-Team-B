@@ -8,6 +8,7 @@ const app = express();
 app.use(json());
 
 app.post('/email/send', validateEmail, async (req: Request, res: Response) => {
+  console.info('Incoming email request:', req.body);
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
@@ -17,7 +18,7 @@ app.post('/email/send', validateEmail, async (req: Request, res: Response) => {
   try {
     const { success } = await sendEmail(req.body);
     if (success) {
-      res.status(201).send({ message: 'Email envoyé avec succès.' });
+      res.status(200).send({ message: 'Email envoyé avec succès.' });
     } else {
       res
         .status(500)
