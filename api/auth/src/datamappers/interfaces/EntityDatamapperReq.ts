@@ -11,4 +11,5 @@ export interface EntityDatamapperReq {
     field: string,
     value: string
   ): Promise<EntityDatamapperReq['data']>;
+  findAll(): Promise<EntityDatamapperReq['data'][]>;
 }

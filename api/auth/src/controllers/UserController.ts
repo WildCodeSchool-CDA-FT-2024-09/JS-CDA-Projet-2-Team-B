@@ -3,12 +3,16 @@ import { CoreController } from './CoreController';
 import { UserControllerReq } from './interfaces/UserControllerReq';
 import {
   BadRequestError,
-  DatabaseConnectionError
+  DatabaseConnectionError,
+  NotFoundError
 } from '../errors/index.errors';
 import { roleDatamapper } from '../datamappers/index.datamappers';
-import { NotFoundError } from '../errors/NotFoundError.error';
 import argon2 from 'argon2';
-import { generateRandomString } from '../helpers/generateRandomString.helper';
+import {
+  generateRandomString,
+  sendPasswordEmail,
+  Token
+} from '../helpers/index.helpers';
 
 export class UserController
   extends CoreController<UserControllerReq>
@@ -35,11 +39,10 @@ export class UserController
     const defaultRole = await roleDatamapper.findByPk(2);
 
     if (!defaultRole) {
-      throw new NotFoundError();
+      throw new NotFoundError('Rôle par défaut non trouvé.');
     }
 
     const password = await generateRandomString(10);
-
     const hashedPassword = await argon2.hash(password);
 
     const newUser = {
@@ -55,6 +58,71 @@ export class UserController
       throw new DatabaseConnectionError();
     }
 
-    res.status(201).json(createdItem);
+    const { success } = await sendPasswordEmail(newUser.email, password);
+
+    if (!success) {
+      throw new BadRequestError(
+        "Une erreur est survenue lors de l'envoi de l'email contenant le mot de passe."
+      );
+    }
+
+    const userWithoutPassword = { ...createdItem };
+    delete userWithoutPassword.password;
+    delete userWithoutPassword.role_id;
+
+    const userWithRoleName = {
+      ...userWithoutPassword,
+      role: defaultRole.name
+    };
+
+    res.status(201).json(userWithRoleName);
+  };
+
+  signin = async (req: Request, res: Response): Promise<void> => {
+    const data = req.body;
+
+    const user = await this.datamapper.findBySpecificField('email', data.email);
+
+    if (!user) {
+      throw new NotFoundError('Utilisateur non trouvé.');
+    }
+
+    const isPasswordValid = await argon2.verify(user.password, data.password);
+
+    if (!isPasswordValid) {
+      throw new BadRequestError('Mot de passe incorrect.');
+    }
+
+    const date = new Date();
+
+    if (date > user.ending_date) {
+      throw new BadRequestError('Votre compte a expiré.');
+    }
+
+    delete user.password;
+
+    const foundRole = await roleDatamapper.findByPk(user.role_id);
+
+    if (!foundRole) {
+      throw new NotFoundError('Rôle non trouvé.');
+    }
+
+    delete user.role_id;
+    const roleName = foundRole.name;
+
+    const userWithRoleName = {
+      ...user,
+      role: roleName
+    };
+
+    const userPayload = {
+      id: user.id,
+      email: user.email,
+      role: roleName
+    };
+
+    const accessToken = await Token.generateAccessToken(userPayload);
+
+    res.status(200).json({ user: userWithRoleName, accessToken });
   };
 }
