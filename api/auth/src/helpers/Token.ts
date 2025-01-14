@@ -1,5 +1,6 @@
 import { BadRequestError } from '../errors/BadRequestError.error';
 import { UserPayload } from './index.helpers';
+import { Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 const { ACCESS_TOKEN_SECRET } = process.env;
@@ -13,7 +14,7 @@ export default class Token {
     }
 
     const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET, {
-      expiresIn: '30m'
+      expiresIn: '30sec'
     });
 
     return accessToken;
@@ -31,6 +32,14 @@ export default class Token {
           resolve(decoded as UserPayload);
         }
       });
+    });
+  };
+
+  static setAccessTokenCookie = async (res: Response, accessToken: string) => {
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
     });
   };
 }

@@ -122,7 +122,8 @@ export class UserController
     };
 
     const accessToken = await Token.generateAccessToken(userPayload);
+    await Token.setAccessTokenCookie(res, accessToken);
 
-    res.status(200).json({ user: userWithRoleName, accessToken });
+    res.status(200).json({ user: userWithRoleName });
   };
 }

@@ -13,12 +13,7 @@ export const requireAuth = async (
   res: Response,
   next: NextFunction
 ) => {
-  if (!req.headers['authorization']) {
-    throw new NotAuthorizedError();
-  }
-
-  const authorizationHeader = req.headers['authorization'] as string;
-  const accessToken = authorizationHeader.split(' ')[1];
+  const accessToken = req.cookies['access_token'];
 
   if (!accessToken) {
     throw new NotAuthorizedError();
@@ -31,7 +26,7 @@ export const requireAuth = async (
       accessToken,
       process.env.ACCESS_TOKEN_SECRET
     );
-    req.user = decodedToken;
+    req.user = decodedToken as UserPayload;
 
     next();
   } catch (err) {
