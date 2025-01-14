@@ -2,7 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
-import client from './services/connexion.ts';
+import { createApolloClient } from './services/apollo.client.ts';
 import App from './App.tsx';
 import Catalog from './pages/Catalog.tsx';
 import ManagementProduct from './pages/ManagementProduct.tsx';
@@ -14,8 +14,19 @@ import BrandCatalog from './components/BrandCatalog.tsx';
 import BrandDetails from './components/BrandDetails.tsx';
 import UserManagement from './pages/users/UserManagement.tsx';
 import Portal from './pages/users/Portal.tsx';
-import { AuthProvider } from './context/AuthContext.tsx';
+import { AuthProvider, useAuth } from './context/AuthContext.tsx';
 import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
+
+const Root = () => {
+  const { logout } = useAuth();
+  const client = createApolloClient(logout);
+
+  return (
+    <ApolloProvider client={client}>
+      <RouterProvider router={router} />
+    </ApolloProvider>
+  );
+};
 
 const router = createBrowserRouter([
   {
@@ -24,7 +35,9 @@ const router = createBrowserRouter([
   },
   {
     path: '/',
-    element: <App />,
+    element: (
+      <RoleBasedRoute allowedRole={['admin', 'user']} element={<App />} />
+    ),
     children: [
       {
         path: '/users',
@@ -101,10 +114,8 @@ const router = createBrowserRouter([
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <ApolloProvider client={client}>
-      <AuthProvider>
-        <RouterProvider router={router} />
-      </AuthProvider>
-    </ApolloProvider>
+    <AuthProvider>
+      <Root />
+    </AuthProvider>
   </StrictMode>
 );
