@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
+import { useAuth } from '../context/AuthContext';
+import { createAxiosInstance } from '../services/axios.instance';
 
 interface UploadResponse {
   id: string;
@@ -29,6 +31,9 @@ const AddBrandImage = ({ brandId, setIsModifying, refetch }: Props) => {
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<UploadResponse | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const { logout } = useAuth();
+
+  const axiosInstance = createAxiosInstance(logout);
 
   const handleClick = () => {
     setIsModifying(false);
@@ -54,9 +59,8 @@ const AddBrandImage = ({ brandId, setIsModifying, refetch }: Props) => {
 
     setLoading(true);
     setError(null);
-
     try {
-      const response = await axios.patch<UploadResponse>(
+      const response = await axiosInstance.patch<UploadResponse>(
         '/upload/brands',
         formData,
         {
@@ -65,12 +69,17 @@ const AddBrandImage = ({ brandId, setIsModifying, refetch }: Props) => {
           }
         }
       );
+
       setData(response.data);
       setImageFile(null);
       setImagePreview(null);
       refetch();
       setIsModifying(false);
     } catch (e) {
+      if (axios.isAxiosError(e)) {
+        console.error('Erreur Axios :', e.response?.data || e.message);
+        setError(e.response?.data.message || 'Une erreur est survenue.');
+      }
       setError(e as Error);
     } finally {
       setLoading(false);

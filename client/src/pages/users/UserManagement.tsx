@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { Button } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { userColumns } from '../../utils/userColumns';
-import Cookies from 'js-cookie';
-import axios from 'axios';
+import { useAuth } from '../../context/AuthContext';
+import { createAxiosInstance } from '../../services/axios.instance';
 
 export type UserRow = {
   id?: number;
@@ -20,20 +20,13 @@ export type UserRow = {
 
 export default function UserManagement() {
   const [users, setUsers] = useState<UserRow[]>([]);
+  const { logout } = useAuth();
+
+  const axiosInstance = createAxiosInstance(logout);
 
   const fetchUsers = async () => {
-    try {
-      const token = Cookies.get('access_token');
-
-      const response = await axios.get('/auth/users', {
-        headers: {
-          authorization: `Bearer ${token}`
-        }
-      });
-      setUsers(response.data);
-    } catch (e) {
-      console.error(e);
-    }
+    const response = await axiosInstance.get('/auth/users');
+    setUsers(response.data);
   };
 
   useEffect(() => {
@@ -44,17 +37,13 @@ export default function UserManagement() {
     delete data.id;
     delete data.isNew;
 
-    try {
-      await axios.post('/auth/users', data, {
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
+    await axiosInstance.post('/auth/users', data, {
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
 
-      fetchUsers();
-    } catch (e) {
-      console.error(e);
-    }
+    fetchUsers();
   };
 
   const handleAddClick = () => {
