@@ -14,31 +14,53 @@ import BrandCatalog from './components/Brand/BrandCatalog.tsx';
 import BrandDetails from './components/Brand/BrandDetails.tsx';
 import UserManagement from './pages/users/UserManagement.tsx';
 import ProductManagement from './pages/ProductManagement.tsx';
+import Portal from './pages/users/Portal.tsx';
+import { AuthProvider } from './context/AuthContext.tsx';
+import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
+
 
 const router = createBrowserRouter([
+  {
+    path: '/portal',
+    element: <Portal />
+  },
   {
     path: '/',
     element: <App />,
     children: [
       {
         path: '/users',
-        element: <UserManagement />
+        element: (
+          <RoleBasedRoute
+            allowedRole={['admin']}
+            element={<UserManagement />}
+          />
+        )
       },
       {
         path: '/product',
-        element: <ProductManagement />,
+        element: (
+          <RoleBasedRoute
+            allowedRole={['user']}
+            element={<ProductManagement />}
+          />
+        ),
         children: [
           {
             path: '/product/view',
-            element: <ProductCatalog />
+            element: <RoleBasedRoute allowedRole={['user']} element={<ProductCatalog />} />
           },
           {
             path: '/product/add',
-            element: <AddProduct />
+           element: (
+          <RoleBasedRoute allowedRole={['user']} element={<AddProduct />} />
+        )
           },
           {
             path: '/product/:id/edit',
-            element: <ProductDetails />
+            element: (
+          <RoleBasedRoute allowedRole={['user']} element={<ProductDetails />} />
+        )
           }
         ]
       },
@@ -48,19 +70,36 @@ const router = createBrowserRouter([
       },
       {
         path: '/brand',
-        element: <BrandManagement />,
+        element: (
+          <RoleBasedRoute
+            allowedRole={['user']}
+            element={<BrandManagement />}
+          />
+        ),
         children: [
           {
             path: '/brand/view',
-            element: <BrandCatalog />
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<BrandCatalog />}
+              />
+            )
           },
           {
             path: '/brand/add',
-            element: <AddBrand />
+            element: (
+              <RoleBasedRoute allowedRole={['user']} element={<AddBrand />} />
+            )
           },
           {
             path: '/brand/:id/edit',
-            element: <BrandDetails />
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<BrandDetails />}
+              />
+            )
           }
         ]
       }
@@ -71,7 +110,9 @@ const router = createBrowserRouter([
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <ApolloProvider client={client}>
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </ApolloProvider>
   </StrictMode>
 );
