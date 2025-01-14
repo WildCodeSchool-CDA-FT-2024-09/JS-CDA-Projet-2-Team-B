@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-import { useAuth } from '../context/AuthContext';
-import { createAxiosInstance } from '../services/axios.instance';
+import { useAuth } from '../../context/AuthContext';
+import { createAxiosInstance } from '../../services/axios.instance';
 
 interface UploadResponse {
   id: string;
