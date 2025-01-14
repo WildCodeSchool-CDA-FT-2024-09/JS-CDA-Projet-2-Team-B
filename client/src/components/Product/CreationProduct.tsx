@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import {
-  Card,
   CardContent,
   Typography,
   TextField,
@@ -47,6 +46,7 @@ type newProduct = {
 type Props = {
   handleProductId: (id: number) => void;
   block: boolean;
+  resetForm?: boolean;
 };
 
 const initialValue: newProduct = {
@@ -62,7 +62,11 @@ const initialValue: newProduct = {
   characteristics: []
 };
 
-export default function CreationProduct({ handleProductId, block }: Props) {
+export default function CreationProduct({
+  handleProductId,
+  block,
+  resetForm
+}: Props) {
   const [formProduct, setFormProduct] = useState(initialValue);
 
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -91,6 +95,12 @@ export default function CreationProduct({ handleProductId, block }: Props) {
       setBrandOptions(brandsData.getAllBrands);
     }
   }, [brandsData]);
+
+  useEffect(() => {
+    if (resetForm) {
+      setFormProduct(initialValue);
+    }
+  }, [resetForm]);
 
   const handleAddCharacteristic = (characteristic: {
     id: number;
@@ -220,18 +230,6 @@ export default function CreationProduct({ handleProductId, block }: Props) {
         }
       });
 
-      setFormProduct({
-        name: '',
-        reference: '',
-        shortDescription: '',
-        description: '',
-        price: 0,
-        isPublished: true,
-        categories: [],
-        tags: [],
-        brand: null,
-        characteristics: []
-      });
       if (data?.createNewProduct?.id) {
         setSuccessMessage(
           'Produit créé avec succès ! Veuillez maintenant ajouter des images '
@@ -245,12 +243,12 @@ export default function CreationProduct({ handleProductId, block }: Props) {
   };
 
   return (
-    <Card
+    <Box
       sx={{
         maxWidth: 1200,
         margin: 'auto',
         marginTop: 5,
-        padding: '2rem',
+        padding: 3,
         backgroundColor: '#f9f9f9',
         borderRadius: '8px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
@@ -340,6 +338,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
                 display: 'flex',
                 gap: 2,
                 alignItems: 'center',
+                justifyContent: 'flex-end', // Aligne les éléments à droite
                 backgroundColor: 'background.paper',
                 p: 2,
                 borderRadius: 1
@@ -373,6 +372,7 @@ export default function CreationProduct({ handleProductId, block }: Props) {
               </IconButton>
             </Box>
           ))}
+
           <FormControl fullWidth>
             <Autocomplete
               multiple
@@ -605,10 +605,10 @@ export default function CreationProduct({ handleProductId, block }: Props) {
         )}
         {error && (
           <Typography color="error.main" variant="body2">
-            Une erreur s'est produite : {error}
+            {successMessage}
           </Typography>
         )}
       </CardContent>
-    </Card>
+    </Box>
   );
 }

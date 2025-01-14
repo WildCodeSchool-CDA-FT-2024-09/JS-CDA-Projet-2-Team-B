@@ -6,20 +6,33 @@ import { Grid, Grid2 } from '@mui/material';
 const AddProduct = () => {
   const [productId, setProductId] = useState<number | null>(null);
   const [block, setBlock] = useState<boolean>(false);
+  const [resetFormFlag, setResetFormFlag] = useState<boolean>(false);
 
   const handleProductId = (id: number) => {
     setProductId(id);
-    setBlock(!block);
+    setBlock(true);
   };
 
+  const resetForm = () => {
+    setResetFormFlag(true); // Déclenche une réinitialisation dans CreationProduct
+    setTimeout(() => setResetFormFlag(false), 0); // Réinitialise le flag
+  };
   return (
     <Grid2 container spacing={2}>
       <Grid item xs={12}>
-        <CreationProduct handleProductId={handleProductId} block={block} />
+        <CreationProduct
+          handleProductId={handleProductId}
+          block={block}
+          resetForm={resetFormFlag}
+        />
       </Grid>
       {productId && (
         <Grid item xs={12} md={6}>
-          <AddImage productId={productId} handleBlock={setBlock} />
+          <AddImage
+            productId={productId}
+            handleBlock={setBlock}
+            onImageAdded={resetForm}
+          />
         </Grid>
       )}
     </Grid2>

@@ -61,7 +61,15 @@ export default function AddBrand() {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        margin: '10rem',
+        marginLeft: '20rem',
+        gap: '10rem'
+      }}
+    >
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -158,6 +166,6 @@ export default function AddBrand() {
           refetch={() => {}}
         />
       )}
-    </>
+    </Box>
   );
 }

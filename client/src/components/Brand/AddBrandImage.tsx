@@ -83,18 +83,21 @@ const AddBrandImage = ({ brandId, setIsModifying, refetch }: Props) => {
         maxWidth: 600,
         display: 'flex',
         flexDirection: 'column',
-        alignItems: 'center'
+        alignItems: 'center',
+        backgroundColor: '#f9f9f9',
+        borderRadius: '8px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        padding: '2rem'
       }}
     >
       <Typography>Ajouter une Image</Typography>
-      <Box sx={{ marginBottom: 2 }}>
+      <Box>
         <Button
           component="label"
           variant="contained"
           startIcon={<CloudUploadIcon />}
           sx={{
-            borderRadius: '10px',
-            marginTop: '10px'
+            borderRadius: '10px'
           }}
         >
           Choisir un fichier
@@ -113,8 +116,7 @@ const AddBrandImage = ({ brandId, setIsModifying, refetch }: Props) => {
           sx={{
             display: 'flex',
             maxWidth: '200px',
-            height: 'auto',
-            marginBottom: 2
+            height: 'auto'
           }}
         />
       )}
