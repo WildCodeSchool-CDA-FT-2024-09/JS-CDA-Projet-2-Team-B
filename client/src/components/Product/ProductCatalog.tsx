@@ -6,7 +6,7 @@ import {
 } from '@mui/x-data-grid';
 import { Box, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
-import { GetAllProductsDocument } from '../generated/graphql-types';
+import { GetAllProductsDocument } from '../../generated/graphql-types';
 import CardProduct from './CardProduct';
 
 interface Product {

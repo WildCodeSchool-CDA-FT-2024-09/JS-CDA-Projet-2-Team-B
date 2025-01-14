@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import CreationProduct from '../components/CreationProduct';
-import AddImage from '../components/AddImage';
+import CreationProduct from '../Product/CreationProduct';
+import AddImage from './AddImage';
 import { Grid, Grid2 } from '@mui/material';
 
 const AddProduct = () => {

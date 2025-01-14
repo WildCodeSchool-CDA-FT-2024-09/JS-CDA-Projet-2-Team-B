@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { useCreateBrandMutation } from '../generated/graphql-types';
+import { useCreateBrandMutation } from '../../generated/graphql-types';
 import AddBrandImage from './AddBrandImage';
 
 interface BrandReq {

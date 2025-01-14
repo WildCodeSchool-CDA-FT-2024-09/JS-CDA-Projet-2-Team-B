@@ -22,7 +22,7 @@ import {
   useGetAllCategoriesQuery,
   useGetAllCharacteristicQuery,
   useGetAllTagsQuery
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
 
 type ProductCharacteristic = {

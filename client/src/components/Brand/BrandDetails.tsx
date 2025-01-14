@@ -5,9 +5,9 @@ import {
   useDeactivateBrandMutation,
   useGetBrandByIdQuery,
   useUpdateBrandMutation
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 import { useParams } from 'react-router-dom';
-import { CustomSwitch } from '../ui/Switch';
+import { CustomSwitch } from '../../ui/Switch';
 import DisplayBrandImage from './DisplayBrandImage';
 import AddBrandImage from './AddBrandImage';
 

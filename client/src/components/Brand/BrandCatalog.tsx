@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import {
   GetAllBrandsQuery,
   useGetAllBrandsQuery
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 import { useEffect, useState } from 'react';
 import BrandCard from './BrandCard';
 

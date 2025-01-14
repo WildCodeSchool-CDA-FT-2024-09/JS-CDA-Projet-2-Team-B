@@ -1,6 +1,6 @@
-import CharacteristicForm from '../components/CharacteristicForm';
-import CategoryForm from '../components/CategoryForm';
-import TagForm from '../components/TagForm';
+import CharacteristicForm from '../components/Item/CharacteristicForm';
+import CategoryForm from '../components/Item/CategoryForm';
+import TagForm from '../components/Item/TagForm';
 import { Box } from '@mui/material';
 
 export default function ItemManagement() {

@@ -31,9 +31,9 @@ import {
   useGetProductByIdQuery,
   useRestoreProductMutation,
   useUpdateProductMutation
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
-import { CustomSwitch } from '../ui/Switch';
+import { CustomSwitch } from '../../ui/Switch';
 import axios from 'axios';
 
 interface ProductDetailsReq {

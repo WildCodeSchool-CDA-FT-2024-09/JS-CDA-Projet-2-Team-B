@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   useDeleteCategoryMutation,
   useUpdateCategoryMutation
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 
 type CategoryItemProps = {
   id: number;

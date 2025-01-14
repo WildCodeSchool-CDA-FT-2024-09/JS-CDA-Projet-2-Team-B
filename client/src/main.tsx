@@ -4,14 +4,14 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import client from './services/connexion.ts';
 import App from './App.tsx';
-import Catalog from './components/Catalog.tsx';
+import ProductCatalog from './components/Product/ProductCatalog.tsx';
 import ItemManagement from './pages/ItemManagement.tsx';
-import ProductDetails from './components/ProductDetails.tsx';
-import AddProduct from './components/AddProduct.tsx';
+import ProductDetails from './components/Product/ProductDetails.tsx';
+import AddProduct from './components/Product/AddProduct.tsx';
 import BrandManagement from './pages/BrandManagement.tsx';
-import AddBrand from './components/AddBrand.tsx';
-import BrandCatalog from './components/BrandCatalog.tsx';
-import BrandDetails from './components/BrandDetails.tsx';
+import AddBrand from './components/Brand/AddBrand.tsx';
+import BrandCatalog from './components/Brand/BrandCatalog.tsx';
+import BrandDetails from './components/Brand/BrandDetails.tsx';
 import UserManagement from './pages/users/UserManagement.tsx';
 import ProductManagement from './pages/ProductManagement.tsx';
 
@@ -30,7 +30,7 @@ const router = createBrowserRouter([
         children: [
           {
             path: '/product/view',
-            element: <Catalog />
+            element: <ProductCatalog />
           },
           {
             path: '/product/add',

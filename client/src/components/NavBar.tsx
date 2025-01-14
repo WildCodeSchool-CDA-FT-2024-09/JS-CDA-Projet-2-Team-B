@@ -22,7 +22,7 @@ export default function NavBAr() {
         <Toolbar disableGutters>
           <Box
             component={RouterLink}
-            to="/product"
+            to="/product/view"
             sx={{
               display: 'flex',
               alignItems: 'center',
