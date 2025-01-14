@@ -1,6 +1,6 @@
 import express, { json } from 'express';
 import cors from 'cors';
-import apiRouter from './routers/index.routers';
+import indexRouter from './routers/index.routers';
 import { errorHandler } from './middlewares/errorHandler.middleware';
 
 const app = express();
@@ -15,7 +15,7 @@ app.use(cors(corsOptions));
 app.use(json());
 app.use(express.urlencoded({ extended: true }));
 
-app.use('/auth', apiRouter);
+app.use('/auth', indexRouter);
 app.use(errorHandler);
 
 export default app;

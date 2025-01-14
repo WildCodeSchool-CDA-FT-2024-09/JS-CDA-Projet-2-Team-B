@@ -38,7 +38,7 @@ export class UserController
     const defaultRole = await roleDatamapper.findByPk(2);
 
     if (!defaultRole) {
-      throw new NotFoundError();
+      throw new NotFoundError('Rôle par défaut non trouvé.');
     }
 
     const password = await generateRandomString(10);
@@ -70,5 +70,31 @@ export class UserController
     delete userWithoutPassword.password;
 
     res.status(201).json(userWithoutPassword);
+  };
+
+  signin = async (req: Request, res: Response): Promise<void> => {
+    const data = req.body;
+
+    const user = await this.datamapper.findBySpecificField('email', data.email);
+
+    if (!user) {
+      throw new NotFoundError('Utilisateur non trouvé.');
+    }
+
+    const isPasswordValid = await argon2.verify(user.password, data.password);
+
+    if (!isPasswordValid) {
+      throw new BadRequestError('Mot de passe incorrect.');
+    }
+
+    const date = new Date();
+
+    if (date > user.ending_date) {
+      throw new BadRequestError('Votre compte a expiré.');
+    }
+
+    delete user.password;
+
+    res.status(200).json(user);
   };
 }
