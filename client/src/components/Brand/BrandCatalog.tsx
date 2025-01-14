@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import {
   GetAllBrandsQuery,
   useGetAllBrandsQuery
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 import { useEffect, useState } from 'react';
 import BrandCard from './BrandCard';
 
@@ -28,7 +28,11 @@ export default function BrandCatalog() {
         spacing={2}
         sx={{
           justifyContent: 'center',
-          marginTop: '2dvh'
+          marginTop: '2dvh',
+          padding: '2rem',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
         }}
       >
         {brands.map((brand) => (

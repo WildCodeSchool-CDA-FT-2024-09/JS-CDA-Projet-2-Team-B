@@ -10,7 +10,7 @@ interface UploadResponse {
 
 type Props = {
   productId: number;
-
+  onImageAdded: () => void;
   handleBlock: (isBlock: boolean) => void;
 };
 
@@ -24,7 +24,7 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 });
 
-const AddImage = ({ productId, handleBlock }: Props) => {
+const AddImage = ({ productId, handleBlock, onImageAdded }: Props) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
@@ -66,8 +66,13 @@ const AddImage = ({ productId, handleBlock }: Props) => {
       );
 
       setData(response.data);
+
       setImageFile(null);
       setImagePreview(null);
+      setIsMain(false);
+
+      onImageAdded();
+
       const isBlocked = false;
       handleBlock(isBlocked);
     } catch (e) {
@@ -155,7 +160,7 @@ const AddImage = ({ productId, handleBlock }: Props) => {
 
       {data && (
         <Typography color="primary" sx={{ marginTop: 2 }}>
-          Image ajoutée avec succès {data.id}
+          Image ajoutée avec succès ! ID : {data.id}
         </Typography>
       )}
     </Card>

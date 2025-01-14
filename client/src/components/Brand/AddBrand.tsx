@@ -1,6 +1,6 @@
 import { Box, Button, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
-import { useCreateBrandMutation } from '../generated/graphql-types';
+import { useCreateBrandMutation } from '../../generated/graphql-types';
 import AddBrandImage from './AddBrandImage';
 
 interface BrandReq {
@@ -61,7 +61,15 @@ export default function AddBrand() {
   };
 
   return (
-    <>
+    <Box
+      sx={{
+        display: 'flex',
+        flexDirection: 'row',
+        margin: '10rem',
+        marginLeft: '20rem',
+        gap: '10rem'
+      }}
+    >
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -73,7 +81,11 @@ export default function AddBrand() {
           flexDirection: 'column',
           gap: 1,
           maxWidth: 400,
-          margin: '0 auto'
+          margin: '0 auto',
+          padding: '2rem',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
         }}
         noValidate
         autoComplete="off"
@@ -154,6 +166,6 @@ export default function AddBrand() {
           refetch={() => {}}
         />
       )}
-    </>
+    </Box>
   );
 }

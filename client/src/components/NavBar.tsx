@@ -10,10 +10,9 @@ import { Link as RouterLink } from 'react-router-dom';
 import logo from '../../public/logopmp.png'; // Assurez-vous que le chemin vers le logo est correct
 
 const pages = [
-  { content: 'Gestion', to: '/managementProduct' },
-  { content: 'Produits', to: '/catalog' },
-  { content: 'Marque', to: '/brand' },
-  { content: 'Ajout Produit', to: '/addProduct' }
+  { content: 'Gestion', to: '/itemmanagement' },
+  { content: 'Produits', to: '/product/view' },
+  { content: 'Marque', to: '/brand/view' }
 ];
 
 export default function NavBAr() {
@@ -23,7 +22,7 @@ export default function NavBAr() {
         <Toolbar disableGutters>
           <Box
             component={RouterLink}
-            to="/catalog"
+            to="/product/view"
             sx={{
               display: 'flex',
               alignItems: 'center',
