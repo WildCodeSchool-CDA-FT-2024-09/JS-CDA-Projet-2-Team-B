@@ -18,7 +18,6 @@ import Portal from './pages/users/Portal.tsx';
 import { AuthProvider } from './context/AuthContext.tsx';
 import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
 
-
 const router = createBrowserRouter([
   {
     path: '/portal',
@@ -48,25 +47,35 @@ const router = createBrowserRouter([
         children: [
           {
             path: '/product/view',
-            element: <RoleBasedRoute allowedRole={['user']} element={<ProductCatalog />} />
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<ProductCatalog />}
+              />
+            )
           },
           {
             path: '/product/add',
-           element: (
-          <RoleBasedRoute allowedRole={['user']} element={<AddProduct />} />
-        )
+            element: (
+              <RoleBasedRoute allowedRole={['user']} element={<AddProduct />} />
+            )
           },
           {
             path: '/product/:id/edit',
             element: (
-          <RoleBasedRoute allowedRole={['user']} element={<ProductDetails />} />
-        )
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<ProductDetails />}
+              />
+            )
           }
         ]
       },
       {
         path: '/itemmanagement',
-        element: <ItemManagement />
+        element: (
+          <RoleBasedRoute allowedRole={['user']} element={<ItemManagement />} />
+        )
       },
       {
         path: '/brand',

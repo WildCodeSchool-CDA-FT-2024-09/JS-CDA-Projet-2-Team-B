@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import { Link as MUILink } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import logo from '../../public/logopmp.png'; // Assurez-vous que le chemin vers le logo est correct
+import logo from '../assets/logopmp.png';
 
 const pages = [
   { content: 'Gestion', to: '/itemmanagement' },
