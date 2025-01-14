@@ -73,7 +73,11 @@ export default function AddBrand() {
           flexDirection: 'column',
           gap: 1,
           maxWidth: 400,
-          margin: '0 auto'
+          margin: '0 auto',
+          padding: '2rem',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
         }}
         noValidate
         autoComplete="off"

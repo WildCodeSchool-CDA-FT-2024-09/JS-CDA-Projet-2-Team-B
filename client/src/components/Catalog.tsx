@@ -1,4 +1,9 @@
-import { DataGrid, GridColDef, GridRowsProp } from '@mui/x-data-grid';
+import {
+  DataGrid,
+  GridColDef,
+  GridRowsProp,
+  GridRenderCellParams
+} from '@mui/x-data-grid';
 import { Box, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
 import { GetAllProductsDocument } from '../generated/graphql-types';
@@ -50,14 +55,14 @@ export default function Catalog() {
       field: 'actions',
       headerName: 'Actions',
       width: 200,
-      renderCell: (params) => (
+      renderCell: (Product: GridRenderCellParams) => (
         <CardProduct
-          id={params.row.id}
-          name={params.row.name}
-          price={params.row.price}
-          reference={params.row.reference}
-          shortDescription={params.row.shortDescription}
-          description={params.row.description}
+          id={Product.row.id}
+          name={Product.row.name}
+          price={Product.row.price}
+          reference={Product.row.reference}
+          shortDescription={Product.row.shortDescription}
+          description={Product.row.description}
           compact
         />
       ),
@@ -70,7 +75,11 @@ export default function Catalog() {
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'column',
+          padding: '2rem',
+          backgroundColor: '#f9f9f9',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
         }}
       >
         <Box

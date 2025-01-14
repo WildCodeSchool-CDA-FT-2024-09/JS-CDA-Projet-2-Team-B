@@ -245,7 +245,17 @@ export default function CreationProduct({ handleProductId, block }: Props) {
   };
 
   return (
-    <Card sx={{ maxWidth: 1200, padding: 3, margin: 'auto', marginTop: 5 }}>
+    <Card
+      sx={{
+        maxWidth: 1200,
+        margin: 'auto',
+        marginTop: 5,
+        padding: '2rem',
+        backgroundColor: '#f9f9f9',
+        borderRadius: '8px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+      }}
+    >
       <CardContent>
         <Box
           component="form"

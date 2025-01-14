@@ -6,7 +6,7 @@ import client from './services/connexion.ts';
 import App from './App.tsx';
 import Catalog from './components/Catalog.tsx';
 import ItemManagement from './pages/ItemManagement.tsx';
-import ProductDetails from './pages/ProductDetails.tsx';
+import ProductDetails from './components/ProductDetails.tsx';
 import AddProduct from './components/AddProduct.tsx';
 import BrandManagement from './pages/BrandManagement.tsx';
 import AddBrand from './components/AddBrand.tsx';

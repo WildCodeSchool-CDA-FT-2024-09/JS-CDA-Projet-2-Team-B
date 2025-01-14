@@ -55,7 +55,7 @@ export default function ProductManagement() {
                 color: 'inherit'
               }}
             >
-              Créer une marque
+              Créer un Produit
             </Link>
           </Box>
         </CardContent>

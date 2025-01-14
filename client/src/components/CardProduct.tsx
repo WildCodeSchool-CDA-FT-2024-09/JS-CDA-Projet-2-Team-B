@@ -22,7 +22,7 @@ type Products = {
   reference: string;
   shortDescription: string;
   description: string;
-  compact?: boolean; // Ajout de cette prop
+  compact?: boolean;
 };
 
 export default function CardProduct({
@@ -32,7 +32,7 @@ export default function CardProduct({
   reference,
   shortDescription,
   description,
-  compact = false // Valeur par défaut
+  compact = false
 }: Products) {
   return (
     <Card

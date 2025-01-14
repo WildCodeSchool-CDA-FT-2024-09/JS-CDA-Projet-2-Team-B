@@ -10,7 +10,14 @@ export default function ItemManagement() {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        paddingTop: 6
+        paddingTop: 6,
+        padding: '2rem',
+        backgroundColor: '#f9f9f9',
+        borderRadius: '8px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        marginLeft: '28rem',
+        marginRight: '28rem',
+        marginTop: '2rem'
       }}
     >
       <CategoryForm />
