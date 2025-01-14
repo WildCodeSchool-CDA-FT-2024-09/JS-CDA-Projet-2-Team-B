@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { Card, Button, Typography, Box, styled } from '@mui/material';
+import axios from 'axios';
+import { Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { useAuth } from '../context/AuthContext';
 import { createAxiosInstance } from '../services/axios.instance';
@@ -9,8 +10,9 @@ interface UploadResponse {
 }
 
 type Props = {
-  productId: number;
-  handleBlock: (isBlock: boolean) => void;
+  brandId: number | null;
+  setIsModifying: (value: boolean) => void;
+  refetch: () => void;
 };
 
 const VisuallyHiddenInput = styled('input')({
@@ -23,16 +25,19 @@ const VisuallyHiddenInput = styled('input')({
   width: 1
 });
 
-const AddImage = ({ productId, handleBlock }: Props) => {
+const AddBrandImage = ({ brandId, setIsModifying, refetch }: Props) => {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<UploadResponse | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
-  const [isMain, setIsMain] = useState<boolean>(false);
   const { logout } = useAuth();
 
   const axiosInstance = createAxiosInstance(logout);
+
+  const handleClick = () => {
+    setIsModifying(false);
+  };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -50,15 +55,13 @@ const AddImage = ({ productId, handleBlock }: Props) => {
 
     const formData = new FormData();
     formData.append('image', imageFile);
-    formData.append('product_id', productId.toString());
-    formData.append('isMain', isMain.toString());
+    formData.append('brand_id', brandId!.toString());
 
     setLoading(true);
     setError(null);
-
     try {
-      const response = await axiosInstance.post<UploadResponse>(
-        '/upload/products',
+      const response = await axiosInstance.patch<UploadResponse>(
+        '/upload/brands',
         formData,
         {
           headers: {
@@ -70,9 +73,13 @@ const AddImage = ({ productId, handleBlock }: Props) => {
       setData(response.data);
       setImageFile(null);
       setImagePreview(null);
-      const isBlocked = false;
-      handleBlock(isBlocked);
+      refetch();
+      setIsModifying(false);
     } catch (e) {
+      if (axios.isAxiosError(e)) {
+        console.error('Erreur Axios :', e.response?.data || e.message);
+        setError(e.response?.data.message || 'Une erreur est survenue.');
+      }
       setError(e as Error);
     } finally {
       setLoading(false);
@@ -80,24 +87,27 @@ const AddImage = ({ productId, handleBlock }: Props) => {
   };
 
   return (
-    <Card
+    <Box
       sx={{
         maxWidth: 600,
-        padding: 3,
-        textAlign: 'center',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        margin: 'auto',
-        marginTop: 5
+        backgroundColor: '#f9f9f9',
+        borderRadius: '8px',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        padding: '2rem'
       }}
     >
       <Typography>Ajouter une Image</Typography>
-      <Box sx={{ marginBottom: 2 }}>
+      <Box>
         <Button
           component="label"
           variant="contained"
           startIcon={<CloudUploadIcon />}
+          sx={{
+            borderRadius: '10px'
+          }}
         >
           Choisir un fichier
           <VisuallyHiddenInput
@@ -107,7 +117,6 @@ const AddImage = ({ productId, handleBlock }: Props) => {
           />
         </Button>
       </Box>
-
       {imagePreview && (
         <Box
           component="img"
@@ -115,26 +124,11 @@ const AddImage = ({ productId, handleBlock }: Props) => {
           alt="Prévisualisation"
           sx={{
             display: 'flex',
-            maxWidth: '60%',
-            height: 'auto',
-            marginBottom: 2,
-            borderRadius: 1,
-            border: '1px solid #ccc'
+            maxWidth: '200px',
+            height: 'auto'
           }}
         />
       )}
-
-      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        <Box sx={{ marginBottom: 2 }}>
-          <Typography>Image principale ?</Typography>
-          <input
-            type="checkbox"
-            checked={isMain}
-            onChange={(e) => setIsMain(e.target.checked)}
-            style={{ marginTop: '8px' }}
-          />
-        </Box>
-      </Box>
 
       <Button
         type="submit"
@@ -142,11 +136,33 @@ const AddImage = ({ productId, handleBlock }: Props) => {
         sx={{
           marginTop: 2,
           backgroundColor: 'green',
-          color: 'white'
+          borderRadius: '10px',
+          padding: '5px 20px',
+          color: 'white',
+          '&:disabled': {
+            backgroundColor: 'darkgrey',
+            color: 'black'
+          }
         }}
         disabled={loading || !imageFile}
       >
-        {loading ? 'Ajout en cours...' : 'Ajouter +'}
+        {loading ? 'Ajout en cours...' : 'Ajouter'}
+      </Button>
+      <Button
+        onClick={handleClick}
+        sx={{
+          marginTop: 1,
+          backgroundColor: 'red',
+          borderRadius: '10px',
+          padding: '5px 20px',
+          color: 'white',
+          '&:disabled': {
+            backgroundColor: 'darkgrey',
+            color: 'black'
+          }
+        }}
+      >
+        Annuler
       </Button>
 
       {error && (
@@ -160,8 +176,8 @@ const AddImage = ({ productId, handleBlock }: Props) => {
           Image ajoutée avec succès {data.id}
         </Typography>
       )}
-    </Card>
+    </Box>
   );
 };
 
-export default AddImage;
+export default AddBrandImage;

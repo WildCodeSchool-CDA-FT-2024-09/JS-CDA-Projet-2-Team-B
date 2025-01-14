@@ -15,7 +15,7 @@ export default function Portal() {
         navigate('/users');
       } else {
         // user.role === 'user'
-        navigate('/catalog');
+        navigate('/product/view');
       }
     }
   }, [user, navigate]);

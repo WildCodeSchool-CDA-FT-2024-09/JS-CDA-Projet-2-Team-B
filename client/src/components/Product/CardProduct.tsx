@@ -22,6 +22,7 @@ type Products = {
   reference: string;
   shortDescription: string;
   description: string;
+  compact?: boolean;
 };
 
 export default function CardProduct({
@@ -30,29 +31,35 @@ export default function CardProduct({
   price,
   reference,
   shortDescription,
-  description
+  description,
+  compact = false
 }: Products) {
   return (
     <Card
       sx={{
-        maxWidth: 300,
-        margin: 1,
+        maxWidth: compact ? '100%' : 300,
+        margin: compact ? 0 : 1,
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'space-between',
-        boxShadow: 4
+        boxShadow: compact ? 0 : 4,
+        padding: compact ? 0 : 1
       }}
     >
-      <CardContent>
-        <Typography variant="h6" sx={{ marginBottom: 1 }}>
-          {name}
-        </Typography>
-        <Typography variant="body2"> {reference}</Typography>
-        <Typography variant="body2"> {price}</Typography>
-        <Typography variant="body2"> {shortDescription}</Typography>
-        <Typography variant="body2"> {description}</Typography>
-      </CardContent>
-      <Grid sx={{ display: 'flex', justifyContent: 'end', marginRight: 1 }}>
+      {!compact && (
+        <CardContent>
+          <Typography variant="h6" sx={{ marginBottom: 1 }}>
+            {name}
+          </Typography>
+          <Typography variant="body2"> {reference}</Typography>
+          <Typography variant="body2"> {price}</Typography>
+          <Typography variant="body2"> {shortDescription}</Typography>
+          <Typography variant="body2"> {description}</Typography>
+        </CardContent>
+      )}
+      <Grid
+        sx={{ display: 'flex', justifyContent: 'end', margin: compact ? 0 : 1 }}
+      >
         <MUILink
           component={RouterLink}
           to={`/product/${id}/edit`}

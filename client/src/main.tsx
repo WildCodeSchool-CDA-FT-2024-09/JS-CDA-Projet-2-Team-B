@@ -4,15 +4,16 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
 import { createApolloClient } from './services/apollo.client.ts';
 import App from './App.tsx';
-import Catalog from './pages/Catalog.tsx';
-import ManagementProduct from './pages/ManagementProduct.tsx';
-import ProductDetails from './pages/ProductDetails.tsx';
-import AddProduct from './pages/AddProduct.tsx';
+import ProductCatalog from './components/Product/ProductCatalog.tsx';
+import ItemManagement from './pages/ItemManagement.tsx';
+import ProductDetails from './components/Product/ProductDetails.tsx';
+import AddProduct from './components/Product/AddProduct.tsx';
 import BrandManagement from './pages/BrandManagement.tsx';
-import AddBrand from './components/AddBrand.tsx';
-import BrandCatalog from './components/BrandCatalog.tsx';
-import BrandDetails from './components/BrandDetails.tsx';
+import AddBrand from './components/Brand/AddBrand.tsx';
+import BrandCatalog from './components/Brand/BrandCatalog.tsx';
+import BrandDetails from './components/Brand/BrandDetails.tsx';
 import UserManagement from './pages/users/UserManagement.tsx';
+import ProductManagement from './pages/ProductManagement.tsx';
 import Portal from './pages/users/Portal.tsx';
 import { AuthProvider, useAuth } from './context/AuthContext.tsx';
 import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
@@ -49,28 +50,44 @@ const router = createBrowserRouter([
         )
       },
       {
-        path: '/catalog',
-        element: <RoleBasedRoute allowedRole={['user']} element={<Catalog />} />
-      },
-      {
-        path: '/managementProduct',
+        path: '/product',
         element: (
           <RoleBasedRoute
             allowedRole={['user']}
-            element={<ManagementProduct />}
+            element={<ProductManagement />}
           />
-        )
+        ),
+        children: [
+          {
+            path: '/product/view',
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<ProductCatalog />}
+              />
+            )
+          },
+          {
+            path: '/product/add',
+            element: (
+              <RoleBasedRoute allowedRole={['user']} element={<AddProduct />} />
+            )
+          },
+          {
+            path: '/product/:id/edit',
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<ProductDetails />}
+              />
+            )
+          }
+        ]
       },
       {
-        path: '/addProduct',
+        path: '/itemmanagement',
         element: (
-          <RoleBasedRoute allowedRole={['user']} element={<AddProduct />} />
-        )
-      },
-      {
-        path: '/product/:id/edit',
-        element: (
-          <RoleBasedRoute allowedRole={['user']} element={<ProductDetails />} />
+          <RoleBasedRoute allowedRole={['user']} element={<ItemManagement />} />
         )
       },
       {

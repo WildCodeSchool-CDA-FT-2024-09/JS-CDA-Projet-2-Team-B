@@ -31,9 +31,9 @@ import {
   useGetProductByIdQuery,
   useRestoreProductMutation,
   useUpdateProductMutation
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 import { useLazyQuery } from '@apollo/client';
-import { CustomSwitch } from '../ui/Switch';
+import { CustomSwitch } from '../../ui/Switch';
 import axios from 'axios';
 
 interface ProductDetailsReq {
@@ -273,12 +273,22 @@ export default function ProductDetails() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <Box component="form" onSubmit={handleSubmit} noValidate autoComplete="off">
+    <Box
+      component="form"
+      onSubmit={handleSubmit}
+      noValidate
+      autoComplete="off"
+      sx={{ margin: '2rem' }}
+    >
       <Box
         sx={{
           display: 'flex',
-          flexDirection: 'row-reverse',
-          gap: 5
+          flexDirection: { xs: 'column', md: 'row' },
+          gap: '10rem',
+          padding: '2rem',
+          paddingLeft: '5rem',
+          borderRadius: '8px',
+          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
         }}
       >
         {product.images && product.images.length > 0 && (
@@ -287,7 +297,8 @@ export default function ProductDetails() {
               boxShadow: 'none',
               backgroundColor: 'transparent',
               marginTop: '5rem',
-              width: '20%'
+              width: '100%', // Adapter la largeur
+              maxWidth: '100px' // Taille maximale
             }}
           >
             <CardMedia
@@ -302,8 +313,6 @@ export default function ProductDetails() {
             />
             <Box
               sx={{
-                justifyContent: 'center',
-                backgroundColor: 'rgba(255, 255, 255, 0.8)',
                 borderRadius: '50%'
               }}
             >
@@ -324,9 +333,7 @@ export default function ProductDetails() {
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column',
-            width: '80%',
-            padding: '5rem'
+            flexDirection: 'column'
           }}
         >
           <FormControlLabel
@@ -346,7 +353,6 @@ export default function ProductDetails() {
                 {product.isActive ? 'Activé' : 'Désactivé'}
               </Typography>
             }
-            sx={{ mt: 2, mb: 2 }}
           />
           <Typography
             sx={{
@@ -358,18 +364,18 @@ export default function ProductDetails() {
           </Typography>
           <TextField
             required
-            id="outlined-required"
             name="name"
             value={product.name}
             onChange={handleChange}
             placeholder="Nom"
+            fullWidth
+            sx={{ maxWidth: '400px' }}
           />
           <Typography
             sx={{
               marginLeft: '2px',
               fontWeight: 'bold',
-              marginTop: 1,
-              marginBottom: 1
+              marginTop: 1
             }}
           >
             Reference
@@ -381,13 +387,13 @@ export default function ProductDetails() {
             value={product.reference}
             onChange={handleChange}
             placeholder="Reference"
+            sx={{ width: '100%' }}
           />
           <Typography
             sx={{
               marginLeft: '2px',
               fontWeight: 'bold',
-              marginTop: 1,
-              marginBottom: 1
+              marginTop: 1
             }}
           >
             Courte description
@@ -397,13 +403,13 @@ export default function ProductDetails() {
             value={product.shortDescription}
             onChange={handleChange}
             placeholder="Courte description"
+            sx={{ width: '100%' }}
           />
           <Typography
             sx={{
               marginLeft: '2px',
               fontWeight: 'bold',
-              marginTop: 1,
-              marginBottom: 1
+              marginTop: 1
             }}
           >
             Description
@@ -413,13 +419,13 @@ export default function ProductDetails() {
             value={product.description}
             onChange={handleChange}
             placeholder="Description"
+            sx={{ width: '100%' }}
           />
           <Typography
             sx={{
               marginLeft: '2px',
               fontWeight: 'bold',
-              marginTop: 1,
-              marginBottom: 1
+              marginTop: 1
             }}
           >
             Prix
@@ -430,17 +436,18 @@ export default function ProductDetails() {
             onChange={handleChange}
             placeholder="Prix"
           />
+        </Box>
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Typography
             sx={{
               marginLeft: '2px',
-              marginBottom: 1,
-              marginTop: 1,
+              marginTop: 5,
               fontWeight: 'bold'
             }}
           >
             Caractéristiques
           </Typography>
-          <FormControl fullWidth>
+          <FormControl fullWidth sx={{ mb: 2 }}>
             <Autocomplete
               options={characteristicsData?.getAllCharacteristic || []}
               getOptionLabel={(option) => option.name}
@@ -479,20 +486,9 @@ export default function ProductDetails() {
             />
           </FormControl>
 
-          <Box sx={{ mt: 2 }}>
+          <Box sx={{ mt: 1 }}>
             {product.characteristicValues?.map((char) => (
-              <Box
-                key={char.characteristic.id}
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: 2,
-                  mb: 2,
-                  backgroundColor: 'background.paper',
-                  p: 2,
-                  borderRadius: 1
-                }}
-              >
+              <Box key={char.characteristic.id}>
                 <Typography sx={{ minWidth: 150, fontWeight: 'medium' }}>
                   {char.characteristic.name}
                 </Typography>
@@ -533,9 +529,7 @@ export default function ProductDetails() {
           <Typography
             sx={{
               marginLeft: '2px',
-              fontWeight: 'bold',
-              marginTop: 1,
-              marginBottom: 1
+              fontWeight: 'bold'
             }}
           >
             Catégorie
@@ -576,18 +570,9 @@ export default function ProductDetails() {
               )}
             />
           </FormControl>
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 1,
-              minHeight: '40px',
-
-              border: 'none',
-              borderRadius: '4px'
-            }}
-          >
-            {product.categories && product.categories.length > 0 ? (
+          <Box sx={{ mb: 1 }}>
+            {product.categories &&
+              product.categories.length > 0 &&
               product.categories.map((category) => (
                 <Chip
                   key={category.id}
@@ -603,42 +588,13 @@ export default function ProductDetails() {
                         ) || []
                     }));
                   }}
-                  sx={{
-                    backgroundColor: '#f5f5f5',
-                    borderRadius: '20px',
-
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                    transition: 'transform 0.2s ease-in-out',
-                    '&:hover': {
-                      transform: 'scale(1.05)',
-                      backgroundColor: '#f5f5f5'
-                    },
-                    '& .MuiChip-label': {
-                      color: 'text.primary'
-                    },
-                    '& .MuiChip-deleteIcon': {
-                      color: '#d32f2f',
-                      '&:hover': {
-                        color: '#d32f2f',
-                        backgroundColor: 'rgba(211, 47, 47, 0.1)',
-                        borderRadius: '50%'
-                      }
-                    }
-                  }}
                 />
-              ))
-            ) : (
-              <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                Aucune catégorie associée
-              </Typography>
-            )}
+              ))}
           </Box>
           <Typography
             sx={{
               marginLeft: '2px',
-              fontWeight: 'bold',
-
-              marginBottom: 1
+              fontWeight: 'bold'
             }}
           >
             Tags
@@ -678,18 +634,9 @@ export default function ProductDetails() {
               )}
             />
           </FormControl>
-          <Box
-            sx={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: 1,
-              minHeight: '40px',
-
-              border: 'none',
-              borderRadius: '4px'
-            }}
-          >
-            {product.tags && product.tags.length > 0 ? (
+          <Box sx={{ mb: 1 }}>
+            {product.tags &&
+              product.tags.length > 0 &&
               product.tags.map((tag) => (
                 <Chip
                   key={tag.id}
@@ -702,35 +649,8 @@ export default function ProductDetails() {
                       tags: prev.tags?.filter((t) => t.id !== tag.id) || []
                     }));
                   }}
-                  sx={{
-                    backgroundColor: '#e3f2fd',
-                    borderRadius: '20px',
-                    padding: '4px 8px',
-                    boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
-                    transition: 'transform 0.2s ease-in-out',
-                    '&:hover': {
-                      transform: 'scale(1.05)',
-                      backgroundColor: '#e3f2fd'
-                    },
-                    '& .MuiChip-label': {
-                      color: 'text.primary'
-                    },
-                    '& .MuiChip-deleteIcon': {
-                      color: '#1976d2',
-                      '&:hover': {
-                        color: '#1976d2',
-                        backgroundColor: 'rgba(25, 118, 210, 0.1)',
-                        borderRadius: '50%'
-                      }
-                    }
-                  }}
                 />
-              ))
-            ) : (
-              <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                Aucun tag associé
-              </Typography>
-            )}
+              ))}
           </Box>
           <Typography
             sx={{
@@ -741,7 +661,7 @@ export default function ProductDetails() {
           >
             Marque
           </Typography>
-          <FormControl fullWidth>
+          <FormControl fullWidth sx={{ mb: 2 }}>
             <Autocomplete
               options={brandOptions}
               getOptionLabel={(option) => option.name}
@@ -768,9 +688,7 @@ export default function ProductDetails() {
           <Typography
             sx={{
               marginLeft: '2px',
-              fontWeight: 'bold',
-              marginTop: 1,
-              marginBottom: 1
+              fontWeight: 'bold'
             }}
           >
             Statut

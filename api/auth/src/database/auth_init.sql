@@ -22,6 +22,6 @@ INSERT INTO "role" ("name") VALUES
 ('user');
 
 INSERT INTO "user" ("email", "password", "last_name", "first_name", "phone", "starting_date", "ending_date", "role_id") VALUES 
-('admin@admin.com', '$argon2id$v=19$m=65536,t=3,p=4$AZj1t56g/1uQEdAyqF34+w$vjOB07zdKQemH43AKp3hOqsfYleunmOwE8j75sGUfQM', 'admin', 'admin', '123456789', '2021-01-01', '2030-12-31', 1)
+('admin@admin.com', '$argon2id$v=19$m=65536,t=3,p=4$AZj1t56g/1uQEdAyqF34+w$vjOB07zdKQemH43AKp3hOqsfYleunmOwE8j75sGUfQM', 'admin', 'admin', '123456789', '2021-01-01', '2030-12-31', 1);
 
 COMMIT;

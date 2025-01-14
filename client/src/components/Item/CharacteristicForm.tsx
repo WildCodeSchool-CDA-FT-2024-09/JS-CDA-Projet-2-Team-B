@@ -5,7 +5,7 @@ import Button from '@mui/material/Button';
 import {
   useGetAllCharacteristicQuery,
   useCreateNewCharacteristicMutation
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 import { useState } from 'react';
 import CharacteristicItem from './CharacteristicItem';
 

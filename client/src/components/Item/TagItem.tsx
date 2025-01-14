@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useCallback } from 'react';
 import {
   useDeleteTagMutation,
   useUpdateTagMutation
-} from '../generated/graphql-types';
+} from '../../generated/graphql-types';
 
 type TagItemProps = {
   id: number;

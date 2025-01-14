@@ -1,33 +1,35 @@
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import Box from '@mui/material/Box';
+import {
+  Box,
+  Card,
+  CardContent,
+  Button,
+  TextField,
+  Typography
+} from '@mui/material';
 import { useState } from 'react';
 import {
-  useCreateTagMutation,
-  useGetAllTagsQuery
-} from '../generated/graphql-types';
-import TagItem from './TagItem';
+  useCreateCategoryMutation,
+  useGetAllCategoriesQuery
+} from '../../generated/graphql-types';
+import CategoryItem from './CategoryItem';
 
-const TagForm = () => {
-  const [newTagName, setNewTagName] = useState('');
-  const [createTag] = useCreateTagMutation();
-  const { data, loading, refetch } = useGetAllTagsQuery();
+const CategoryForm = () => {
+  const [newCategoryName, setNewCategoryName] = useState('');
+  const { data, loading, error, refetch } = useGetAllCategoriesQuery();
+  const [createCategory] = useCreateCategoryMutation();
 
   const handleSubmit = async (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const newName = newTagName.trim();
+    const newName = newCategoryName.trim();
     try {
       if (newName) {
-        const response = await createTag({
+        const response = await createCategory({
           variables: {
             input: { name: newName }
           }
         });
-        if (response.data?.createTag) {
-          setNewTagName('');
+        if (response.data?.createCategory) {
+          setNewCategoryName('');
           await refetch();
         }
       }
@@ -40,11 +42,14 @@ const TagForm = () => {
     await refetch();
   };
 
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
     <Card sx={{ width: 900, margin: 1, boxShadow: 4 }}>
       <CardContent>
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
-          Tags
+          Catégories
         </Typography>
         <Box
           component="form"
@@ -57,15 +62,15 @@ const TagForm = () => {
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Typography sx={{ minWidth: 'fit-content' }}>
-              Ajouter un tag :
+              Ajouter une catégorie :
             </Typography>
             <TextField
               sx={{ marginLeft: '25px' }}
               placeholder="Nom"
               variant="outlined"
               size="small"
-              value={newTagName}
-              onChange={(e) => setNewTagName(e.target.value)}
+              value={newCategoryName}
+              onChange={(e) => setNewCategoryName(e.target.value)}
             />
           </Box>
           <Box>
@@ -88,25 +93,21 @@ const TagForm = () => {
             display: 'flex',
             flexWrap: 'wrap',
             gap: 1,
-            marginTop: 3
+            marginTop: 2
           }}
         >
-          {loading ? (
-            <Typography>Chargement...</Typography>
-          ) : (
-            data?.getAllTags.map((tag) => (
-              <TagItem
-                key={tag.id}
-                id={tag.id}
-                name={tag.name}
-                onRefetch={handleRefetch}
-              />
-            ))
-          )}
+          {data?.getAllCategories.map((category) => (
+            <CategoryItem
+              key={category.id}
+              id={category.id}
+              name={category.name}
+              onRefetch={handleRefetch}
+            />
+          ))}
         </Box>
       </CardContent>
     </Card>
   );
 };
 
-export default TagForm;
+export default CategoryForm;
