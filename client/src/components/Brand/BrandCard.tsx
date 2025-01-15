@@ -39,7 +39,6 @@ export default function BrandCard({ id, name, image }: Brand) {
         display: 'flex',
         flexDirection: 'column',
         padding: '2rem',
-        backgroundColor: '#f9f9f9',
         borderRadius: '8px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
       }}
