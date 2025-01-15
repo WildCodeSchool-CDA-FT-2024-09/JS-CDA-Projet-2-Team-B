@@ -4,16 +4,7 @@ import CardContent from '@mui/material/CardContent';
 import Typography from '@mui/material/Typography';
 import { Link as MUILink } from '@mui/material';
 import { Grid } from '@mui/system';
-
-const styleButton = {
-  padding: '4px 10px',
-  borderRadius: '5px',
-  margin: 0.6,
-  color: 'primary.contrastText',
-  textTransform: 'uppercase',
-  textDecoration: 'none',
-  fontFamily: "'Roboto', sans-serif"
-};
+import ModeEditIcon from '@mui/icons-material/ModeEdit';
 
 type Products = {
   id: number;
@@ -35,44 +26,28 @@ export default function CardProduct({
   compact = false
 }: Products) {
   return (
-    <Card
-      sx={{
-        maxWidth: compact ? '100%' : 300,
-        margin: compact ? 0 : 1,
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        boxShadow: compact ? 0 : 4,
-        padding: compact ? 0 : 1
-      }}
-    >
+    <Card sx={{ border: 'none', boxShadow: 'none', textDecoration: 'none' }}>
       {!compact && (
         <CardContent>
-          <Typography variant="h6" sx={{ marginBottom: 1 }}>
-            {name}
-          </Typography>
+          <Typography variant="h6">{name}</Typography>
           <Typography variant="body2"> {reference}</Typography>
           <Typography variant="body2"> {price}</Typography>
           <Typography variant="body2"> {shortDescription}</Typography>
           <Typography variant="body2"> {description}</Typography>
         </CardContent>
       )}
-      <Grid
-        sx={{ display: 'flex', justifyContent: 'end', margin: compact ? 0 : 1 }}
-      >
+      <Grid container justifyContent="center">
         <MUILink
           component={RouterLink}
           to={`/product/${id}/edit`}
-          sx={{ ...styleButton, backgroundColor: 'green' }}
+          sx={{ marginTop: '0.5rem' }}
         >
-          Modifier
-        </MUILink>
-        <MUILink
-          component={RouterLink}
-          to="/"
-          sx={{ ...styleButton, backgroundColor: 'info.main' }}
-        >
-          Activer
+          <ModeEditIcon
+            sx={{
+              color: 'green',
+              fontSize: '1.8rem'
+            }}
+          />
         </MUILink>
       </Grid>
     </Card>

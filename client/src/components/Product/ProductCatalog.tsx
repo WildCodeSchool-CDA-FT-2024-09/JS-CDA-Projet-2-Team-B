@@ -77,18 +77,11 @@ export default function Catalog() {
           display: 'flex',
           flexDirection: 'column',
           padding: '2rem',
-          backgroundColor: '#f9f9f9',
           borderRadius: '8px',
           boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
         }}
       >
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            width: '100%'
-          }}
-        >
+        <Box>
           <Typography variant="h6" sx={{ marginBottom: 1 }}>
             Liste des produits
           </Typography>
@@ -98,9 +91,6 @@ export default function Catalog() {
             autoHeight
             pageSize={10}
             rowsPerPageOptions={[5, 10, 20]}
-            sx={{
-              marginBottom: 1
-            }}
           />
         </Box>
       </Box>
