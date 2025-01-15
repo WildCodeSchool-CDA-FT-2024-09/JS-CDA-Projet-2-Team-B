@@ -1,5 +1,5 @@
 import { Outlet } from 'react-router-dom';
-import NavBarAdmin from '../../components/NavBarAdmin';
+import NavBarAdmin from '../../components/Navbar/NavBarAdmin';
 
 export default function UserLayout() {
   return (
