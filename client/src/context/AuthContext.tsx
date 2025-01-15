@@ -1,4 +1,5 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
+import axios from 'axios';
 import { createAxiosInstance } from '../services/axios.instance';
 
 interface User {
@@ -58,7 +59,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       return true;
     } catch (err: unknown) {
-      if (err instanceof Error) {
+      if (axios.isAxiosError(err)) {
+        const errorMessage =
+          err.response?.data?.errors?.[0]?.message || 'Erreur inconnue';
+        setError(errorMessage);
+      } else if (err instanceof Error) {
         console.error(err);
         setError(err.message);
       } else {
