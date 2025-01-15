@@ -116,7 +116,6 @@ export class UserController
     };
 
     const userPayload = {
-      id: user.id,
       email: user.email,
       role: roleName
     };

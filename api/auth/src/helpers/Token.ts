@@ -6,15 +6,15 @@ import jwt from 'jsonwebtoken';
 const { ACCESS_TOKEN_SECRET } = process.env;
 
 export default class Token {
-  static generateAccessToken = async ({ id, email, role }: UserPayload) => {
-    const user = { id, email, role };
+  static generateAccessToken = async ({ email, role }: UserPayload) => {
+    const user = { email, role };
 
     if (!ACCESS_TOKEN_SECRET) {
       throw new BadRequestError("La clé secrète n'est pas définie.");
     }
 
     const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET, {
-      expiresIn: '30min'
+      expiresIn: '1d'
     });
 
     return accessToken;

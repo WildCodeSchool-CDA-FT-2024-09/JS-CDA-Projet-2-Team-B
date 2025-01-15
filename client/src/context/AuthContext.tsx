@@ -1,5 +1,6 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
 import axios from 'axios';
+import { createAxiosInstance } from '../services/axios.instance';
 
 interface User {
   id: number;
@@ -26,16 +27,21 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
+  const logout = async () => {
+    setUser(null);
+  };
+
+  const axiosInstance = createAxiosInstance(logout);
+
   const login = async (email: string, password: string): Promise<boolean> => {
     try {
-      const response = await axios.post(
+      const response = await axiosInstance.post(
         '/auth',
         { email, password },
         {
           headers: {
             'Content-Type': 'application/json'
-          },
-          withCredentials: true
+          }
         }
       );
 
@@ -67,10 +73,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       return false;
     }
-  };
-
-  const logout = async () => {
-    setUser(null);
   };
 
   const isLoggedIn = !!user;

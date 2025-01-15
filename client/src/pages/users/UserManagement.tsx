@@ -46,9 +46,17 @@ export default function UserManagement() {
     fetchUsers();
   };
 
+  const getLastId = (): number => {
+    const maxIdUser = users.reduce((maxUser, currentUser) =>
+      (currentUser.id || 0) > (maxUser.id || 0) ? currentUser : maxUser
+    );
+
+    return maxIdUser.id || 0;
+  };
+
   const handleAddClick = () => {
     const newUser: UserRow = {
-      id: users.length + 1,
+      id: getLastId() + 1,
       first_name: '',
       last_name: '',
       email: '',
