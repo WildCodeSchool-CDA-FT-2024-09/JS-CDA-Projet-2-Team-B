@@ -1,10 +1,8 @@
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import { Link as RouterLink } from 'react-router-dom';
 import logo from '../../assets/logopmp.png';
 import { useAuth } from '../../context/AuthContext';
@@ -55,9 +53,6 @@ export default function NavBAr() {
               gap: 1
             }}
           >
-            <IconButton>
-              <Avatar alt="A" src="/static/images/avatar/2.jpg" />
-            </IconButton>
             <LogoutIcon
               onClick={logout}
               sx={{
