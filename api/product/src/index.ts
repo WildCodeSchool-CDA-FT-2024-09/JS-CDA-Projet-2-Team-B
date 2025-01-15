@@ -10,7 +10,6 @@ import { parse } from 'cookie';
 const { PORT, ACCESS_TOKEN_SECRET } = process.env;
 
 interface User {
-  id: number;
   email: string;
   role: string;
 }
