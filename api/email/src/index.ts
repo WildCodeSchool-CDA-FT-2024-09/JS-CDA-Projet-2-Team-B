@@ -8,7 +8,6 @@ const app = express();
 app.use(json());
 
 app.post('/email/send', validateEmail, async (req: Request, res: Response) => {
-  console.info('Incoming email request:', req.body);
   const errors = validationResult(req);
 
   if (!errors.isEmpty()) {
