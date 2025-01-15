@@ -7,7 +7,7 @@ import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import { Link as MUILink } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import logo from '../assets/logopmp.png';
+import logo from '../../assets/logopmp.png';
 import { useAuth } from '../../context/AuthContext';
 import LogoutIcon from '@mui/icons-material/Logout';
 
