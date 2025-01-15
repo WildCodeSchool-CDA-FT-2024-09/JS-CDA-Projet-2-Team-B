@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { Card, Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
-// import { Check } from '@mui/icons-material';
+import { createAxiosInstance } from '../../services/axios.instance';
+import { useAuth } from '../../context/AuthContext';
 
 interface UploadResponse {
   id: string;
@@ -31,6 +31,9 @@ const AddImage = ({ productId, handleBlock, onImageAdded }: Props) => {
   const [data, setData] = useState<UploadResponse | null>(null);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isMain, setIsMain] = useState<boolean>(false);
+  const { logout } = useAuth();
+
+  const axiosInstance = createAxiosInstance(logout);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
@@ -55,7 +58,7 @@ const AddImage = ({ productId, handleBlock, onImageAdded }: Props) => {
     setError(null);
 
     try {
-      const response = await axios.post<UploadResponse>(
+      const response = await axiosInstance.post<UploadResponse>(
         '/upload/products',
         formData,
         {

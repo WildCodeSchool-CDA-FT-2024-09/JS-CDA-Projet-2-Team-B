@@ -2,6 +2,7 @@ import express, { json } from 'express';
 import cors from 'cors';
 import indexRouter from './routers/index.routers';
 import { errorHandler } from './middlewares/errorHandler.middleware';
+import cookieParser from 'cookie-parser';
 
 const app = express();
 
@@ -11,6 +12,7 @@ const corsOptions = {
 };
 
 app.use(cors(corsOptions));
+app.use(cookieParser());
 
 app.use(json());
 app.use(express.urlencoded({ extended: true }));

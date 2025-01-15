@@ -1,5 +1,4 @@
 import React, { createContext, ReactNode, useContext, useState } from 'react';
-import Cookies from 'js-cookie';
 import axios from 'axios';
 
 interface User {
@@ -10,7 +9,8 @@ interface User {
 interface AuthContextType {
   user: User | null;
   isLoggedIn: boolean;
-  login: (email: string, password: string) => void;
+  login: (email: string, password: string) => Promise<boolean>;
+  logout: () => void;
   error: string | null;
 }
 
@@ -26,7 +26,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const login = async (email: string, password: string) => {
+  const login = async (email: string, password: string): Promise<boolean> => {
     try {
       const response = await axios.post(
         '/auth',
@@ -34,16 +34,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         {
           headers: {
             'Content-Type': 'application/json'
-          }
+          },
+          withCredentials: true
         }
       );
 
       if (response.status !== 200) {
         throw new Error('Erreur lors de la connexion');
       }
-      const { user: userData, accessToken } = response.data;
 
-      Cookies.set('access_token', accessToken, { expires: 0.5 / 24 });
+      const { user: userData } = response.data;
 
       setUser({
         id: userData.id,
@@ -69,10 +69,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const logout = async () => {
+    setUser(null);
+  };
+
   const isLoggedIn = !!user;
 
   return (
-    <AuthContext.Provider value={{ user, isLoggedIn, login, error }}>
+    <AuthContext.Provider value={{ user, logout, isLoggedIn, login, error }}>
       {children}
     </AuthContext.Provider>
   );

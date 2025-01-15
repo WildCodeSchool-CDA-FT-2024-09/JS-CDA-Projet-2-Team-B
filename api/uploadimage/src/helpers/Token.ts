@@ -14,7 +14,7 @@ export default class Token {
     }
 
     const accessToken = jwt.sign(user, ACCESS_TOKEN_SECRET, {
-      expiresIn: '30min'
+      expiresIn: '30sec'
     });
 
     return accessToken;
