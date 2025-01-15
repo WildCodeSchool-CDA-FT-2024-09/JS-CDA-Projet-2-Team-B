@@ -4,6 +4,7 @@ import { DatabaseConnectionError } from './DatabaseConnectionError.error';
 import { RequestValidationError } from './RequestValidationError.error';
 import { NotFoundError } from './NotFoundError.error';
 import { NotAuthorizedError } from './NotAuthorizedError.error';
+import { AccessDeniedError } from './AccessDeniedError.error';
 
 export {
   BadRequestError,
@@ -11,5 +12,6 @@ export {
   DatabaseConnectionError,
   RequestValidationError,
   NotFoundError,
-  NotAuthorizedError
+  NotAuthorizedError,
+  AccessDeniedError
 };

@@ -10,13 +10,11 @@ import {
   verifyFileExistence
 } from '../services/upload';
 import multer from '../middlewares/multer';
-import { requireAuth, errorCatcher } from '../middlewares/index.middlewares';
 
 const productRouter = Router();
 
 productRouter.post(
   '/',
-  errorCatcher(requireAuth),
   multer.single('image'),
   async (req: Request, res: Response): Promise<void> => {
     console.info('Headers:', req.headers);
@@ -52,7 +50,6 @@ productRouter.post(
 
 productRouter.delete(
   '/:productId/images/:imageId',
-  requireAuth,
   async (req: Request, res: Response): Promise<void> => {
     const { productId, imageId } = req.params;
 
