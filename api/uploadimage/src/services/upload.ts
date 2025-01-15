@@ -16,7 +16,7 @@ export const saveImageToDatabase = async (
 
   try {
     const result = await pool.query(query, [url, isMain]);
-    console.info('Image sauvegardée :', result.rows[0]);
+
     return result.rows[0];
   } catch (error) {
     console.error("Erreur lors de la sauvegarde de l'image :", error);
@@ -27,7 +27,6 @@ export const saveImageToDatabase = async (
 export const verifyFileExistence = async (filePath: string) => {
   try {
     await fs.promises.access(filePath);
-    console.info('Fichier trouvé :', filePath);
   } catch (error) {
     console.error('Fichier introuvable :', filePath);
     throw error;
@@ -42,7 +41,6 @@ export const imageByProduct = async (imageId: number, productId: string) => {
 
   try {
     await pool.query(query, [productId, imageId]);
-    console.info('Lien produit-image créé');
   } catch (error) {
     console.error('Erreur lors de la création du lien produit-image :', error);
     throw error;
@@ -54,7 +52,6 @@ export const updateBrandImage = async (imageId: number, brandId: string) => {
 
   try {
     await pool.query(query, [imageId, brandId]);
-    console.info("L'image a correctement été associée à la marque.");
   } catch (error) {
     console.error(
       "Erreur lors de l'association de l'image à la marque : ",
@@ -115,7 +112,6 @@ export const deleteImageFile = async (url: string) => {
 
   try {
     await fs.promises.unlink(imagePath);
-    console.info(`Image supprimée : ${imagePath}`);
     return true;
   } catch (err: unknown) {
     if (err instanceof Error && err.message.includes('ENOENT')) {
@@ -190,7 +186,6 @@ export const deleteProductImageRelation = async (
 
   try {
     await pool.query(query, [imageId, productId]);
-    console.info('Relation produit-image supprimée');
   } catch (error) {
     console.error(
       'Erreur lors de la suppression de la relation produit-image:',
