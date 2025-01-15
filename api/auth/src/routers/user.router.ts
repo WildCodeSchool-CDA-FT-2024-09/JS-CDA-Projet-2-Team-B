@@ -1,10 +1,10 @@
 import Router from 'express';
 import { userController } from '../controllers/index.controllers';
-import { errorCatcher } from '../helpers/index.helpers';
 import {
   validateRequest,
   requireAuth,
-  checkPermissions
+  checkPermissions,
+  errorCatcher
 } from '../middlewares/index.middlewares';
 import { userCreateSchema } from '../validation/index.validation';
 
