@@ -11,15 +11,12 @@ import {
   verifyFileExistence
 } from '../services/upload';
 import multer from '../middlewares/multer';
-import { requireAuth } from '../middlewares/requireAuth.middleware';
-import { errorCatcher } from '../middlewares/errorCatcher.middleware';
 
 const brandRouter = Router();
 
 brandRouter
   .patch(
     '/',
-    errorCatcher(requireAuth),
     multer.single('image'),
     async (req: Request, res: Response): Promise<void> => {
       console.info('Headers:', req.headers);
@@ -63,32 +60,28 @@ brandRouter
       }
     }
   )
-  .delete(
-    '/',
-    errorCatcher(requireAuth),
-    async (req: Request, res: Response): Promise<void> => {
-      const { image_id } = req.body;
+  .delete('/', async (req: Request, res: Response): Promise<void> => {
+    const { image_id } = req.body;
 
-      try {
-        const brand = await getBrandByImageId(image_id);
+    try {
+      const brand = await getBrandByImageId(image_id);
 
-        if (brand) {
-          const image = await getBrandImage(brand.image_id);
-          await updateBrandImageToNull(brand.id);
-          await deleteImageFromDatabase(brand.image_id);
-          await deleteImageFile(image.url);
-        }
-
-        res.status(200).json({
-          status: 'success'
-        });
-        return;
-      } catch (error) {
-        console.error('Error:', error instanceof Error ? error.message : error);
-        res.sendStatus(500);
-        return;
+      if (brand) {
+        const image = await getBrandImage(brand.image_id);
+        await updateBrandImageToNull(brand.id);
+        await deleteImageFromDatabase(brand.image_id);
+        await deleteImageFile(image.url);
       }
+
+      res.status(200).json({
+        status: 'success'
+      });
+      return;
+    } catch (error) {
+      console.error('Error:', error instanceof Error ? error.message : error);
+      res.sendStatus(500);
+      return;
     }
-  );
+  });
 
 export default brandRouter;

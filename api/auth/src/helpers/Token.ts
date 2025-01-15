@@ -1,4 +1,4 @@
-import { BadRequestError } from '../errors/BadRequestError.error';
+import { BadRequestError } from '../errors/index.errors';
 import { UserPayload } from './index.helpers';
 import { Response } from 'express';
 import jwt from 'jsonwebtoken';
