@@ -20,17 +20,6 @@ import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
 import UnauthorizedPage from './components/UnauthorizedPage.tsx';
 import UserLayout from './pages/users/UserLayout.tsx';
 
-const Root = () => {
-  const { logout } = useAuth();
-  const client = createApolloClient(logout);
-
-  return (
-    <ApolloProvider client={client}>
-      <RouterProvider router={router} />
-    </ApolloProvider>
-  );
-};
-
 const router = createBrowserRouter([
   {
     path: '/portal',
@@ -137,6 +126,17 @@ const router = createBrowserRouter([
     element: <UnauthorizedPage />
   }
 ]);
+
+const Root = () => {
+  const { logout } = useAuth();
+  const client = createApolloClient(logout);
+
+  return (
+    <ApolloProvider client={client}>
+      <RouterProvider router={router} />
+    </ApolloProvider>
+  );
+};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
