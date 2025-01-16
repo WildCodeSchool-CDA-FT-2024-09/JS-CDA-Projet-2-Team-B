@@ -35,7 +35,6 @@ export const sendEmail = async ({
 
     const info = await transport.sendMail(mailOptions);
 
-    console.info('Message envoyé : %s', info.messageId);
     return { success: true, message: info.response };
   } catch (err: unknown) {
     if (err instanceof Error) {

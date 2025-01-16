@@ -1,12 +1,15 @@
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
 import { Link as MUILink } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
-import logo from '../assets/logopmp.png';
+import logo from '../../assets/logopmp.png';
+import { useAuth } from '../../context/AuthContext';
+import LogoutIcon from '@mui/icons-material/Logout';
 
 const pages = [
   { content: 'Gestion', to: '/itemmanagement' },
@@ -15,6 +18,7 @@ const pages = [
 ];
 
 export default function NavBAr() {
+  const { logout } = useAuth();
   return (
     <AppBar position="static" sx={{ backgroundColor: '#E3AB44' }}>
       <Container maxWidth="xl">
@@ -61,19 +65,26 @@ export default function NavBAr() {
               </MUILink>
             ))}
           </Box>
-          <Box sx={{ flexGrow: 0 }}>
-            <MUILink
-              to="/profile"
-              component={RouterLink}
-              sx={{
-                p: 0,
-                display: 'flex',
-                alignItems: 'center',
-                textDecoration: 'none'
-              }}
-            >
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'flex-end',
+
+              gap: 1
+            }}
+          >
+            <IconButton sx={{ p: 0 }}>
               <Avatar alt="A" src="/static/images/avatar/2.jpg" />
-            </MUILink>
+            </IconButton>
+            <LogoutIcon
+              onClick={logout}
+              sx={{
+                cursor: 'pointer',
+                color: 'black',
+                marginLeft: '2'
+              }}
+            />
           </Box>
         </Toolbar>
       </Container>

@@ -17,10 +17,6 @@ productRouter.post(
   '/',
   multer.single('image'),
   async (req: Request, res: Response): Promise<void> => {
-    console.info('Headers:', req.headers);
-    console.info('Body:', req.body);
-    console.info('Received file:', req.file);
-
     const { product_id, isMain } = req.body;
 
     if (!req.file) {

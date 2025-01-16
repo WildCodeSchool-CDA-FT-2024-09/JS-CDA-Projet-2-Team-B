@@ -18,17 +18,8 @@ import Portal from './pages/users/Portal.tsx';
 import { AuthProvider, useAuth } from './context/AuthContext.tsx';
 import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
 import Profile from './pages/users/Profile.tsx';
-
-const Root = () => {
-  const { logout } = useAuth();
-  const client = createApolloClient(logout);
-
-  return (
-    <ApolloProvider client={client}>
-      <RouterProvider router={router} />
-    </ApolloProvider>
-  );
-};
+import UnauthorizedPage from './components/UnauthorizedPage.tsx';
+import UserLayout from './pages/users/UserLayout.tsx';
 
 const router = createBrowserRouter([
   {
@@ -44,11 +35,14 @@ const router = createBrowserRouter([
       {
         path: '/users',
         element: (
-          <RoleBasedRoute
-            allowedRole={['admin']}
-            element={<UserManagement />}
-          />
-        )
+          <RoleBasedRoute allowedRole={['admin']} element={<UserLayout />} />
+        ),
+        children: [
+          {
+            path: '/users',
+            element: <UserManagement />
+          }
+        ]
       },
       {
         path: '/profile',
@@ -131,8 +125,23 @@ const router = createBrowserRouter([
         ]
       }
     ]
+  },
+  {
+    path: '*',
+    element: <UnauthorizedPage />
   }
 ]);
+
+const Root = () => {
+  const { logout } = useAuth();
+  const client = createApolloClient(logout);
+
+  return (
+    <ApolloProvider client={client}>
+      <RouterProvider router={router} />
+    </ApolloProvider>
+  );
+};
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
