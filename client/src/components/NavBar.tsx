@@ -1,7 +1,6 @@
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import Avatar from '@mui/material/Avatar';
@@ -63,9 +62,18 @@ export default function NavBAr() {
             ))}
           </Box>
           <Box sx={{ flexGrow: 0 }}>
-            <IconButton sx={{ p: 0 }}>
+            <MUILink
+              to="/profile"
+              component={RouterLink}
+              sx={{
+                p: 0,
+                display: 'flex',
+                alignItems: 'center',
+                textDecoration: 'none'
+              }}
+            >
               <Avatar alt="A" src="/static/images/avatar/2.jpg" />
-            </IconButton>
+            </MUILink>
           </Box>
         </Toolbar>
       </Container>
