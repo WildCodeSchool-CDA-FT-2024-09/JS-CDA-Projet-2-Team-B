@@ -15,4 +15,8 @@ export interface UserDatamapperReq extends EntityDatamapperReq {
     role_id?: number;
   };
   insert(item: UserDatamapperReq['data']): Promise<UserDatamapperReq['data']>;
+  updatePassword(
+    password: string,
+    id: number
+  ): Promise<UserDatamapperReq['data']>;
 }

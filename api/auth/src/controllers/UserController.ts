@@ -121,8 +121,65 @@ export class UserController
     };
 
     const accessToken = await Token.generateAccessToken(userPayload);
-    await Token.setAccessTokenCookie(res, accessToken);
+
+    res.cookie('access_token', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict'
+    });
 
     res.status(200).json({ user: userWithRoleName });
+  };
+
+  getByEmail = async (req: Request, res: Response): Promise<void> => {
+    const email = req.user?.email;
+
+    const user = await this.datamapper.findBySpecificField('email', email!);
+
+    if (!user) {
+      throw new NotFoundError('Utilisateur non trouvé.');
+    }
+
+    delete user.password;
+
+    delete user.id;
+    delete user.role_id;
+    delete user.starting_date;
+    delete user.ending_date;
+
+    res.status(200).json({ user });
+  };
+
+  changePassword = async (req: Request, res: Response): Promise<void> => {
+    const data = req.body;
+    const email = req.user?.email;
+
+    const user = await this.datamapper.findBySpecificField('email', email!);
+
+    if (!user) {
+      throw new NotFoundError('Utilisateur non trouvé.');
+    }
+
+    const isPasswordValid = await argon2.verify(
+      user.password,
+      data.currentPassword
+    );
+
+    if (!isPasswordValid) {
+      throw new BadRequestError('Mot de passe actuel incorrect.');
+    }
+
+    const hashedPassword = await argon2.hash(data.newPassword);
+
+    const updatedUser = await this.datamapper.updatePassword(
+      hashedPassword,
+      user.id
+    );
+
+    if (!updatedUser) {
+      throw new DatabaseConnectionError();
+    }
+
+    res.status(200).json({ success: true });
   };
 }
