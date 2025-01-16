@@ -19,10 +19,6 @@ brandRouter
     '/',
     multer.single('image'),
     async (req: Request, res: Response): Promise<void> => {
-      console.info('Headers:', req.headers);
-      console.info('Body:', req.body);
-      console.info('Received file:', req.file);
-
       const { brand_id } = req.body;
 
       const isMain = true;
