@@ -52,7 +52,7 @@ services:
     command: npm run dev
     restart: always
     environment:
-      - VITE_API_URL=/graph
+      - VITE_API_URI=/graph
 
   predeploy-gateway:
     image: nginx
