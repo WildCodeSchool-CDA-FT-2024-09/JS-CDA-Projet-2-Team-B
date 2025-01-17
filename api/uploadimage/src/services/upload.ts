@@ -16,7 +16,7 @@ export const saveImageToDatabase = async (
 
   try {
     const result = await pool.query(query, [url, isMain]);
-    console.info('Image sauvegardée :', result.rows[0]);
+
     return result.rows[0];
   } catch (error) {
     console.error("Erreur lors de la sauvegarde de l'image :", error);
@@ -27,7 +27,6 @@ export const saveImageToDatabase = async (
 export const verifyFileExistence = async (filePath: string) => {
   try {
     await fs.promises.access(filePath);
-    console.info('Fichier trouvé :', filePath);
   } catch (error) {
     console.error('Fichier introuvable :', filePath);
     throw error;
@@ -42,7 +41,6 @@ export const imageByProduct = async (imageId: number, productId: string) => {
 
   try {
     await pool.query(query, [productId, imageId]);
-    console.info('Lien produit-image créé');
   } catch (error) {
     console.error('Erreur lors de la création du lien produit-image :', error);
     throw error;
@@ -54,7 +52,6 @@ export const updateBrandImage = async (imageId: number, brandId: string) => {
 
   try {
     await pool.query(query, [imageId, brandId]);
-    console.info("L'image a correctement été associée à la marque.");
   } catch (error) {
     console.error(
       "Erreur lors de l'association de l'image à la marque : ",
@@ -99,7 +96,7 @@ export const updateBrandImageToNull = async (brandId: string) => {
   }
 };
 
-export const deleteBrandImageFromDatabase = async (imageId: number) => {
+export const deleteImageFromDatabase = async (imageId: number) => {
   const imageQuery = 'DELETE FROM image WHERE "id" = $1';
 
   try {
@@ -110,12 +107,11 @@ export const deleteBrandImageFromDatabase = async (imageId: number) => {
   }
 };
 
-export const deleteBrandImageFile = async (url: string) => {
+export const deleteImageFile = async (url: string) => {
   const imagePath = path.join(PUBLIC_DIR, url);
 
   try {
     await fs.promises.unlink(imagePath);
-    console.info(`Image supprimée : ${imagePath}`);
     return true;
   } catch (err: unknown) {
     if (err instanceof Error && err.message.includes('ENOENT')) {
@@ -141,6 +137,60 @@ export const getBrandByImageId = async (imageId: number) => {
     return result.rows[0];
   } catch (error) {
     console.error('Erreur lors de la recherche de la marque', error);
+    throw error;
+  }
+};
+
+export const getProductImageById = async (imageId: number) => {
+  const query = `
+    SELECT i.* 
+    FROM image i
+    JOIN products_images pi ON i.id = pi.image_id
+    WHERE i.id = $1
+  `;
+
+  try {
+    const result = await pool.query(query, [imageId]);
+    return result.rows[0];
+  } catch (error) {
+    console.error("Erreur lors de la recherche de l'image du produit", error);
+    throw error;
+  }
+};
+
+export const getImageUsageCount = async (imageId: number) => {
+  const query = `
+    SELECT COUNT(*) as usage_count 
+    FROM products_images 
+    WHERE image_id = $1
+  `;
+
+  try {
+    const result = await pool.query(query, [imageId]);
+    return parseInt(result.rows[0].usage_count);
+  } catch (error) {
+    console.error(
+      "Erreur lors du comptage des utilisations de l'image:",
+      error
+    );
+    throw error;
+  }
+};
+
+export const deleteProductImageRelation = async (
+  imageId: number,
+  productId: string
+) => {
+  const query =
+    'DELETE FROM products_images WHERE image_id = $1 AND product_id = $2';
+
+  try {
+    await pool.query(query, [imageId, productId]);
+  } catch (error) {
+    console.error(
+      'Erreur lors de la suppression de la relation produit-image:',
+      error
+    );
     throw error;
   }
 };

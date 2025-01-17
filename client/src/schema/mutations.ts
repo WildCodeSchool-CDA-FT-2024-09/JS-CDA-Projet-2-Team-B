@@ -19,6 +19,15 @@ export const CREATE_PRODUCT = gql`
         id
         name
       }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
+      }
+      deletedAt
     }
   }
 `;
@@ -84,6 +93,14 @@ export const PUT_PRODUCT = gql`
       tags {
         id
         name
+      }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
       }
     }
   }

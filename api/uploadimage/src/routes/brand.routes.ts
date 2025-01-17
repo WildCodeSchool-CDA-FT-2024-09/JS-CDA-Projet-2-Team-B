@@ -1,8 +1,8 @@
 import { Router, Request, Response } from 'express';
 import {
   checkIfBrandHasImage,
-  deleteBrandImageFile,
-  deleteBrandImageFromDatabase,
+  deleteImageFile,
+  deleteImageFromDatabase,
   getBrandByImageId,
   getBrandImage,
   saveImageToDatabase,
@@ -19,10 +19,6 @@ brandRouter
     '/',
     multer.single('image'),
     async (req: Request, res: Response): Promise<void> => {
-      console.info('Headers:', req.headers);
-      console.info('Body:', req.body);
-      console.info('Received file:', req.file);
-
       const { brand_id } = req.body;
 
       const isMain = true;
@@ -40,8 +36,8 @@ brandRouter
         if (brandImage.image_id) {
           const image = await getBrandImage(brandImage.image_id);
           await updateBrandImageToNull(brand_id);
-          await deleteBrandImageFromDatabase(brandImage.image_id);
-          await deleteBrandImageFile(image.url);
+          await deleteImageFromDatabase(brandImage.image_id);
+          await deleteImageFile(image.url);
         }
 
         await verifyFileExistence(req.file.path);
@@ -69,8 +65,8 @@ brandRouter
       if (brand) {
         const image = await getBrandImage(brand.image_id);
         await updateBrandImageToNull(brand.id);
-        await deleteBrandImageFromDatabase(brand.image_id);
-        await deleteBrandImageFile(image.url);
+        await deleteImageFromDatabase(brand.image_id);
+        await deleteImageFile(image.url);
       }
 
       res.status(200).json({

@@ -1,8 +1,8 @@
 import { gql } from '@apollo/client';
 
 export const GET_PRODUCT = gql`
-  query GetAllProducts($search: String) {
-    getAllProducts(search: $search) {
+  query GetAllProducts($search: String, $brands: [String!]) {
+    getAllProducts(search: $search, brands: $brands) {
       id
       name
       price
@@ -53,6 +53,14 @@ export const GET_PRODUCT_BY_ID = gql`
         id
         url
         isMain
+      }
+      characteristicValues {
+        id
+        value
+        characteristic {
+          id
+          name
+        }
       }
     }
   }
