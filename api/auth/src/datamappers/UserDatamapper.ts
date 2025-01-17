@@ -34,4 +34,12 @@ export class UserDatamapper extends CoreDatamapper<UserDatamapperReq> {
 
     return result.rows[0];
   };
+
+  updatePassword = async (password: string, id: number) => {
+    const query = `UPDATE "${this.tableName}" SET "password" = $1 WHERE "id" = $2 RETURNING *`;
+
+    const result = await this.pool.query(query, [password, id]);
+
+    return result.rows[0];
+  };
 }

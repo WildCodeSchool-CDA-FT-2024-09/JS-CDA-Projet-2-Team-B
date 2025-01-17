@@ -1,5 +1,5 @@
 import express from 'express';
-import userRouter from './user.router';
+import usersRouter from './users.router';
 import { userController } from '../controllers/index.controllers';
 import {
   validateRequest,
@@ -16,6 +16,6 @@ indexRouter
     errorCatcher(userController.signin)
   );
 
-indexRouter.use('/users', userRouter);
+indexRouter.use('/users', usersRouter);
 
 export default indexRouter;

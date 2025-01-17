@@ -4,7 +4,11 @@ import { createAxiosInstance } from '../services/axios.instance';
 
 interface User {
   id: number;
+  first_name: string;
+  last_name: string;
   role: string;
+  email: string;
+  phone: string;
 }
 
 interface AuthContextType {
@@ -53,7 +57,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       setUser({
         id: userData.id,
-        role: userData.role
+        first_name: userData.first_name,
+        last_name: userData.last_name,
+        role: userData.role,
+        email: userData.email,
+        phone: userData.phone
       });
 
       setError(null);

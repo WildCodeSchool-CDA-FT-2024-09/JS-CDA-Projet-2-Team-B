@@ -17,6 +17,7 @@ import ProductManagement from './pages/ProductManagement.tsx';
 import Portal from './pages/users/Portal.tsx';
 import { AuthProvider, useAuth } from './context/AuthContext.tsx';
 import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
+import Profile from './pages/users/Profile.tsx';
 import UnauthorizedPage from './components/UnauthorizedPage.tsx';
 import UserLayout from './pages/users/UserLayout.tsx';
 
@@ -42,6 +43,10 @@ const router = createBrowserRouter([
             element: <UserManagement />
           }
         ]
+      },
+      {
+        path: '/profile',
+        element: <RoleBasedRoute allowedRole={['user']} element={<Profile />} />
       },
       {
         path: '/product',
