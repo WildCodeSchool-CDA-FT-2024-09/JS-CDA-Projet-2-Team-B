@@ -71,7 +71,7 @@ services:
     command: npm run dev
     restart: always
     environment:
-      - VITE_API_URL=http://localhost:5050/graph
+      - VITE_API_URI=/graph
     volumes:
       - ./client/src:/app/src
 
