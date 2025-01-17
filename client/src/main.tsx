@@ -2,64 +2,146 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { ApolloProvider } from '@apollo/client';
-import client from './services/connexion.ts';
+import { createApolloClient } from './services/apollo.client.ts';
 import App from './App.tsx';
-import Catalog from './pages/Catalog.tsx';
-import ManagementProduct from './pages/ManagementProduct.tsx';
-import ProductDetails from './pages/ProductDetails.tsx';
-import AddProduct from './pages/AddProduct.tsx';
+import ProductCatalog from './components/Product/ProductCatalog.tsx';
+import ItemManagement from './pages/ItemManagement.tsx';
+import ProductDetails from './components/Product/ProductDetails.tsx';
+import AddProduct from './components/Product/AddProduct.tsx';
 import BrandManagement from './pages/BrandManagement.tsx';
-import AddBrand from './components/AddBrand.tsx';
-import BrandCatalog from './components/BrandCatalog.tsx';
-import BrandDetails from './components/BrandDetails.tsx';
+import AddBrand from './components/Brand/AddBrand.tsx';
+import BrandCatalog from './components/Brand/BrandCatalog.tsx';
+import BrandDetails from './components/Brand/BrandDetails.tsx';
+import UserManagement from './pages/users/UserManagement.tsx';
+import ProductManagement from './pages/ProductManagement.tsx';
+import Portal from './pages/users/Portal.tsx';
+import { AuthProvider, useAuth } from './context/AuthContext.tsx';
+import { RoleBasedRoute } from './utils/RoleBasedRoute.tsx';
+import UnauthorizedPage from './components/UnauthorizedPage.tsx';
+import UserLayout from './pages/users/UserLayout.tsx';
 
 const router = createBrowserRouter([
   {
+    path: '/portal',
+    element: <Portal />
+  },
+  {
     path: '/',
-    element: <App />,
+    element: (
+      <RoleBasedRoute allowedRole={['admin', 'user']} element={<App />} />
+    ),
     children: [
       {
-        path: '/catalog',
-        element: <Catalog />
+        path: '/users',
+        element: (
+          <RoleBasedRoute allowedRole={['admin']} element={<UserLayout />} />
+        ),
+        children: [
+          {
+            path: '/users',
+            element: <UserManagement />
+          }
+        ]
       },
       {
-        path: '/managementProduct',
-        element: <ManagementProduct />
+        path: '/product',
+        element: (
+          <RoleBasedRoute
+            allowedRole={['user']}
+            element={<ProductManagement />}
+          />
+        ),
+        children: [
+          {
+            path: '/product/view',
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<ProductCatalog />}
+              />
+            )
+          },
+          {
+            path: '/product/add',
+            element: (
+              <RoleBasedRoute allowedRole={['user']} element={<AddProduct />} />
+            )
+          },
+          {
+            path: '/product/:id/edit',
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<ProductDetails />}
+              />
+            )
+          }
+        ]
       },
       {
-        path: '/addProduct',
-        element: <AddProduct />
-      },
-      {
-        path: '/product/:id/edit',
-        element: <ProductDetails />
+        path: '/itemmanagement',
+        element: (
+          <RoleBasedRoute allowedRole={['user']} element={<ItemManagement />} />
+        )
       },
       {
         path: '/brand',
-        element: <BrandManagement />,
+        element: (
+          <RoleBasedRoute
+            allowedRole={['user']}
+            element={<BrandManagement />}
+          />
+        ),
         children: [
           {
             path: '/brand/view',
-            element: <BrandCatalog />
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<BrandCatalog />}
+              />
+            )
           },
           {
             path: '/brand/add',
-            element: <AddBrand />
+            element: (
+              <RoleBasedRoute allowedRole={['user']} element={<AddBrand />} />
+            )
           },
           {
             path: '/brand/:id/edit',
-            element: <BrandDetails />
+            element: (
+              <RoleBasedRoute
+                allowedRole={['user']}
+                element={<BrandDetails />}
+              />
+            )
           }
         ]
       }
     ]
+  },
+  {
+    path: '*',
+    element: <UnauthorizedPage />
   }
 ]);
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
+const Root = () => {
+  const { logout } = useAuth();
+  const client = createApolloClient(logout);
+
+  return (
     <ApolloProvider client={client}>
       <RouterProvider router={router} />
     </ApolloProvider>
+  );
+};
+
+createRoot(document.getElementById('root')!).render(
+  <StrictMode>
+    <AuthProvider>
+      <Root />
+    </AuthProvider>
   </StrictMode>
 );

@@ -3,6 +3,8 @@ services:
     image: postgres
     env_file: .env
     restart: always
+    volumes:
+      - ./api/auth/src/database:/docker-entrypoint-initdb.d
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}']
       interval: 5s
@@ -71,7 +73,7 @@ services:
     command: npm run dev
     restart: always
     environment:
-      - VITE_API_URL=http://localhost:5050/graph
+      - VITE_API_URI=/graph
     volumes:
       - ./client/src:/app/src
 

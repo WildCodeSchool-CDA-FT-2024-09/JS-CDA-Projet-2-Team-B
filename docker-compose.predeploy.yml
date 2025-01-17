@@ -9,15 +9,7 @@ services:
       timeout: 5s
       retries: 5
 
-  predeploy-adminer:
-    image: adminer
-    ports:
-      - 8080:8080
-    container_name: adminer
-    restart: always
-    depends_on:
-      predeploy-db:
-        condition: service_healthy
+
 
   predeploy-product:
     image: pierredlc/japn-crew_product_service
@@ -60,7 +52,7 @@ services:
     command: npm run dev
     restart: always
     environment:
-      - VITE_API_URL=/graph
+      - VITE_API_URI=/graph
 
   predeploy-gateway:
     image: nginx
