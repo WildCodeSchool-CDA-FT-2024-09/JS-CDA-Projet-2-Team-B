@@ -139,16 +139,16 @@ export default function Profile() {
         >
           <Box>
             <Typography sx={style}>
-              <strong>Prénom :</strong> {user.first_name}
+              <strong>Prénom :</strong> {user ? user.first_name : ''}
             </Typography>
             <Typography sx={style}>
-              <strong>Nom :</strong> {user.last_name}
+              <strong>Nom :</strong> {user ? user.last_name : ''}
             </Typography>
             <Typography sx={style}>
-              <strong>email :</strong> {user.email}
+              <strong>Email :</strong> {user ? user.email : ''}
             </Typography>
             <Typography sx={style}>
-              <strong>tél. :</strong> {user.phone}
+              <strong>Tél. :</strong> {user ? user.phone : ''}
             </Typography>
           </Box>
           <Box
