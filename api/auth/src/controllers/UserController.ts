@@ -99,6 +99,10 @@ export class UserController
       throw new BadRequestError('Votre compte a expiré.');
     }
 
+    if (date < user.starting_date) {
+      throw new BadRequestError("Votre compte n'est pas encore actif.");
+    }
+
     delete user.password;
 
     const foundRole = await roleDatamapper.findByPk(user.role_id);
