@@ -22,7 +22,6 @@ export class ProductInput {
 
   @Field()
   @IsString()
-  @Length(1, 2000)
   description: string;
 
   @Field()
@@ -70,7 +69,6 @@ export class ProductUpdateInput {
 
   @Field()
   @IsString()
-  @Length(1, 2000)
   description: string;
 
   @Field()
