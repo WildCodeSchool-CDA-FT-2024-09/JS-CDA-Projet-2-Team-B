@@ -10,7 +10,6 @@ import {
   OneToMany
 } from 'typeorm';
 import { ObjectType, Field, Float } from 'type-graphql';
-import { Length, Min } from 'class-validator';
 import { Image } from './image.entities';
 import { Category } from './category.entities';
 import { Brand } from './brand.entities';
@@ -26,26 +25,23 @@ export class Product extends BaseEntity {
   id: number;
 
   @Field()
-  @Column({ unique: true, length: 50, nullable: true })
-  @Length(1, 50)
+  @Column({ unique: true, length: 13, nullable: true })
   reference: string;
 
   @Field()
   @Column({ length: 255, nullable: true })
-  @Length(1, 255)
   name: string;
 
   @Field({ nullable: true })
-  @Column('text', { nullable: true })
+  @Column({ length: 100, nullable: true })
   shortDescription: string;
 
   @Field({ nullable: true })
-  @Column({ nullable: true })
+  @Column({ length: 255, nullable: true })
   description: string;
 
   @Field(() => Float, { nullable: true })
   @Column('decimal', { precision: 10, scale: 2, nullable: true })
-  @Min(0)
   price: number;
 
   @Field(() => [Image])

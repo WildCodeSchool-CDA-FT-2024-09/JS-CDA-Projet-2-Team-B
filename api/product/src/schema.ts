@@ -15,7 +15,8 @@ const getSchema = async () => {
       ImageResolver,
       TagResolver,
       BrandResolver
-    ]
+    ],
+    validate: true
   });
 };
 

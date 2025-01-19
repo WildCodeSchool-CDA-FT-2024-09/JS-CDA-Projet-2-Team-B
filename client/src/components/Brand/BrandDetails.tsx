@@ -42,8 +42,7 @@ export default function BrandDetails() {
     activateBrand,
     { error: activationError, loading: activationLoading }
   ] = useActivateBrandMutation();
-  const [updateBrand, { loading: updateLoading, error: updateError }] =
-    useUpdateBrandMutation();
+  const [updateBrand, { loading: updateLoading }] = useUpdateBrandMutation();
 
   const {
     loading,
@@ -146,22 +145,13 @@ export default function BrandDetails() {
       });
 
       if (data?.updateBrand) {
-        setBrand({
-          name: '',
-          description: '',
-          deletedAt: null
-        });
         setSuccessMessage('Marque mise à jour avec succès !');
-      } else if (updateError) {
-        setSuccessMessage(null);
-        setError(updateError.message);
-        console.error(
-          'Erreur lors de la mise à jour de la marque :',
-          updateError
-        );
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err);
+        setError(err.message);
+      }
     }
   };
 
