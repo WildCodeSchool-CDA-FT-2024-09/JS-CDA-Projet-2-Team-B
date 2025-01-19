@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import { DataGrid } from '@mui/x-data-grid';
 import { useEffect, useState } from 'react';
-import { Button } from '@mui/material';
+import { Button, Typography } from '@mui/material';
 import { Add } from '@mui/icons-material';
 import { userColumns } from '../../utils/userColumns';
 import { useAuth } from '../../context/AuthContext';
@@ -20,6 +20,8 @@ export type UserRow = {
 
 export default function UserManagement() {
   const [users, setUsers] = useState<UserRow[]>([]);
+  const [error, setError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { logout } = useAuth();
 
   const axiosInstance = createAxiosInstance(logout);
@@ -36,6 +38,39 @@ export default function UserManagement() {
   const handleSaveClick = async (data: UserRow) => {
     delete data.id;
     delete data.isNew;
+
+    const isValidDate = (dateStr: string): boolean => {
+      const regex = /^\d{2}\/\d{2}\/\d{4}$/; // Format DD/MM/YYYY
+      if (!regex.test(dateStr)) return false;
+      const [day, month, year] = dateStr.split('/').map(Number);
+      const date = new Date(year, month - 1, day);
+      return (
+        date.getFullYear() === year &&
+        date.getMonth() === month - 1 &&
+        date.getDate() === day
+      );
+    };
+
+    if (!isValidDate(data.starting_date)) {
+      setError("La date de début n'est pas valide.");
+      fetchUsers();
+      return;
+    }
+
+    if (!isValidDate(data.ending_date)) {
+      setError("La date de fin n'est pas valide.");
+      fetchUsers();
+      return;
+    }
+
+    // Converting date format from DD/MM/YYYY to YYYY-MM-DD
+    const parseDate = (dateStr: string): string => {
+      const [day, month, year] = dateStr.split('/');
+      return `${year}-${month}-${day}`;
+    };
+
+    data.starting_date = parseDate(data.starting_date);
+    data.ending_date = parseDate(data.ending_date);
 
     await axiosInstance.post('/auth/users', data, {
       headers: {
@@ -55,6 +90,9 @@ export default function UserManagement() {
   };
 
   const handleAddClick = () => {
+    setError(null);
+    setSuccessMessage(null);
+
     const newUser: UserRow = {
       id: getLastId() + 1,
       first_name: '',
@@ -83,9 +121,7 @@ export default function UserManagement() {
         pageSizeOptions={[10]}
         disableRowSelectionOnClick
       />
-      <Box
-        sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: '10px' }}
-      >
+      <Box sx={{ display: 'flex', marginTop: '10px', alignItems: 'center' }}>
         <Button
           variant="contained"
           color="primary"
@@ -94,6 +130,16 @@ export default function UserManagement() {
         >
           Ajouter un utilisateur
         </Button>
+        {error ? (
+          <Typography sx={{ color: 'error.main', marginLeft: '10px' }}>
+            {error}
+          </Typography>
+        ) : (
+          ''
+        )}
+        {successMessage && (
+          <Typography sx={{ color: 'success' }}>{successMessage}</Typography>
+        )}
       </Box>
     </Box>
   );
