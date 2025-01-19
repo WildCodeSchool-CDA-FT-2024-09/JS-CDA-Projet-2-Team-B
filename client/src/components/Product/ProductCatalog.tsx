@@ -39,7 +39,7 @@ export default function Catalog() {
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: 'Nom', width: 200 },
-    { field: 'price', headerName: 'Prix (€)', width: 150 },
+    { field: 'price', headerName: 'Prix (€)', width: 100 },
     { field: 'reference', headerName: 'Référence', width: 200 },
     {
       field: 'shortDescription',
@@ -49,12 +49,12 @@ export default function Catalog() {
     {
       field: 'Description',
       headerName: 'Description',
-      width: 300
+      width: 250
     },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 200,
+      width: 100,
       renderCell: (Product: GridRenderCellParams) => (
         <CardProduct
           id={Product.row.id}
@@ -74,11 +74,7 @@ export default function Catalog() {
     <>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '2rem',
-          borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          padding: '2rem'
         }}
       >
         <Box>

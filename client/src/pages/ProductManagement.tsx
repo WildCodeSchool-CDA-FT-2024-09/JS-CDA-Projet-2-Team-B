@@ -41,7 +41,7 @@ export default function ProductManagement() {
                 color: 'inherit'
               }}
             >
-              Liste des Produits
+              Liste des produits
             </Link>
             <Link
               to="/product/add"
@@ -55,7 +55,7 @@ export default function ProductManagement() {
                 color: 'inherit'
               }}
             >
-              Créer un Produit
+              Créer un produit
             </Link>
           </Box>
         </CardContent>
@@ -65,18 +65,10 @@ export default function ProductManagement() {
           width: '85%',
           margin: '5px 0',
           height: '100dvh',
-          boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)',
-          display: 'flex',
-          justifyContent: 'left'
+          boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)'
         }}
       >
-        <CardContent
-          sx={{
-            marginLeft: '5dvh'
-          }}
-        >
-          <Outlet />
-        </CardContent>
+        <Outlet />
       </Card>
     </Box>
   );

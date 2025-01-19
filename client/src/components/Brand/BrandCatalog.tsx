@@ -29,22 +29,30 @@ export default function BrandCatalog() {
             width: '100%',
             display: 'flex',
             flexWrap: 'wrap',
-            margin: '1rem 2rem',
-            justifyContent: 'left',
-            gap: '0.5rem'
+            margin: '0.5rem 1rem'
           }}
         >
-          {brands.map((brand) => (
-            <BrandCard
-              key={brand.id}
-              id={brand.id}
-              name={brand.name}
-              description={brand.description}
-              image={brand.image}
-              deletedAt={brand.deletedAt as Date | null}
-              refetch={refetch}
-            />
-          ))}
+          <Box
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              justifyContent: 'flex-start',
+              margin: 'auto',
+              gap: '0.5rem'
+            }}
+          >
+            {brands.map((brand) => (
+              <BrandCard
+                key={brand.id}
+                id={brand.id}
+                name={brand.name}
+                description={brand.description}
+                image={brand.image}
+                deletedAt={brand.deletedAt as Date | null}
+                refetch={refetch}
+              />
+            ))}
+          </Box>
         </Box>
       )}
     </>
