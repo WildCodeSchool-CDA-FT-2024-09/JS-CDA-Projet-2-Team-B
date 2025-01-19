@@ -67,16 +67,17 @@ export default function BrandManagement() {
           height: '100dvh',
           boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)',
           display: 'flex',
-          justifyContent: 'left'
+          justifyContent: 'center'
         }}
       >
-        <CardContent
+        <Box
           sx={{
-            marginLeft: '5dvh'
+            margin: '1em',
+            width: '100%'
           }}
         >
           <Outlet />
-        </CardContent>
+        </Box>
       </Card>
     </Box>
   );

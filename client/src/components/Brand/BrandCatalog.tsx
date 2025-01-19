@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Box } from '@mui/material';
 import {
   GetAllBrandsQuery,
   useGetAllBrandsQuery
@@ -23,30 +23,30 @@ export default function BrandCatalog() {
 
   return (
     <>
-      <Grid
-        container
-        spacing={2}
-        sx={{
-          justifyContent: 'center',
-          marginTop: '2dvh',
-          padding: '2rem',
-          backgroundColor: '#f9f9f9',
-          borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-        }}
-      >
-        {brands.map((brand) => (
-          <BrandCard
-            key={brand.id}
-            id={brand.id}
-            name={brand.name}
-            description={brand.description}
-            image={brand.image}
-            deletedAt={brand.deletedAt as Date | null}
-            refetch={refetch}
-          />
-        ))}
-      </Grid>
+      {brands.length > 0 && (
+        <Box
+          sx={{
+            width: '100%',
+            display: 'flex',
+            flexWrap: 'wrap',
+            margin: '1rem 2rem',
+            justifyContent: 'left',
+            gap: '0.5rem'
+          }}
+        >
+          {brands.map((brand) => (
+            <BrandCard
+              key={brand.id}
+              id={brand.id}
+              name={brand.name}
+              description={brand.description}
+              image={brand.image}
+              deletedAt={brand.deletedAt as Date | null}
+              refetch={refetch}
+            />
+          ))}
+        </Box>
+      )}
     </>
   );
 }
