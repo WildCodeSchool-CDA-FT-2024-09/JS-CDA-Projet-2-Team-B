@@ -74,7 +74,7 @@ export const userColumns = (
     width: 110,
     editable: true,
     valueGetter: (value, row) => {
-      const date = row.ending_date ? new Date(row.ending_date) : '';
+      const date = row.ending_date ? new Date(row.ending_date) : null;
       return date ? new Intl.DateTimeFormat('fr-FR').format(date) : '';
     }
   },
