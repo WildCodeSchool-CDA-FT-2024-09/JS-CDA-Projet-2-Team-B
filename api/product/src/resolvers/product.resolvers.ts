@@ -7,6 +7,7 @@ import { Brand } from '../entity/brand.entities';
 import { ProductCharacteristic } from '../entity/productCharacteristic.entities';
 import { Characteristic } from '../entity/characteristic.entities';
 import { Tag } from '../entity/tag.entities';
+import redisClient from '../redis.config';
 
 @Resolver(Product)
 export default class ProductResolver {
@@ -17,6 +18,12 @@ export default class ProductResolver {
     @Arg('includeDeleted', () => Boolean, { nullable: true })
     includeDeleted = false
   ): Promise<Product[]> {
+    const cacheKey = `products:${search || 'all'}:${brands?.join(',') || 'all'}:${includeDeleted}`;
+    const cache = await redisClient.get(cacheKey);
+    if (cache) {
+      return JSON.parse(cache);
+    }
+
     const query = {
       where: {
         ...(search && { name: ILike(`%${search}%`) }),
@@ -34,7 +41,11 @@ export default class ProductResolver {
       withDeleted: includeDeleted
     };
 
-    return Product.find(query);
+    const result = await Product.find(query);
+
+    await redisClient.set(cacheKey, JSON.stringify(result), { EX: 60 });
+
+    return result;
   }
 
   @Mutation(() => Product)
@@ -81,6 +92,7 @@ export default class ProductResolver {
     }
 
     await product.save();
+    await redisClient.flushAll();
 
     if (newProduct.characteristicValues?.length) {
       const characteristicValues = await Promise.all(
@@ -250,7 +262,10 @@ export default class ProductResolver {
       product.characteristicValues = updatedCharacteristics;
     }
 
-    return await product.save();
+    await product.save();
+    await redisClient.flushAll();
+
+    return product;
   }
 
   @Mutation(() => Boolean)
