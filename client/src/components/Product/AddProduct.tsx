@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import CreationProduct from '../Product/CreationProduct';
 import AddImage from './AddImage';
-import { Grid, Grid2 } from '@mui/material';
+import { Box, Grid, Grid2 } from '@mui/material';
 
 const AddProduct = () => {
   const [productId, setProductId] = useState<number | null>(null);
@@ -19,13 +19,13 @@ const AddProduct = () => {
   };
   return (
     <Grid2 container spacing={2}>
-      <Grid item xs={12}>
+      <Box>
         <CreationProduct
           handleProductId={handleProductId}
           block={block}
           resetForm={resetFormFlag}
         />
-      </Grid>
+      </Box>
       {productId && (
         <Grid item xs={12} md={6}>
           <AddImage

@@ -5,18 +5,24 @@ import {
 } from '../../generated/graphql-types';
 import { useEffect, useState } from 'react';
 import BrandCard from './BrandCard';
+import { useOutletContext } from 'react-router-dom';
 
 export default function BrandCatalog() {
   const { loading, error, data, refetch } = useGetAllBrandsQuery({
     variables: { includeDeleted: true }
   });
   const [brands, setBrands] = useState<GetAllBrandsQuery['getAllBrands']>([]);
+  const { refreshBrands } = useOutletContext<{ refreshBrands: boolean }>();
 
   useEffect(() => {
     if (data && data.getAllBrands) {
       setBrands(data.getAllBrands);
     }
   }, [data]);
+
+  useEffect(() => {
+    refetch();
+  }, [refreshBrands, refetch]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;

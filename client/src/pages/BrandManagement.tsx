@@ -1,7 +1,14 @@
 import { Card, CardContent, Box } from '@mui/material';
+import { useState } from 'react';
 import { Link, Outlet } from 'react-router-dom';
 
 export default function BrandManagement() {
+  const [refreshBrands, setRefreshBrands] = useState(false);
+
+  const triggerRefresh = () => {
+    setRefreshBrands((prev) => !prev);
+  };
+
   return (
     <Box
       sx={{
@@ -76,7 +83,7 @@ export default function BrandManagement() {
             width: '100%'
           }}
         >
-          <Outlet />
+          <Outlet context={{ triggerRefresh, refreshBrands }} />
         </Box>
       </Card>
     </Box>

@@ -245,8 +245,8 @@ export default function CreationProduct({
   return (
     <Box
       sx={{
-        maxWidth: 1200,
-        margin: 'auto',
+        maxWidth: '100%',
+        marginLeft: '2rem',
         marginTop: 5,
         padding: 3,
         backgroundColor: '#f9f9f9',
