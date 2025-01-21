@@ -2,7 +2,7 @@ import { graphql, GraphQLSchema, print } from 'graphql';
 import getSchema from '../schema';
 import { DEACTIVATE_BRAND, POST_BRAND, PUT_BRAND } from './schemas/mutations';
 import { Brand } from '../../src/entity/brand.entities';
-import { cookieString } from './helpers/generateCookie.helper';
+import { UserCookie } from './helpers/generateCookie.helper';
 import * as cookie from 'cookie';
 import { AppDataSource } from '../data-source';
 import { createBrand } from './helpers/test.helpers';
@@ -20,8 +20,8 @@ describe('Brand resolvers tests', () => {
     await AppDataSource.query('DELETE FROM brand');
   });
 
-  const cookieHeader = cookieString.split(';')[0];
-  const contextValue = cookie.parse(cookieHeader);
+  const UserCookieHeader = UserCookie.split(';')[0];
+  const UserContextValue = cookie.parse(UserCookieHeader);
 
   const manualBrandCreation = {
     name: 'Le Brand James',
@@ -33,7 +33,7 @@ describe('Brand resolvers tests', () => {
       schema: schema,
       source: print(POST_BRAND),
       variableValues: { data: manualBrandCreation },
-      contextValue: contextValue
+      contextValue: UserContextValue
     })) as { data: { createBrand: Brand } };
 
     expect(result.data?.createBrand).toMatchObject({
@@ -49,7 +49,7 @@ describe('Brand resolvers tests', () => {
     const result = (await graphql({
       schema: schema,
       source: print(GET_ALL_BRANDS),
-      contextValue: contextValue
+      contextValue: UserContextValue
     })) as { data: { getAllBrands: Array<Brand> } };
 
     expect(result.data?.getAllBrands.length).toEqual(2);
@@ -68,7 +68,7 @@ describe('Brand resolvers tests', () => {
       schema: schema,
       source: print(PUT_BRAND),
       variableValues: { data: newData },
-      contextValue: contextValue
+      contextValue: UserContextValue
     })) as { data: { updateBrand: Brand } };
 
     expect(updatedBrand.data?.updateBrand).toMatchObject(newData);
@@ -81,7 +81,7 @@ describe('Brand resolvers tests', () => {
       schema: schema,
       source: print(DEACTIVATE_BRAND),
       variableValues: { id: brand.id },
-      contextValue: contextValue
+      contextValue: UserContextValue
     })) as { data: { deactivateBrand: Brand } };
 
     expect(deactivatedBrand.data?.deactivateBrand.deletedAt).not.toBe(null);
