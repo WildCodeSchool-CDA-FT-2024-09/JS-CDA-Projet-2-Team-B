@@ -1,24 +1,22 @@
-import Router from 'express';
+import { Router } from 'express';
 import { userController } from '../controllers/index.controllers';
 import {
-  validateRequest,
-  requireAuth,
   checkPermissions,
+  validateRequest,
   errorCatcher
 } from '../middlewares/index.middlewares';
-import { userCreateSchema } from '../validation/index.validation';
+import { userChangePasswordSchema } from '../validation/index.validation';
 
 const userRouter = Router();
 
-userRouter.use(errorCatcher(requireAuth));
-userRouter.use(errorCatcher(checkPermissions(['admin'])));
+userRouter.use(errorCatcher(checkPermissions(['user'])));
 
 userRouter
-  .route('/')
-  .get(errorCatcher(userController.getAll))
-  .post(
-    errorCatcher(validateRequest('body', userCreateSchema)),
-    errorCatcher(userController.create)
+  .get('/', errorCatcher(userController.getByEmail))
+  .patch(
+    '/change-password',
+    errorCatcher(validateRequest('body', userChangePasswordSchema)),
+    errorCatcher(userController.changePassword)
   );
 
 export default userRouter;

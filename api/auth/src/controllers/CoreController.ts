@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { NotFoundError } from '../errors/NotFoundError.error';
+import { NotFoundError } from '../errors/index.errors';
 import { EntityControllerReq } from './interfaces/EntityControllerReq';
 
 export abstract class CoreController<T extends EntityControllerReq> {

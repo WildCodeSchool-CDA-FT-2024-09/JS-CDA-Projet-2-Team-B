@@ -1,4 +1,10 @@
 services:
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - '6379:6379'
   db:
     image: postgres
     env_file: .env
@@ -31,6 +37,8 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      redis:
+        condition: service_started
 
   uploadimage:
     build: ./api/uploadimage

@@ -1,6 +1,5 @@
 import { BadRequestError } from '../errors/index.errors';
 import { UserPayload } from './index.helpers';
-import { Response } from 'express';
 import jwt from 'jsonwebtoken';
 
 const { ACCESS_TOKEN_SECRET } = process.env;
@@ -32,14 +31,6 @@ export default class Token {
           resolve(decoded as UserPayload);
         }
       });
-    });
-  };
-
-  static setAccessTokenCookie = async (res: Response, accessToken: string) => {
-    res.cookie('access_token', accessToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict'
     });
   };
 }
