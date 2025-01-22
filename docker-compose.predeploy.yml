@@ -9,8 +9,6 @@ services:
       timeout: 5s
       retries: 5
 
-
-
   predeploy-product:
     image: pierredlc/japn-crew_product_service
     command: npm run dev

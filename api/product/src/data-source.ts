@@ -28,5 +28,6 @@ export const AppDataSource = new DataSource({
     Brand,
     ProductCharacteristic
   ],
-  synchronize: true
+  synchronize: false,
+  migrations: ['src/migrations/*.ts']
 });

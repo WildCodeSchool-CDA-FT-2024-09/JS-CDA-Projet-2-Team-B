@@ -7,6 +7,7 @@ import jwt from 'jsonwebtoken';
 import { AuthenticationError } from 'type-graphql';
 import { parse } from 'cookie';
 import redisClient from './redis.config';
+import { DataImportService } from './services/DataImportService';
 
 const { PORT, ACCESS_TOKEN_SECRET } = process.env;
 
@@ -23,6 +24,11 @@ interface Context {
   await AppDataSource.initialize();
   await redisClient.connect();
   console.info('🚀 Redis connected');
+
+  const dataImportService = new DataImportService();
+  await dataImportService.importData();
+  console.info('🚀 Data imported');
+
   const schema = await getSchema();
 
   const server = new ApolloServer<Context>({ schema });

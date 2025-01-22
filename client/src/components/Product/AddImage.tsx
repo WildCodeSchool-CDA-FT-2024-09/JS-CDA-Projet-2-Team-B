@@ -130,18 +130,6 @@ const AddImage = ({ productId, handleBlock, onImageAdded }: Props) => {
         />
       )}
 
-      <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%' }}>
-        <Box sx={{ marginBottom: 2 }}>
-          <Typography>Image principale ?</Typography>
-          <input
-            type="checkbox"
-            checked={isMain}
-            onChange={(e) => setIsMain(e.target.checked)}
-            style={{ marginTop: '8px' }}
-          />
-        </Box>
-      </Box>
-
       <Button
         type="submit"
         onClick={handleAddImage}
@@ -162,8 +150,8 @@ const AddImage = ({ productId, handleBlock, onImageAdded }: Props) => {
       )}
 
       {data && (
-        <Typography color="primary" sx={{ marginTop: 2 }}>
-          Image ajoutée avec succès ! ID : {data.id}
+        <Typography color="green" sx={{ marginTop: 2 }}>
+          Produit créé {data.id ? `: ${data.id}` : 'avec succès'}
         </Typography>
       )}
     </Card>
