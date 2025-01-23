@@ -49,12 +49,12 @@ export default function Catalog() {
     {
       field: 'shortDescription',
       headerName: 'Description courte',
-      width: 250
+      width: 400
     },
     {
       field: 'description',
       headerName: 'Description',
-      width: 250
+      width: 450
     },
     {
       field: 'actions',
