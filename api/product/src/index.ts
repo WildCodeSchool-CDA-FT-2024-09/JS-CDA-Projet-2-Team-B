@@ -6,6 +6,7 @@ import getSchema from './schema';
 import jwt from 'jsonwebtoken';
 import { AuthenticationError } from 'type-graphql';
 import { parse } from 'cookie';
+import redisClient from './redis.config';
 
 const { PORT, ACCESS_TOKEN_SECRET } = process.env;
 
@@ -20,6 +21,8 @@ interface Context {
 
 (async () => {
   await AppDataSource.initialize();
+  await redisClient.connect();
+  console.info('🚀 Redis connected');
 
   const schema = await getSchema();
 
@@ -31,9 +34,9 @@ interface Context {
       const cookies = req.headers.cookie ? parse(req.headers.cookie) : {};
       const accessToken = cookies.access_token;
 
-      if (!accessToken) {
+      /*if (!accessToken) {
         throw new AuthenticationError("Le token d'accès est manquant.");
-      }
+      }*/
 
       let user: User | null = null;
 
