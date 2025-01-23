@@ -88,32 +88,137 @@ CREATE TABLE "brand" ("id" SERIAL NOT NULL, "name" character varying NOT NULL, "
         ALTER TABLE "products_tags_tags" ADD CONSTRAINT "FK_88687975db5205fdbdb10969fc4" FOREIGN KEY ("productsId") REFERENCES "products"("id") ON DELETE CASCADE ON UPDATE CASCADE;
         ALTER TABLE "products_tags_tags" ADD CONSTRAINT "FK_72fa6ba0f176a89a2e9d90274c5" FOREIGN KEY ("tagsId") REFERENCES "tags"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
-        INSERT INTO IMAGE (url) select distinct(brand_logo) FROM temp_import;
-        INSERT INTO products (reference, name, description, "shortDescription", price, "brandId") 
-SELECT ti.ref, ti.name, ti.description, ti.short_description, ti.price, b.id 
-FROM temp_import as ti 
-inner join brand as b
-on b.name = ti.brand_name;
-        INSERT INTO brand (name, image_id) SELECT DISTINCT temp.brand_name, img.id FROM temp_import temp LEFT JOIN image img ON temp.brand_logo = img.url WHERE temp.brand_name IS NOT NULL;
+        
+
+        
+        
         INSERT INTO IMAGE (url)
-SELECT DISTINCT image_1_src 
-FROM temp_import
-WHERE image_1_src IS NOT NULL;
-INSERT INTO products_images (product_id, image_id)
-SELECT p.id, i.id
-FROM temp_import temp
-JOIN products p ON p.reference = temp.ref
-JOIN image i ON i.url = temp.image_1_src
-WHERE temp.image_1_src IS NOT NULL
-AND temp.image_1_src NOT IN (SELECT brand_logo FROM temp_import WHERE brand_logo IS NOT NULL);
-INSERT INTO characteristics (name)
-SELECT DISTINCT property_1_label FROM temp_import WHERE property_1_label IS NOT NULL
-UNION
-SELECT DISTINCT property_2_label FROM temp_import WHERE property_2_label IS NOT NULL
-UNION
-SELECT DISTINCT property_3_label FROM temp_import WHERE property_3_label IS NOT NULL
-UNION
-SELECT DISTINCT property_4_label FROM temp_import WHERE property_4_label IS NOT NULL
-UNION
-SELECT DISTINCT property_5_label FROM temp_import WHERE property_5_label IS NOT NULL;
+        SELECT DISTINCT CONCAT('/', image_1_src) 
+        FROM temp_import
+        WHERE image_1_src IS NOT NULL;
+
+        INSERT INTO IMAGE (url) select distinct CONCAT('/',brand_logo) 
+        FROM temp_import;
+
+        INSERT INTO brand (name, image_id, description)
+        SELECT DISTINCT temp.brand_name, img.id, temp.brand_description
+        FROM temp_import temp
+        LEFT JOIN image img ON '/' || temp.brand_logo = img.url
+        WHERE temp.brand_name IS NOT NULL
+        ON CONFLICT (name) 
+        DO NOTHING;
+
+        INSERT INTO products (reference, name, description, "shortDescription", price, "brandId") 
+        SELECT ti.ref, ti.name, ti.description, ti.short_description, ti.price, b.id 
+        FROM temp_import as ti 
+        JOIN brand as b ON b.name = ti.brand_name;
+
+        
+        INSERT INTO products_images (product_id, image_id)
+        SELECT p.id, i.id
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN image i ON i.url = '/' || temp.image_1_src
+        WHERE temp.image_1_src IS NOT NULL
+        AND temp.image_1_src NOT IN (SELECT brand_logo FROM temp_import WHERE brand_logo IS NOT NULL)
+
+        UNION ALL
+
+        SELECT p.id, i.id
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN image i ON i.url = '/' || temp.image_2_src
+        WHERE temp.image_2_src IS NOT NULL
+
+        UNION ALL
+
+        SELECT p.id, i.id
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN image i ON i.url = '/' || temp.image_3_src
+        WHERE temp.image_3_src IS NOT NULL;
+
+        INSERT INTO characteristics (name)
+        SELECT DISTINCT property_1_label FROM temp_import WHERE property_1_label IS NOT NULL
+        UNION
+        SELECT DISTINCT property_2_label FROM temp_import WHERE property_2_label IS NOT NULL
+        UNION
+        SELECT DISTINCT property_3_label FROM temp_import WHERE property_3_label IS NOT NULL
+        UNION
+        SELECT DISTINCT property_4_label FROM temp_import WHERE property_4_label IS NOT NULL
+        UNION
+        SELECT DISTINCT property_5_label FROM temp_import WHERE property_5_label IS NOT NULL;
+
+        INSERT INTO product_characteristics ("characteristicId", "productId")
+        SELECT DISTINCT c.id, p.id
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_1_label
+        WHERE temp.property_1_label IS NOT NULL
+        UNION
+        SELECT DISTINCT c.id, p.id
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_2_label
+        WHERE temp.property_2_label IS NOT NULL
+        UNION
+        SELECT DISTINCT c.id, p.id
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_3_label
+        WHERE temp.property_3_label IS NOT NULL
+        UNION
+        SELECT DISTINCT c.id, p.id
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_4_label
+        WHERE temp.property_4_label IS NOT NULL
+        UNION
+        SELECT DISTINCT c.id, p.id
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_5_label
+        WHERE temp.property_5_label IS NOT NULL;
+
+        INSERT INTO product_characteristic_values ("productId", "characteristicId", "value")
+        SELECT p.id, c.id, CAST(temp.property_1_text AS TEXT)
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_1_label
+        WHERE temp.property_1_label IS NOT NULL AND temp.property_1_text IS NOT NULL
+
+        UNION ALL
+
+        SELECT p.id, c.id, CAST(temp.property_2_text AS TEXT)
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_2_label
+        WHERE temp.property_2_label IS NOT NULL AND temp.property_2_text IS NOT NULL
+
+        UNION ALL
+
+        SELECT p.id, c.id, CAST(temp.property_3_text AS TEXT)
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_3_label
+        WHERE temp.property_3_label IS NOT NULL AND temp.property_3_text IS NOT NULL
+
+        UNION ALL
+
+        SELECT p.id, c.id, CAST(temp.property_4_text AS TEXT)
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_4_label
+        WHERE temp.property_4_label IS NOT NULL AND temp.property_4_text IS NOT NULL
+
+        UNION ALL
+
+        SELECT p.id, c.id, CAST(temp.property_5_text AS TEXT)
+        FROM temp_import temp
+        JOIN products p ON p.reference = temp.ref
+        JOIN characteristics c ON c.name = temp.property_5_label
+        WHERE temp.property_5_label IS NOT NULL AND temp.property_5_text IS NOT NULL;
+
+
+
 COMMIT;

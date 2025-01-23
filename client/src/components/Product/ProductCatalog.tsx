@@ -47,7 +47,7 @@ export default function Catalog() {
       width: 250
     },
     {
-      field: 'Description',
+      field: 'description',
       headerName: 'Description',
       width: 300
     },
