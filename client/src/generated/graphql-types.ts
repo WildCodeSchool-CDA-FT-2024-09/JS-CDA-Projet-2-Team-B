@@ -43,7 +43,6 @@ export type Brand = {
 };
 
 export type BrandCreationInput = {
-  deletedAt?: InputMaybe<Scalars['DateTimeISO']['input']>;
   description: Scalars['String']['input'];
   name: Scalars['String']['input'];
 };
@@ -237,12 +236,12 @@ export type ProductInput = {
   brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   characteristicValues?: InputMaybe<Array<CharacteristicValueInput>>;
-  description: Scalars['String']['input'];
-  isPublished: Scalars['Boolean']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
-  price: Scalars['Float']['input'];
+  price?: InputMaybe<Scalars['Float']['input']>;
   reference: Scalars['String']['input'];
-  shortDescription: Scalars['String']['input'];
+  shortDescription?: InputMaybe<Scalars['String']['input']>;
   tagIds?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 
@@ -250,13 +249,13 @@ export type ProductUpdateInput = {
   brand?: InputMaybe<Scalars['Float']['input']>;
   categoryIds?: InputMaybe<Array<Scalars['Int']['input']>>;
   characteristicValues?: InputMaybe<Array<CharacteristicValueUpdateInput>>;
-  description: Scalars['String']['input'];
+  description?: InputMaybe<Scalars['String']['input']>;
   id: Scalars['Float']['input'];
-  isPublished: Scalars['Boolean']['input'];
+  isPublished?: InputMaybe<Scalars['Boolean']['input']>;
   name: Scalars['String']['input'];
-  price: Scalars['Float']['input'];
+  price?: InputMaybe<Scalars['Float']['input']>;
   reference: Scalars['String']['input'];
-  shortDescription: Scalars['String']['input'];
+  shortDescription?: InputMaybe<Scalars['String']['input']>;
   tagIds?: InputMaybe<Array<Scalars['Int']['input']>>;
 };
 

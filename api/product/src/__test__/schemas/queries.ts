@@ -1,6 +1,6 @@
 import { gql } from 'graphql-tag';
 
-export const GET_PRODUCT = gql`
+export const GET_PRODUCTS = gql`
   query GetAllProducts {
     getAllProducts {
       id
@@ -9,11 +9,11 @@ export const GET_PRODUCT = gql`
       shortDescription
       description
       price
+      isPublished
       brand {
         id
         name
         description
-        logo
       }
     }
   }
@@ -28,11 +28,11 @@ export const GET_PRODUCT_BY_ID = gql`
       shortDescription
       description
       price
+      isPublished
       brand {
         id
         name
         description
-        logo
       }
     }
   }
@@ -44,7 +44,6 @@ export const GET_ALL_BRANDS = gql`
       id
       name
       description
-      logo
       deletedAt
     }
   }
@@ -56,7 +55,6 @@ export const GET_BRAND_BY_ID = gql`
       id
       name
       description
-      logo
       deletedAt
     }
   }

@@ -41,7 +41,7 @@ const TagForm = () => {
   };
 
   return (
-    <Card sx={{ width: 900, margin: 1, boxShadow: 4 }}>
+    <Card sx={{ width: '30%', margin: 1, boxShadow: 4 }}>
       <CardContent>
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
           Tags
@@ -52,15 +52,12 @@ const TagForm = () => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'flex-start'
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ minWidth: 'fit-content' }}>
-              Ajouter un tag :
-            </Typography>
             <TextField
-              sx={{ marginLeft: '25px' }}
+              sx={{ marginLeft: '0.1rem' }}
               placeholder="Nom"
               variant="outlined"
               size="small"
@@ -73,13 +70,13 @@ const TagForm = () => {
               variant="contained"
               type="submit"
               sx={{
-                padding: '4px 10px',
+                padding: '0.45rem 1rem',
                 borderRadius: '5px',
                 backgroundColor: 'green',
-                marginRight: 6
+                marginLeft: '1rem'
               }}
             >
-              Ajouter +
+              Ajouter
             </Button>
           </Box>
         </Box>

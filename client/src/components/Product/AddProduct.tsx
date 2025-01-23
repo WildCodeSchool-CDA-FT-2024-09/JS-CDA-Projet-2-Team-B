@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import CreationProduct from '../Product/CreationProduct';
 import AddImage from './AddImage';
-import { Grid, Grid2 } from '@mui/material';
+import { Box } from '@mui/material';
 
 const AddProduct = () => {
   const [productId, setProductId] = useState<number | null>(null);
@@ -18,24 +18,30 @@ const AddProduct = () => {
     setTimeout(() => setResetFormFlag(false), 0);
   };
   return (
-    <Grid2 container spacing={2}>
-      <Grid item xs={12}>
+    <>
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center'
+        }}
+      >
         <CreationProduct
           handleProductId={handleProductId}
           block={block}
           resetForm={resetFormFlag}
         />
-      </Grid>
-      {productId && (
-        <Grid item xs={12} md={6}>
+      </Box>
+      <Box>
+        {productId && (
           <AddImage
             productId={productId}
             handleBlock={setBlock}
             onImageAdded={resetForm}
           />
-        </Grid>
-      )}
-    </Grid2>
+        )}
+      </Box>
+    </>
   );
 };
 

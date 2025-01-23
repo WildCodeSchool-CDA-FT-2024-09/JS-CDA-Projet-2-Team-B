@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Card, Button, Typography, Box, styled } from '@mui/material';
+import { Button, Typography, Box, styled } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import { createAxiosInstance } from '../../services/axios.instance';
 import { useAuth } from '../../context/AuthContext';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 interface UploadResponse {
   id: string;
@@ -29,6 +30,7 @@ const AddImage = ({ productId, handleBlock, onImageAdded }: Props) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [data, setData] = useState<UploadResponse | null>(null);
+  const [displayStepTwo, setDisplayStepTwo] = useState<boolean>(true);
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [isMain, setIsMain] = useState<boolean>(false);
   const { logout } = useAuth();
@@ -86,75 +88,115 @@ const AddImage = ({ productId, handleBlock, onImageAdded }: Props) => {
   };
 
   return (
-    <Card
-      sx={{
-        maxWidth: 600,
-        padding: 3,
-        textAlign: 'center',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        margin: 'auto',
-        marginTop: 5
-      }}
-    >
-      <Typography>Ajouter une Image</Typography>
-      <Box sx={{ marginBottom: 2 }}>
-        <Button
-          component="label"
-          variant="contained"
-          startIcon={<CloudUploadIcon />}
-        >
-          Choisir un fichier
-          <VisuallyHiddenInput
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-          />
-        </Button>
-      </Box>
-
-      {imagePreview && (
+    <>
+      <Box
+        sx={{
+          marginLeft: '2rem',
+          backgroundColor: '#f9f9f9',
+          padding: '1rem 1.5rem 1rem 1.5rem',
+          borderRadius: '8px 8px 0 0',
+          width: '90%',
+          marginTop: '1rem'
+        }}
+      >
         <Box
-          component="img"
-          src={imagePreview}
-          alt="Prévisualisation"
           sx={{
             display: 'flex',
-            maxWidth: '60%',
-            height: 'auto',
-            marginBottom: 2,
-            borderRadius: 1,
-            border: '1px solid #ccc'
+            justifyContent: 'space-between'
           }}
-        />
-      )}
+        >
+          <Typography variant="h6">
+            <strong>Associer une image</strong>
+          </Typography>
+          {displayStepTwo ? (
+            <Typography>
+              <KeyboardArrowUp
+                onClick={() => setDisplayStepTwo((prev) => !prev)}
+              />
+            </Typography>
+          ) : (
+            <Typography>
+              <KeyboardArrowDown
+                onClick={() => setDisplayStepTwo((prev) => !prev)}
+              />
+            </Typography>
+          )}
+        </Box>
+        {displayStepTwo && (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
+            }}
+          >
+            <Button
+              sx={{
+                width: '15rem',
+                marginBottom: '1rem'
+              }}
+              component="label"
+              variant="contained"
+              startIcon={<CloudUploadIcon />}
+            >
+              Choisir un fichier
+              <VisuallyHiddenInput
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+              />
+            </Button>
 
-      <Button
-        type="submit"
-        onClick={handleAddImage}
-        sx={{
-          marginTop: 2,
-          backgroundColor: 'green',
-          color: 'white'
-        }}
-        disabled={loading || !imageFile}
-      >
-        {loading ? 'Ajout en cours...' : 'Ajouter +'}
-      </Button>
+            {imagePreview && (
+              <Box
+                component="img"
+                src={imagePreview}
+                alt="Prévisualisation"
+                sx={{
+                  display: 'flex',
+                  maxWidth: '25%',
+                  padding: '1rem',
+                  height: 'auto',
+                  marginBottom: 2,
+                  borderRadius: 1,
+                  border: '1px solid #ccc'
+                }}
+              />
+            )}
+            <Button
+              type="submit"
+              onClick={handleAddImage}
+              sx={{
+                marginTop: 2,
+                backgroundColor: 'green',
+                color: 'white',
+                width: '15rem',
+                '&.Mui-disabled': {
+                  backgroundColor: 'grey',
+                  color: 'white'
+                }
+              }}
+              disabled={loading || !imageFile}
+            >
+              {loading ? 'Ajout en cours...' : 'Ajouter'}
+            </Button>
 
-      {error && (
-        <Typography color="error" sx={{ marginTop: 2 }}>
-          {error.message || 'Une erreur est survenue.'}
-        </Typography>
-      )}
+            {error && (
+              <Typography color="error" sx={{ marginTop: 2 }}>
+                {error.message || 'Une erreur est survenue.'}
+              </Typography>
+            )}
 
-      {data && (
-        <Typography color="green" sx={{ marginTop: 2 }}>
-          Produit créé {data.id ? `: ${data.id}` : 'avec succès'}
-        </Typography>
-      )}
-    </Card>
+            {data && (
+              <Typography color="success" sx={{ marginTop: 2 }}>
+                Image ajoutée avec succès
+              </Typography>
+            )}
+          </Box>
+        )}
+      </Box>
+    </>
   );
 };
 

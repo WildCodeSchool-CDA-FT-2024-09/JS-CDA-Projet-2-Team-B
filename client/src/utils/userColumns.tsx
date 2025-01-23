@@ -64,8 +64,18 @@ export const userColumns = (
     width: 110,
     editable: true,
     valueGetter: (value, row) => {
-      const date = row.starting_date ? new Date(row.starting_date) : null;
-      return date ? new Intl.DateTimeFormat('fr-FR').format(date) : '';
+      const dateStr = row.starting_date;
+
+      if (dateStr && /^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+        return dateStr;
+      }
+
+      const date = dateStr ? new Date(dateStr) : null;
+      if (date && !isNaN(date.getTime())) {
+        return new Intl.DateTimeFormat('fr-FR').format(date);
+      }
+
+      return '';
     }
   },
   {
@@ -74,8 +84,19 @@ export const userColumns = (
     width: 110,
     editable: true,
     valueGetter: (value, row) => {
-      const date = row.ending_date ? new Date(row.ending_date) : '';
-      return date ? new Intl.DateTimeFormat('fr-FR').format(date) : '';
+      const dateStr = row.ending_date;
+
+      // Early return if the date is already in the correct format
+      if (dateStr && /^\d{2}\/\d{2}\/\d{4}$/.test(dateStr)) {
+        return dateStr;
+      }
+
+      const date = dateStr ? new Date(dateStr) : null;
+      if (date && !isNaN(date.getTime())) {
+        return new Intl.DateTimeFormat('fr-FR').format(date);
+      }
+
+      return '';
     }
   },
   {

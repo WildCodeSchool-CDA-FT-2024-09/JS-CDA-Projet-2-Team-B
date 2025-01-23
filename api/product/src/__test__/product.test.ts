@@ -1,11 +1,13 @@
-import { GET_PRODUCT, GET_PRODUCT_BY_ID } from './schemas/queries';
+import { GET_PRODUCTS, GET_PRODUCT_BY_ID } from './schemas/queries';
 import { POST_PRODUCT, PUT_PRODUCT } from './schemas/mutations';
 import { graphql, GraphQLSchema, print } from 'graphql';
 import { AppDataSource } from '../../src/data-source';
-import { Product } from 'src/entity/product.entities';
 import getSchema from '../../src/schema';
-import { ProductUpdateInput } from 'src/types/product.types';
 import { createBrand } from './helpers/test.helpers';
+import { cookieString } from './helpers/generateCookie.helper';
+import * as cookie from 'cookie';
+import { Product } from '../entity/product.entities';
+import { ProductUpdateInput } from '../types/product.types';
 
 describe('Product resolvers tests', () => {
   let schema: GraphQLSchema;
@@ -19,20 +21,25 @@ describe('Product resolvers tests', () => {
     await AppDataSource.query('DELETE FROM brand');
   });
 
+  const cookieHeader = cookieString.split(';')[0];
+  const contextValue = cookie.parse(cookieHeader);
+
   const productOne = {
-    reference: 'REF001',
-    name: 'Test Product 1',
+    reference: 'REF0000000001',
+    name: 'Test Product 01',
     shortDescription: 'A short description of the product',
     description: 'A detailed description of the test product',
-    price: 123.45
+    price: 123.45,
+    isPublished: false
   };
 
   const productTwo = {
-    reference: 'REF002',
-    name: 'Test Product 2',
+    reference: 'REF0000000002',
+    name: 'Test Product 02',
     shortDescription: 'A short description of the product',
     description: 'A detailed description of the test product',
-    price: 543.21
+    price: 543.21,
+    isPublished: false
   };
 
   // - - - - - - - - - -
@@ -48,7 +55,8 @@ describe('Product resolvers tests', () => {
     const result = (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: brandAddedToProduct }
+      variableValues: { data: brandAddedToProduct },
+      contextValue: contextValue
     })) as { data: { createNewProduct: Product } };
 
     expect(result.data?.createNewProduct).toMatchObject({
@@ -56,7 +64,8 @@ describe('Product resolvers tests', () => {
       name: productOne.name,
       shortDescription: productOne.shortDescription,
       description: productOne.description,
-      price: productOne.price
+      price: productOne.price,
+      isPublished: productOne.isPublished
     });
   });
 
@@ -78,18 +87,21 @@ describe('Product resolvers tests', () => {
     (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: brandAddedToProductOne }
-    })) as { data: { createNewProduct: unknown } };
+      variableValues: { data: brandAddedToProductOne },
+      contextValue: contextValue
+    })) as { data: { createNewProduct: Product } };
 
     (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: brandAddedToProductTwo }
+      variableValues: { data: brandAddedToProductTwo },
+      contextValue: contextValue
     })) as { data: { createNewProduct: Product } };
 
     const result = (await graphql({
       schema: schema,
-      source: print(GET_PRODUCT)
+      source: print(GET_PRODUCTS),
+      contextValue: contextValue
     })) as { data: { getAllProducts: Array<Product> } };
 
     expect(result.data?.getAllProducts.length).toEqual(2);
@@ -108,7 +120,8 @@ describe('Product resolvers tests', () => {
     const resultOne = (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: brandAddedToProduct }
+      variableValues: { data: brandAddedToProduct },
+      contextValue: contextValue
     })) as { data: { createNewProduct: Product } };
 
     const productId = resultOne.data?.createNewProduct.id;
@@ -116,7 +129,8 @@ describe('Product resolvers tests', () => {
     const resultTwo = (await graphql({
       schema: schema,
       source: print(GET_PRODUCT_BY_ID),
-      variableValues: { getProductByIdId: productId }
+      variableValues: { getProductByIdId: productId },
+      contextValue: contextValue
     })) as { data: { getProductById: Product } };
 
     expect(resultTwo.data?.getProductById.id).toEqual(
@@ -135,35 +149,39 @@ describe('Product resolvers tests', () => {
     const resultOne = (await graphql({
       schema: schema,
       source: print(POST_PRODUCT),
-      variableValues: { data: brandAddedToProduct }
+      variableValues: { data: brandAddedToProduct },
+      contextValue: contextValue
     })) as { data: { createNewProduct: Product } };
 
     const productId = resultOne.data?.createNewProduct.id;
 
     const updateData: ProductUpdateInput = {
       id: productId,
-      reference: '123456789012345',
+      reference: 'REF0000000003',
       name: 'Updated product',
       shortDescription: 'Updated short description',
       description: 'Updated description',
       price: 150.0,
-      brand: brandOne.id
+      brand: brandOne.id,
+      isPublished: false
     };
 
     const resultTwo = await graphql({
       schema,
       source: print(PUT_PRODUCT),
-      variableValues: { data: updateData }
+      variableValues: { data: updateData },
+      contextValue: contextValue
     });
 
     expect(resultTwo.data?.updateProduct).toMatchObject({
       id: productId,
-      reference: '123456789012345',
+      reference: 'REF0000000003',
       name: 'Updated product',
       shortDescription: 'Updated short description',
       description: 'Updated description',
       price: 150.0,
-      brand: brandOne
+      brand: brandOne,
+      isPublished: false
     });
   });
 });

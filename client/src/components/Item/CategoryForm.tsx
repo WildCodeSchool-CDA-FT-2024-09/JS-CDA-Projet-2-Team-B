@@ -46,7 +46,7 @@ const CategoryForm = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <Card sx={{ width: 900, margin: 1, boxShadow: 4 }}>
+    <Card sx={{ width: '30%', margin: 1, boxShadow: 4 }}>
       <CardContent>
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
           Catégories
@@ -57,15 +57,12 @@ const CategoryForm = () => {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'flex-start'
           }}
         >
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ minWidth: 'fit-content' }}>
-              Ajouter une catégorie :
-            </Typography>
             <TextField
-              sx={{ marginLeft: '25px' }}
+              sx={{ marginLeft: '0.1rem' }}
               placeholder="Nom"
               variant="outlined"
               size="small"
@@ -78,13 +75,13 @@ const CategoryForm = () => {
               variant="contained"
               type="submit"
               sx={{
-                padding: '4px 10px',
+                padding: '0.45rem 1rem',
                 borderRadius: '5px',
                 backgroundColor: 'green',
-                marginRight: 6
+                marginLeft: '1rem'
               }}
             >
-              Ajouter +
+              Ajouter
             </Button>
           </Box>
         </Box>
@@ -93,7 +90,7 @@ const CategoryForm = () => {
             display: 'flex',
             flexWrap: 'wrap',
             gap: 1,
-            marginTop: 2
+            marginTop: 3
           }}
         >
           {data?.getAllCategories.map((category) => (

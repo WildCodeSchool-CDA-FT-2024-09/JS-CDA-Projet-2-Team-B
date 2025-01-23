@@ -9,11 +9,11 @@ export const POST_PRODUCT = gql`
       shortDescription
       description
       price
+      isPublished
       brand {
         id
         name
         description
-        logo
       }
       categories {
         id
@@ -32,11 +32,11 @@ export const PUT_PRODUCT = gql`
       shortDescription
       description
       price
+      isPublished
       brand {
         id
         name
         description
-        logo
       }
       categories {
         id
@@ -52,7 +52,6 @@ export const POST_BRAND = gql`
       id
       name
       description
-      logo
     }
   }
 `;
@@ -63,7 +62,6 @@ export const PUT_BRAND = gql`
       id
       name
       description
-      logo
     }
   }
 `;

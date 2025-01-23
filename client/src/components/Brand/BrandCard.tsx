@@ -33,23 +33,16 @@ export default function BrandCard({ id, name, image }: Brand) {
   return (
     <Card
       sx={{
-        minWidth: 150,
-        maxWidth: 300,
+        minWidth: '12%',
+        minHeight: '45%',
         margin: 1,
         display: 'flex',
         flexDirection: 'column',
         padding: '2rem',
-        borderRadius: '8px',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
       }}
     >
-      <CardContent
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          flexDirection: 'column'
-        }}
-      >
+      <CardContent>
         <Typography
           variant="h6"
           sx={{
