@@ -8,6 +8,7 @@ import { Box, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
 import { GetAllProductsDocument } from '../../generated/graphql-types';
 import CardProduct from './CardProduct';
+import { useState } from 'react';
 
 interface Product {
   id: number;
@@ -19,6 +20,10 @@ interface Product {
 }
 
 export default function Catalog() {
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0
+  });
   const { loading, error, data } = useQuery(GetAllProductsDocument);
 
   if (loading) return <p>Loading...</p>;
@@ -47,7 +52,7 @@ export default function Catalog() {
       width: 250
     },
     {
-      field: 'Description',
+      field: 'description',
       headerName: 'Description',
       width: 250
     },
@@ -84,9 +89,10 @@ export default function Catalog() {
           <DataGrid
             rows={rows}
             columns={columns}
-            autoHeight
-            pageSize={10}
-            rowsPerPageOptions={[5, 10, 20]}
+            pageSizeOptions={[5, 10, 25]}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            pagination
           />
         </Box>
       </Box>

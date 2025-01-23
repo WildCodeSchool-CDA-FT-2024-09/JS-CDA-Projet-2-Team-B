@@ -1,4 +1,4 @@
-import { Card, CardContent, Box } from '@mui/material';
+import { CardContent, Box } from '@mui/material';
 import { Link, Outlet } from 'react-router-dom';
 
 export default function ProductManagement() {
@@ -6,15 +6,16 @@ export default function ProductManagement() {
     <Box
       sx={{
         display: 'flex',
-        justifyContent: 'space-between'
+        justifyContent: 'center',
+        minHeight: '100dvh',
+        maxHeight: '100%'
       }}
     >
-      <Card
+      <Box
         sx={{
           marginTop: '5px',
           width: '14.5%',
-          height: '100dvh',
-          boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)'
+          boxShadow: '5px 5px 5px rgba(0, 0, 0, 0.2)'
         }}
       >
         <CardContent
@@ -26,7 +27,9 @@ export default function ProductManagement() {
             sx={{
               display: 'flex',
               flexDirection: 'column',
-              gap: '1.5dvh'
+              minHeight: '100dvh',
+              maxHeight: '100%',
+              gap: '1rem'
             }}
           >
             <Link
@@ -59,17 +62,19 @@ export default function ProductManagement() {
             </Link>
           </Box>
         </CardContent>
-      </Card>
-      <Card
+      </Box>
+      <Box
         sx={{
-          width: '85%',
-          margin: '5px 0',
-          height: '100dvh',
+          width: '100%',
+          minHeight: '100dvh',
+          maxHeight: '100%',
+          marginTop: '0.25rem',
+          marginLeft: '0.5rem',
           boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)'
         }}
       >
         <Outlet />
-      </Card>
+      </Box>
     </Box>
   );
 }

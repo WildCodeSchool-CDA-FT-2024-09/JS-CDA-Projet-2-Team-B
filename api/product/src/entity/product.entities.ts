@@ -25,11 +25,11 @@ export class Product extends BaseEntity {
   id: number;
 
   @Field()
-  @Column({ unique: true, length: 13, nullable: true })
+  @Column({ unique: true, length: 13, nullable: false })
   reference: string;
 
   @Field()
-  @Column({ length: 255, nullable: true })
+  @Column({ length: 255, nullable: false })
   name: string;
 
   @Field({ nullable: true })

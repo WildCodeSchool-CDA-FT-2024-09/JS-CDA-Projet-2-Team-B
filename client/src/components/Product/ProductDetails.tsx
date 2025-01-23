@@ -35,6 +35,7 @@ import {
 import { useLazyQuery } from '@apollo/client';
 import { CustomSwitch } from '../../ui/Switch';
 import axios from 'axios';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 interface ProductDetailsReq {
   name: string;
@@ -75,6 +76,8 @@ export default function ProductDetails() {
   const [getBrands, { data: brandsData }] = useLazyQuery(GetAllBrandsDocument);
   const { data: tagsData } = useGetAllTagsQuery();
   const [brandInputValue, setBrandInputValue] = useState('');
+  const [displayProductDetails, setDisplayProductDetails] = useState(true);
+  const [displayImagePreview, setDisplayImagePreview] = useState(false);
   const [deleteProduct] = useDeleteProductMutation();
   const [restoreProduct] = useRestoreProductMutation();
 
@@ -137,12 +140,12 @@ export default function ProductDetails() {
       if (isActive) {
         await restoreProduct({
           variables: { id: parseInt(id!) },
-          refetchQueries: ['GetProductById']
+          refetchQueries: ['getProductById']
         });
       } else {
         await deleteProduct({
           variables: { id: parseInt(id!) },
-          refetchQueries: ['GetProductById']
+          refetchQueries: ['getProductById']
         });
       }
 
@@ -188,12 +191,6 @@ export default function ProductDetails() {
           }
         }
       });
-
-      if (!product.isActive) {
-        await deleteProduct({
-          variables: { id: parseInt(id!) }
-        });
-      }
 
       if (data?.updateProduct) {
         setProduct({
@@ -273,222 +270,396 @@ export default function ProductDetails() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit}
-      noValidate
-      autoComplete="off"
-      sx={{ margin: '2rem' }}
-    >
+    <>
       <Box
         sx={{
           display: 'flex',
-          flexDirection: { xs: 'column', md: 'row' },
-          gap: '10rem',
-          padding: '2rem',
-          paddingLeft: '5rem',
-          borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          marginLeft: '2rem',
+          backgroundColor: '#f9f9f9',
+          padding: '1rem 1.5rem 1rem 1.5rem',
+          borderRadius: '8px 8px 0 0',
+          width: '90%',
+          marginTop: '1rem'
         }}
       >
-        {product.images && product.images.length > 0 && (
-          <Card
-            sx={{
-              boxShadow: 'none',
-              backgroundColor: 'transparent',
-              marginTop: '5rem',
-              width: '100%', // Adapter la largeur
-              maxWidth: '100px' // Taille maximale
-            }}
-          >
-            <CardMedia
-              component="img"
-              height="auto"
-              image={
-                product.images.find((img) => img.isMain)?.url
-                  ? `${BASE_URL}${product.images.find((img) => img.isMain)?.url}`
-                  : `${BASE_URL}${product.images[0].url}`
-              }
-              alt="image du produit"
+        <Typography variant="h6">
+          <strong>Informations produit</strong>
+        </Typography>
+        {displayProductDetails ? (
+          <Typography>
+            <KeyboardArrowUp
+              onClick={() => setDisplayProductDetails((prev) => !prev)}
             />
-            <Box
-              sx={{
-                borderRadius: '50%'
-              }}
-            >
-              <IconButton
-                onClick={() => handleDeleteImage(id!, product.images![0].id)}
-                size="small"
-                sx={{
-                  '&:hover': {
-                    color: 'error.main'
-                  }
-                }}
-              >
-                <DeleteIcon />
-              </IconButton>
-            </Box>
-          </Card>
+          </Typography>
+        ) : (
+          <Typography>
+            <KeyboardArrowDown
+              onClick={() => setDisplayProductDetails((prev) => !prev)}
+            />
+          </Typography>
         )}
+      </Box>
+      {displayProductDetails && (
         <Box
           sx={{
             display: 'flex',
-            flexDirection: 'column'
+            width: '90%',
+            marginLeft: '2rem',
+            padding: 3,
+            backgroundColor: '#f9f9f9',
+            borderRadius: '0 0 8px 8px',
+            boxShadow: '0 2px 0 rgba(0, 0, 0, 0.1)'
           }}
+          component="form"
+          onSubmit={handleSubmit}
         >
-          <FormControlLabel
-            control={
-              <CustomSwitch
-                checked={product.isActive}
-                onChange={handleSwitchChange}
-              />
-            }
-            label={
-              <Typography
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 2,
+              width: '100%'
+            }}
+          >
+            <FormControlLabel
+              control={
+                <CustomSwitch
+                  checked={product.isActive}
+                  onChange={handleSwitchChange}
+                />
+              }
+              label={
+                <Typography
+                  sx={{
+                    color: product.isActive ? 'success.main' : 'error.main',
+                    fontWeight: 'bold'
+                  }}
+                >
+                  {product.isActive ? 'Activé' : 'Désactivé'}
+                </Typography>
+              }
+            />
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                gap: 2,
+                width: '100%'
+              }}
+            >
+              <Box>
+                <TextField
+                  required
+                  label="Nom du produit"
+                  name="name"
+                  value={product.name}
+                  onChange={handleChange}
+                  placeholder="Nom"
+                  fullWidth
+                />
+              </Box>
+              <Box
                 sx={{
-                  color: product.isActive ? 'success.main' : 'error.main',
-                  fontWeight: 'bold'
+                  display: 'flex',
+                  justifyContent: 'space-between'
                 }}
               >
-                {product.isActive ? 'Activé' : 'Désactivé'}
-              </Typography>
-            }
-          />
-          <Typography
+                <TextField
+                  disabled
+                  label="Référence"
+                  id="outlined-required"
+                  name="reference"
+                  value={product.reference}
+                  onChange={handleChange}
+                  placeholder="Reference"
+                  sx={{ width: '40%' }}
+                />
+                <FormControl
+                  sx={{
+                    width: '55%'
+                  }}
+                >
+                  <InputLabel id="status-label">
+                    Statut de publication
+                  </InputLabel>
+                  <Select
+                    labelId="status-label"
+                    value={product.isPublished}
+                    onChange={(event) => {
+                      setProduct((prev) => ({
+                        ...prev,
+                        isPublished: event.target.value === 'true'
+                      }));
+                    }}
+                    label="Statut de publication"
+                  >
+                    <MenuItem value="false">Non publié</MenuItem>
+                    <MenuItem value="true">Publié</MenuItem>
+                  </Select>
+                </FormControl>
+              </Box>
+              <TextField
+                label="Courte description"
+                name="shortDescription"
+                value={product.shortDescription}
+                onChange={handleChange}
+                placeholder="Courte description"
+                fullWidth
+                multiline
+                rows={2}
+              />
+              <TextField
+                label="Description"
+                name="description"
+                value={product.description}
+                onChange={handleChange}
+                placeholder="Description"
+                fullWidth
+                multiline
+                rows={5}
+              />
+              <Box
+                sx={{
+                  display: 'flex',
+                  justifyContent: 'space-between'
+                }}
+              >
+                <TextField
+                  label="Prix (€)"
+                  name="price"
+                  value={product.price}
+                  onChange={handleChange}
+                  placeholder="Prix (€)"
+                  sx={{ width: '40%' }}
+                />
+                <FormControl sx={{ width: '55%' }}>
+                  <Autocomplete
+                    options={brandOptions}
+                    getOptionLabel={(option) => option.name}
+                    value={product.brand}
+                    onChange={(_, newValue) =>
+                      setProduct((prev) => ({
+                        ...prev,
+                        brand: newValue
+                      }))
+                    }
+                    inputValue={brandInputValue}
+                    onInputChange={(_, newInputValue) => {
+                      setBrandInputValue(newInputValue);
+                    }}
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        label="Sélectionner une marque"
+                        placeholder="Rechercher une marque"
+                      />
+                    )}
+                  />
+                </FormControl>
+              </Box>
+            </Box>
+          </Box>
+          <Box
             sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold'
+              width: '100%',
+              marginLeft: '2rem'
             }}
           >
-            Nom
-          </Typography>
-          <TextField
-            required
-            name="name"
-            value={product.name}
-            onChange={handleChange}
-            placeholder="Nom"
-            fullWidth
-            sx={{ maxWidth: '400px' }}
-          />
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold',
-              marginTop: 1
-            }}
-          >
-            Reference
-          </Typography>
-          <TextField
-            disabled
-            id="outlined-required"
-            name="reference"
-            value={product.reference}
-            onChange={handleChange}
-            placeholder="Reference"
-            sx={{ width: '100%' }}
-          />
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold',
-              marginTop: 1
-            }}
-          >
-            Courte description
-          </Typography>
-          <TextField
-            name="shortDescription"
-            value={product.shortDescription}
-            onChange={handleChange}
-            placeholder="Courte description"
-            sx={{ width: '100%' }}
-          />
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold',
-              marginTop: 1
-            }}
-          >
-            Description
-          </Typography>
-          <TextField
-            name="description"
-            value={product.description}
-            onChange={handleChange}
-            placeholder="Description"
-            sx={{ width: '100%' }}
-          />
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold',
-              marginTop: 1
-            }}
-          >
-            Prix
-          </Typography>
-          <TextField
-            name="price"
-            value={product.price}
-            onChange={handleChange}
-            placeholder="Prix"
-          />
-        </Box>
-        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              marginTop: 5,
-              fontWeight: 'bold'
-            }}
-          >
-            Caractéristiques
-          </Typography>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <Autocomplete
-              options={characteristicsData?.getAllCharacteristic || []}
-              getOptionLabel={(option) => option.name}
-              value={null}
-              onChange={(_, newValue) => {
-                if (newValue) {
-                  if (
-                    !product.characteristicValues?.some(
-                      (char) => char.characteristic.id === newValue.id
-                    )
-                  ) {
+            <Typography variant="h6" sx={{ marginBottom: 2 }}>
+              Catégories
+            </Typography>
+            <FormControl fullWidth>
+              <Autocomplete
+                multiple
+                options={categoriesData?.getAllCategories || []}
+                getOptionLabel={(option) => option.name}
+                value={[]} // Il faut qu'on le garde toujours vide car on gère l'ajout nous-mêmes
+                onChange={(_, newValue) => {
+                  if (newValue.length > 0) {
+                    const newCategories = newValue.filter(
+                      (newCat) =>
+                        !product.categories?.some(
+                          (existingCat) => existingCat.id === newCat.id
+                        )
+                    );
+
                     setProduct((prev) => ({
                       ...prev,
-                      characteristicValues: [
-                        ...(prev.characteristicValues || []),
-                        {
-                          id: 0,
-                          value: '',
-                          characteristic: {
-                            id: newValue.id,
-                            name: newValue.name
-                          }
-                        }
-                      ]
+                      categories: [...(prev.categories || []), ...newCategories]
                     }));
                   }
+                }}
+                filterOptions={(options) =>
+                  options.filter(
+                    (option) =>
+                      !product.categories?.some((cat) => cat.id === option.id)
+                  )
                 }
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Ajouter une caractéristique"
-                  size="small"
-                />
-              )}
-            />
-          </FormControl>
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Rechercher des catégories"
+                    size="small"
+                  />
+                )}
+              />
+            </FormControl>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {product.categories &&
+                product.categories.length > 0 &&
+                product.categories.map((category) => (
+                  <Chip
+                    key={category.id}
+                    label={category.name}
+                    variant="filled"
+                    color="primary"
+                    sx={{
+                      marginTop: '0.5rem'
+                    }}
+                    onDelete={() => {
+                      setProduct((prev) => ({
+                        ...prev,
+                        categories:
+                          prev.categories?.filter(
+                            (cat) => cat.id !== category.id
+                          ) || []
+                      }));
+                    }}
+                  />
+                ))}
+            </Box>
+            <Typography
+              variant="h6"
+              sx={{ marginBottom: 2, marginTop: '1rem' }}
+            >
+              Tags
+            </Typography>
+            <FormControl fullWidth>
+              <Autocomplete
+                multiple
+                options={tagsData?.getAllTags || []}
+                getOptionLabel={(option) => option.name}
+                value={[]}
+                onChange={(_, newValue) => {
+                  if (newValue.length > 0) {
+                    const newTags = newValue.filter(
+                      (newTag) =>
+                        !product.tags?.some(
+                          (existingTag) => existingTag.id === newTag.id
+                        )
+                    );
 
-          <Box sx={{ mt: 1 }}>
+                    setProduct((prev) => ({
+                      ...prev,
+                      tags: [...(prev.tags || []), ...newTags]
+                    }));
+                  }
+                }}
+                filterOptions={(options) =>
+                  options.filter(
+                    (option) =>
+                      !product.tags?.some((tag) => tag.id === option.id)
+                  )
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Rechercher des tags"
+                    size="small"
+                  />
+                )}
+              />
+            </FormControl>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {product.tags &&
+                product.tags.length > 0 &&
+                product.tags.map((tag) => (
+                  <Chip
+                    key={tag.id}
+                    label={tag.name}
+                    variant="filled"
+                    color="secondary"
+                    sx={{
+                      marginTop: '0.5rem'
+                    }}
+                    onDelete={() => {
+                      setProduct((prev) => ({
+                        ...prev,
+                        tags: prev.tags?.filter((t) => t.id !== tag.id) || []
+                      }));
+                    }}
+                  />
+                ))}
+            </Box>
+          </Box>
+          <Box
+            sx={{
+              width: '100%',
+              marginLeft: '2rem',
+              display: 'flex',
+              flexDirection: 'column'
+            }}
+          >
+            <Typography variant="h6" sx={{ marginBottom: 2 }}>
+              Caractéristiques
+            </Typography>
+            <FormControl fullWidth>
+              <Autocomplete
+                options={characteristicsData?.getAllCharacteristic || []}
+                getOptionLabel={(option) => option.name}
+                value={null}
+                onChange={(_, newValue) => {
+                  if (newValue) {
+                    if (
+                      !product.characteristicValues?.some(
+                        (char) => char.characteristic.id === newValue.id
+                      )
+                    ) {
+                      setProduct((prev) => ({
+                        ...prev,
+                        characteristicValues: [
+                          ...(prev.characteristicValues || []),
+                          {
+                            id: 0,
+                            value: '',
+                            characteristic: {
+                              id: newValue.id,
+                              name: newValue.name
+                            }
+                          }
+                        ]
+                      }));
+                    }
+                  }
+                }}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    placeholder="Ajouter une caractéristique"
+                    size="small"
+                    sx={{ marginBottom: '0.5rem' }}
+                  />
+                )}
+              />
+            </FormControl>
             {product.characteristicValues?.map((char) => (
-              <Box key={char.characteristic.id}>
+              <Box
+                key={char.characteristic.id}
+                sx={{
+                  display: 'flex',
+                  gap: 2,
+                  alignItems: 'center',
+                  justifyContent: 'flex-end',
+                  backgroundColor: 'background.paper',
+                  p: 1,
+                  borderRadius: 1,
+                  paddingLeft: '1rem',
+                  marginBottom: '0.5rem 0',
+                  borderBottom: '0.5px solid'
+                }}
+              >
                 <Typography sx={{ minWidth: 150, fontWeight: 'medium' }}>
                   {char.characteristic.name}
                 </Typography>
@@ -508,6 +679,7 @@ export default function ProductDetails() {
                     }));
                   }}
                   placeholder="Entrer une valeur"
+                  disabled={loading}
                 />
                 <IconButton
                   onClick={() => {
@@ -520,235 +692,145 @@ export default function ProductDetails() {
                   }}
                   color="error"
                   size="small"
+                  disabled={loading}
                 >
                   <DeleteIcon />
                 </IconButton>
               </Box>
             ))}
-          </Box>
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold'
-            }}
-          >
-            Catégorie
-          </Typography>
-          <FormControl fullWidth>
-            <Autocomplete
-              multiple
-              options={categoriesData?.getAllCategories || []}
-              getOptionLabel={(option) => option.name}
-              value={[]} // Il faut qu'on le garde toujours vide car on gère l'ajout nous-mêmes
-              onChange={(_, newValue) => {
-                if (newValue.length > 0) {
-                  const newCategories = newValue.filter(
-                    (newCat) =>
-                      !product.categories?.some(
-                        (existingCat) => existingCat.id === newCat.id
-                      )
-                  );
-
-                  setProduct((prev) => ({
-                    ...prev,
-                    categories: [...(prev.categories || []), ...newCategories]
-                  }));
-                }
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                marginTop: 'auto'
               }}
-              filterOptions={(options) =>
-                options.filter(
-                  (option) =>
-                    !product.categories?.some((cat) => cat.id === option.id)
-                )
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Rechercher des catégories"
-                  size="small"
-                />
-              )}
-            />
-          </FormControl>
-          <Box sx={{ mb: 1 }}>
-            {product.categories &&
-              product.categories.length > 0 &&
-              product.categories.map((category) => (
-                <Chip
-                  key={category.id}
-                  label={category.name}
-                  variant="filled"
-                  color="primary"
-                  onDelete={() => {
-                    setProduct((prev) => ({
-                      ...prev,
-                      categories:
-                        prev.categories?.filter(
-                          (cat) => cat.id !== category.id
-                        ) || []
-                    }));
-                  }}
-                />
-              ))}
-          </Box>
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold'
-            }}
-          >
-            Tags
-          </Typography>
-          <FormControl fullWidth>
-            <Autocomplete
-              multiple
-              options={tagsData?.getAllTags || []}
-              getOptionLabel={(option) => option.name}
-              value={[]}
-              onChange={(_, newValue) => {
-                if (newValue.length > 0) {
-                  const newTags = newValue.filter(
-                    (newTag) =>
-                      !product.tags?.some(
-                        (existingTag) => existingTag.id === newTag.id
-                      )
-                  );
-
-                  setProduct((prev) => ({
-                    ...prev,
-                    tags: [...(prev.tags || []), ...newTags]
-                  }));
-                }
-              }}
-              filterOptions={(options) =>
-                options.filter(
-                  (option) => !product.tags?.some((tag) => tag.id === option.id)
-                )
-              }
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  placeholder="Rechercher des tags"
-                  size="small"
-                />
-              )}
-            />
-          </FormControl>
-          <Box sx={{ mb: 1 }}>
-            {product.tags &&
-              product.tags.length > 0 &&
-              product.tags.map((tag) => (
-                <Chip
-                  key={tag.id}
-                  label={tag.name}
-                  variant="filled"
-                  color="secondary"
-                  onDelete={() => {
-                    setProduct((prev) => ({
-                      ...prev,
-                      tags: prev.tags?.filter((t) => t.id !== tag.id) || []
-                    }));
-                  }}
-                />
-              ))}
-          </Box>
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold',
-              marginBottom: 1
-            }}
-          >
-            Marque
-          </Typography>
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <Autocomplete
-              options={brandOptions}
-              getOptionLabel={(option) => option.name}
-              value={product.brand}
-              onChange={(_, newValue) =>
-                setProduct((prev) => ({
-                  ...prev,
-                  brand: newValue
-                }))
-              }
-              inputValue={brandInputValue}
-              onInputChange={(_, newInputValue) => {
-                setBrandInputValue(newInputValue);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Sélectionner une marque"
-                  placeholder="Rechercher une marque"
-                />
-              )}
-            />
-          </FormControl>
-          <Typography
-            sx={{
-              marginLeft: '2px',
-              fontWeight: 'bold'
-            }}
-          >
-            Statut
-          </Typography>
-          <FormControl fullWidth margin="normal">
-            <InputLabel id="status-label">Statut de publication</InputLabel>
-            <Select
-              labelId="status-label"
-              value={product.isPublished ? 'true' : 'false'}
-              onChange={(event) => {
-                setProduct((prev) => ({
-                  ...prev,
-                  isPublished: event.target.value === 'true'
-                }));
-              }}
-              label="Statut de publication"
             >
-              <MenuItem value="false">Non publié</MenuItem>
-              <MenuItem value="true">Publié</MenuItem>
-            </Select>
-          </FormControl>
-
-          <Button
-            variant="contained"
-            disabled={updateLoading}
-            color="primary"
-            type="submit"
+              <Button
+                variant="contained"
+                disabled={updateLoading || !product.isActive}
+                color="primary"
+                type="submit"
+                sx={{
+                  alignSelf: 'flex-end'
+                }}
+              >
+                Enregistrer
+              </Button>
+            </Box>
+          </Box>
+        </Box>
+      )}
+      <Box
+        sx={{
+          marginLeft: '2rem',
+          backgroundColor: '#f9f9f9',
+          padding: '1rem 1.5rem 1rem 1.5rem',
+          borderRadius: '8px 8px 0 0',
+          width: '90%',
+          marginTop: '1rem',
+          marginBottom: '1rem'
+        }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-between'
+          }}
+        >
+          <Typography variant="h6">
+            <strong>Associer une image</strong>
+          </Typography>
+          {displayImagePreview ? (
+            <Typography>
+              <KeyboardArrowUp
+                onClick={() => setDisplayImagePreview((prev) => !prev)}
+              />
+            </Typography>
+          ) : (
+            <Typography>
+              <KeyboardArrowDown
+                onClick={() => setDisplayImagePreview((prev) => !prev)}
+              />
+            </Typography>
+          )}
+        </Box>
+        {displayImagePreview && (
+          <Box
             sx={{
-              width: '20ch',
-              alignSelf: 'flex-end'
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'center',
+              alignItems: 'center'
             }}
           >
-            Enregistrer
-          </Button>
-        </Box>
+            {product.images && product.images.length > 0 && (
+              <Card
+                sx={{
+                  boxShadow: 'none',
+                  backgroundColor: 'transparent',
+                  marginTop: '5rem',
+                  width: '100%',
+                  maxWidth: '20rem'
+                }}
+              >
+                <CardMedia
+                  component="img"
+                  height="auto"
+                  image={
+                    product.images.find((img) => img.isMain)?.url
+                      ? `${BASE_URL}${product.images.find((img) => img.isMain)?.url}`
+                      : `${BASE_URL}${product.images[0].url}`
+                  }
+                  alt="image du produit"
+                />
+                <Box
+                  sx={{
+                    borderRadius: '50%'
+                  }}
+                >
+                  <IconButton
+                    onClick={() =>
+                      handleDeleteImage(id!, product.images![0].id)
+                    }
+                    size="small"
+                    sx={{
+                      '&:hover': {
+                        color: 'error.main'
+                      }
+                    }}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Box>
+              </Card>
+            )}
+          </Box>
+        )}
+        <Dialog
+          open={openDialog}
+          onClose={() => setOpenDialog(false)}
+          aria-labelledby="alert-dialog-title"
+          aria-describedby="alert-dialog-description"
+        >
+          <DialogTitle id="alert-dialog-title">
+            Confirmer la suppression
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText id="alert-dialog-description">
+              Êtes-vous sûr de vouloir supprimer cette image ? Cette action ne
+              peut pas être annulée.
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setOpenDialog(false)} color="primary">
+              Annuler
+            </Button>
+            <Button onClick={confirmDelete} color="error" autoFocus>
+              Supprimer
+            </Button>
+          </DialogActions>
+        </Dialog>
       </Box>
-      <Dialog
-        open={openDialog}
-        onClose={() => setOpenDialog(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle id="alert-dialog-title">
-          Confirmer la suppression
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            Êtes-vous sûr de vouloir supprimer cette image ? Cette action ne
-            peut pas être annulée.
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOpenDialog(false)} color="primary">
-            Annuler
-          </Button>
-          <Button onClick={confirmDelete} color="error" autoFocus>
-            Supprimer
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </Box>
+    </>
   );
 }

@@ -5,26 +5,26 @@ import { IsBoolean, IsNumber, IsString, Length } from 'class-validator';
 
 @InputType()
 export class ProductInput {
-  @Field()
+  @Field({ nullable: false })
   @IsString()
-  @Length(11, 17)
+  @Length(11, 13)
   reference: string;
 
-  @Field()
+  @Field({ nullable: false })
   @IsString()
-  @Length(1, 50)
+  @Length(1, 255)
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @Length(1, 255)
   shortDescription: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
   price: number;
 
@@ -34,7 +34,7 @@ export class ProductInput {
   @Field(() => [Int], { nullable: true })
   tagIds?: number[];
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   isPublished: boolean;
 
@@ -48,34 +48,34 @@ export class ProductInput {
 
 @InputType()
 export class ProductUpdateInput {
-  @Field()
+  @Field({ nullable: false })
   @IsNumber()
   id: number;
 
-  @Field()
+  @Field({ nullable: false })
   @IsString()
-  @Length(11, 17)
+  @Length(11, 13)
   reference: string;
 
-  @Field()
+  @Field({ nullable: false })
   @IsString()
-  @Length(1, 50)
+  @Length(1, 255)
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   @Length(1, 255)
   shortDescription: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsString()
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
   @IsNumber()
   price: number;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
   @IsBoolean()
   isPublished: boolean;
 

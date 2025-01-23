@@ -37,7 +37,7 @@ export default function CharacteristicForm() {
   };
 
   return (
-    <Card sx={{ width: 900, margin: 1, boxShadow: 4 }}>
+    <Card sx={{ width: '30%', margin: 1, boxShadow: 4 }}>
       <CardContent>
         <Typography variant="h6" sx={{ marginBottom: 2 }}>
           Caractéristiques
@@ -48,15 +48,12 @@ export default function CharacteristicForm() {
           sx={{
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'space-between'
+            justifyContent: 'flex-start'
           }}
         >
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
-            <Typography sx={{ minWidth: 'fit-content' }}>
-              Ajouter une caractéristique :
-            </Typography>
+          <Box sx={{ display: 'flex' }}>
             <TextField
-              sx={{ marginLeft: '25px' }}
+              sx={{ marginLeft: '0.1rem' }}
               placeholder="Nom"
               variant="outlined"
               size="small"
@@ -69,13 +66,13 @@ export default function CharacteristicForm() {
               variant="contained"
               type="submit"
               sx={{
-                backgroundColor: 'green',
-                padding: '4px 10px',
+                padding: '0.45rem 1rem',
                 borderRadius: '5px',
-                marginRight: 6
+                backgroundColor: 'green',
+                marginLeft: '1rem'
               }}
             >
-              Ajouter +
+              Ajouter
             </Button>
           </Box>
         </Box>

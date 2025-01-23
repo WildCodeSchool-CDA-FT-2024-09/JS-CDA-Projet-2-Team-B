@@ -32,18 +32,15 @@ export default function BrandCatalog() {
       {brands.length > 0 && (
         <Box
           sx={{
-            width: '100%',
+            height: '100%',
             display: 'flex',
-            flexWrap: 'wrap',
-            margin: '0.5rem 1rem'
+            justifyContent: 'center'
           }}
         >
           <Box
             sx={{
               display: 'flex',
               flexWrap: 'wrap',
-              justifyContent: 'flex-start',
-              margin: 'auto',
               gap: '0.5rem'
             }}
           >

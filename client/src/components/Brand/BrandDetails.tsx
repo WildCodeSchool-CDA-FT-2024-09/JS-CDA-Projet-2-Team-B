@@ -164,7 +164,8 @@ export default function BrandDetails() {
         padding: '2rem',
         backgroundColor: '#f9f9f9',
         borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        height: 'fit-content'
       }}
     >
       <Box
@@ -286,10 +287,10 @@ export default function BrandDetails() {
             color="primary"
             type="submit"
             sx={{
-              width: '20ch',
+              width: '10rem',
               alignSelf: 'flex-end',
               borderRadius: '10px',
-              marginTop: '26px'
+              marginTop: '2rem'
             }}
           >
             Enregistrer

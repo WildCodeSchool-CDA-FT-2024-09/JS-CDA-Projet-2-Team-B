@@ -81,6 +81,7 @@ export default function AddBrand() {
         sx={{
           m: 1,
           width: '60ch',
+          height: 'fit-content',
           fontWeight: 'bold',
           display: 'flex',
           flexDirection: 'column',

@@ -69,18 +69,22 @@ export default function BrandManagement() {
       </Card>
       <Card
         sx={{
-          width: '85%',
-          margin: '5px 0',
-          height: '100dvh',
-          boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)',
           display: 'flex',
-          justifyContent: 'center'
+          justifyContent: 'center',
+          width: '100%',
+          marginLeft: '0.5rem',
+          marginTop: '0.25rem',
+          height: '100vh',
+          boxShadow: '5px 5px 15px rgba(0, 0, 0, 0.2)'
         }}
       >
         <Box
           sx={{
-            margin: '1em',
-            width: '100%'
+            display: 'flex',
+            justifyContent: 'center',
+            width: '100%',
+            height: '45%',
+            margin: '1em'
           }}
         >
           <Outlet context={{ triggerRefresh, refreshBrands }} />

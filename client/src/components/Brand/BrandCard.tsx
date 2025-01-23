@@ -33,8 +33,8 @@ export default function BrandCard({ id, name, image }: Brand) {
   return (
     <Card
       sx={{
-        minWidth: '10%',
-        maxWidth: '15%',
+        minWidth: '12%',
+        minHeight: '45%',
         margin: 1,
         display: 'flex',
         flexDirection: 'column',
