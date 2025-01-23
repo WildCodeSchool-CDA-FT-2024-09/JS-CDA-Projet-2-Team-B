@@ -231,9 +231,6 @@ export default function CreationProduct({
       });
 
       if (data?.createNewProduct?.id) {
-        setSuccessMessage(
-          'Produit créé avec succès ! Veuillez maintenant ajouter des images '
-        );
         handleProductId(data?.createNewProduct?.id);
       }
     } catch (err) {

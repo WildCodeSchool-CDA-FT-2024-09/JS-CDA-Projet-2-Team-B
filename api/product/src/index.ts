@@ -23,6 +23,7 @@ interface Context {
   await AppDataSource.initialize();
   await redisClient.connect();
   console.info('🚀 Redis connected');
+
   const schema = await getSchema();
 
   const server = new ApolloServer<Context>({ schema });
@@ -33,9 +34,9 @@ interface Context {
       const cookies = req.headers.cookie ? parse(req.headers.cookie) : {};
       const accessToken = cookies.access_token;
 
-      if (!accessToken) {
+      /*if (!accessToken) {
         throw new AuthenticationError("Le token d'accès est manquant.");
-      }
+      }*/
 
       let user: User | null = null;
 
