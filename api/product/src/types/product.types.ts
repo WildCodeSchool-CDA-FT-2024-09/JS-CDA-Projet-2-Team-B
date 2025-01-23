@@ -1,22 +1,31 @@
 import { Field, InputType, Int } from 'type-graphql';
 import { CharacteristicValueInput } from './characteristic.types';
 import { CharacteristicValueUpdateInput } from './characteristic.types';
+import { IsBoolean, IsNumber, IsString, Length } from 'class-validator';
 
 @InputType()
 export class ProductInput {
-  @Field()
+  @Field({ nullable: false })
+  @IsString()
+  @Length(11, 13)
   reference: string;
 
-  @Field()
+  @Field({ nullable: false })
+  @IsString()
+  @Length(1, 255)
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsString()
+  @Length(1, 255)
   shortDescription: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsString()
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsNumber()
   price: number;
 
   @Field(() => [Int], { nullable: true })
@@ -25,10 +34,12 @@ export class ProductInput {
   @Field(() => [Int], { nullable: true })
   tagIds?: number[];
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
   isPublished: boolean;
 
   @Field(() => Number, { nullable: true })
+  @IsNumber()
   brand: number;
 
   @Field(() => [CharacteristicValueInput], { nullable: true })
@@ -37,25 +48,35 @@ export class ProductInput {
 
 @InputType()
 export class ProductUpdateInput {
-  @Field()
+  @Field({ nullable: false })
+  @IsNumber()
   id: number;
 
-  @Field()
+  @Field({ nullable: false })
+  @IsString()
+  @Length(11, 13)
   reference: string;
 
-  @Field()
+  @Field({ nullable: false })
+  @IsString()
+  @Length(1, 255)
   name: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsString()
+  @Length(1, 255)
   shortDescription: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsString()
   description: string;
 
-  @Field()
+  @Field({ nullable: true })
+  @IsNumber()
   price: number;
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, { nullable: true })
+  @IsBoolean()
   isPublished: boolean;
 
   @Field(() => [Int], { nullable: true })
@@ -65,11 +86,9 @@ export class ProductUpdateInput {
   tagIds?: number[];
 
   @Field(() => Number, { nullable: true })
+  @IsNumber()
   brand: number;
 
   @Field(() => [CharacteristicValueUpdateInput], { nullable: true })
   characteristicValues?: CharacteristicValueUpdateInput[];
-
-  // @Field(() => [Number])
-  // imageIds?: number[];
 }

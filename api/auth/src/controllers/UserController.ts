@@ -27,55 +27,67 @@ export class UserController
   create = async (req: Request, res: Response): Promise<void> => {
     const data = req.body;
 
-    const checkIfExists = await this.datamapper.findBySpecificField(
-      'email',
-      data.email
-    );
+    try {
+      await this.datamapper.pool.query('BEGIN');
 
-    if (checkIfExists) {
+      const checkIfExists = await this.datamapper.findBySpecificField(
+        'email',
+        data.email
+      );
+
+      if (checkIfExists) {
+        throw new BadRequestError(
+          "Erreur lors de la création de l'utilisateur"
+        );
+      }
+
+      const defaultRole = await roleDatamapper.findByPk(2);
+
+      if (!defaultRole) {
+        throw new NotFoundError('Rôle par défaut non trouvé.');
+      }
+
+      const password = await generateRandomString(10);
+      const hashedPassword = await argon2.hash(password);
+
+      const newUser = {
+        ...data,
+        role_id: defaultRole.id,
+        password: hashedPassword,
+        email: data.email.toLowerCase()
+      };
+
+      const createdItem = await this.datamapper.insert(newUser);
+
+      if (!createdItem) {
+        throw new DatabaseConnectionError();
+      }
+
+      const { success } = await sendPasswordEmail(newUser.email, password);
+
+      if (!success) {
+        throw new BadRequestError(
+          "Une erreur est survenue lors de l'envoi de l'email contenant le mot de passe."
+        );
+      }
+
+      await this.datamapper.pool.query('COMMIT');
+
+      const userWithoutPassword = { ...createdItem };
+      delete userWithoutPassword.password;
+      delete userWithoutPassword.role_id;
+
+      const userWithRoleName = {
+        ...userWithoutPassword,
+        role: defaultRole.name
+      };
+
+      res.status(201).json(userWithRoleName);
+    } catch (error) {
+      console.error(error);
+      await this.datamapper.pool.query('ROLLBACK');
       throw new BadRequestError("Erreur lors de la création de l'utilisateur");
     }
-
-    const defaultRole = await roleDatamapper.findByPk(2);
-
-    if (!defaultRole) {
-      throw new NotFoundError('Rôle par défaut non trouvé.');
-    }
-
-    const password = await generateRandomString(10);
-    const hashedPassword = await argon2.hash(password);
-
-    const newUser = {
-      ...data,
-      role_id: defaultRole.id,
-      password: hashedPassword,
-      email: data.email.toLowerCase()
-    };
-
-    const createdItem = await this.datamapper.insert(newUser);
-
-    if (!createdItem) {
-      throw new DatabaseConnectionError();
-    }
-
-    const { success } = await sendPasswordEmail(newUser.email, password);
-
-    if (!success) {
-      throw new BadRequestError(
-        "Une erreur est survenue lors de l'envoi de l'email contenant le mot de passe."
-      );
-    }
-
-    const userWithoutPassword = { ...createdItem };
-    delete userWithoutPassword.password;
-    delete userWithoutPassword.role_id;
-
-    const userWithRoleName = {
-      ...userWithoutPassword,
-      role: defaultRole.name
-    };
-
-    res.status(201).json(userWithRoleName);
   };
 
   signin = async (req: Request, res: Response): Promise<void> => {
@@ -97,6 +109,10 @@ export class UserController
 
     if (date > user.ending_date) {
       throw new BadRequestError('Votre compte a expiré.');
+    }
+
+    if (date < user.starting_date) {
+      throw new BadRequestError("Votre compte n'est pas encore actif.");
     }
 
     delete user.password;

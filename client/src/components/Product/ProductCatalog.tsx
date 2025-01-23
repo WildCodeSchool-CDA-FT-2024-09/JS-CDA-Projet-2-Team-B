@@ -8,6 +8,7 @@ import { Box, Typography } from '@mui/material';
 import { useQuery } from '@apollo/client';
 import { GetAllProductsDocument } from '../../generated/graphql-types';
 import CardProduct from './CardProduct';
+import { useState } from 'react';
 
 interface Product {
   id: number;
@@ -19,6 +20,10 @@ interface Product {
 }
 
 export default function Catalog() {
+  const [paginationModel, setPaginationModel] = useState({
+    pageSize: 10,
+    page: 0
+  });
   const { loading, error, data } = useQuery(GetAllProductsDocument);
 
   if (loading) return <p>Loading...</p>;
@@ -39,22 +44,22 @@ export default function Catalog() {
 
   const columns: GridColDef[] = [
     { field: 'name', headerName: 'Nom', width: 200 },
-    { field: 'price', headerName: 'Prix (€)', width: 150 },
+    { field: 'price', headerName: 'Prix (€)', width: 100 },
     { field: 'reference', headerName: 'Référence', width: 200 },
     {
       field: 'shortDescription',
       headerName: 'Description courte',
-      width: 250
+      width: 400
     },
     {
-      field: 'Description',
+      field: 'description',
       headerName: 'Description',
-      width: 300
+      width: 450
     },
     {
       field: 'actions',
       headerName: 'Actions',
-      width: 200,
+      width: 100,
       renderCell: (Product: GridRenderCellParams) => (
         <CardProduct
           id={Product.row.id}
@@ -74,11 +79,7 @@ export default function Catalog() {
     <>
       <Box
         sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          padding: '2rem',
-          borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          padding: '2rem'
         }}
       >
         <Box>
@@ -88,9 +89,10 @@ export default function Catalog() {
           <DataGrid
             rows={rows}
             columns={columns}
-            autoHeight
-            pageSize={10}
-            rowsPerPageOptions={[5, 10, 20]}
+            pageSizeOptions={[5, 10, 25]}
+            paginationModel={paginationModel}
+            onPaginationModelChange={setPaginationModel}
+            pagination
           />
         </Box>
       </Box>

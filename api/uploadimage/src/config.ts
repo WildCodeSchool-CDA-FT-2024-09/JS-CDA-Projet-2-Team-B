@@ -12,6 +12,7 @@ app.use(corsMiddleware);
 app.use(cookieParser());
 
 app.use('/upload', uploadRouter);
+
 app.use(errorHandler);
 
 export { app };

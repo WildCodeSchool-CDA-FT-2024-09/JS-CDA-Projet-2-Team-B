@@ -23,6 +23,7 @@ interface Context {
   await AppDataSource.initialize();
   await redisClient.connect();
   console.info('🚀 Redis connected');
+
   const schema = await getSchema();
 
   const server = new ApolloServer<Context>({ schema });

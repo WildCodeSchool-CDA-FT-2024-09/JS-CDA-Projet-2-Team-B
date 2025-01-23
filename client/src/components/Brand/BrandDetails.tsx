@@ -42,8 +42,7 @@ export default function BrandDetails() {
     activateBrand,
     { error: activationError, loading: activationLoading }
   ] = useActivateBrandMutation();
-  const [updateBrand, { loading: updateLoading, error: updateError }] =
-    useUpdateBrandMutation();
+  const [updateBrand, { loading: updateLoading }] = useUpdateBrandMutation();
 
   const {
     loading,
@@ -146,22 +145,13 @@ export default function BrandDetails() {
       });
 
       if (data?.updateBrand) {
-        setBrand({
-          name: '',
-          description: '',
-          deletedAt: null
-        });
         setSuccessMessage('Marque mise à jour avec succès !');
-      } else if (updateError) {
-        setSuccessMessage(null);
-        setError(updateError.message);
-        console.error(
-          'Erreur lors de la mise à jour de la marque :',
-          updateError
-        );
       }
-    } catch (err) {
-      console.error(err);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        console.error(err);
+        setError(err.message);
+      }
     }
   };
 
@@ -174,7 +164,8 @@ export default function BrandDetails() {
         padding: '2rem',
         backgroundColor: '#f9f9f9',
         borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)',
+        height: 'fit-content'
       }}
     >
       <Box
@@ -296,10 +287,10 @@ export default function BrandDetails() {
             color="primary"
             type="submit"
             sx={{
-              width: '20ch',
+              width: '10rem',
               alignSelf: 'flex-end',
               borderRadius: '10px',
-              marginTop: '26px'
+              marginTop: '2rem'
             }}
           >
             Enregistrer

@@ -1,0 +1,25 @@
+services:
+  db:
+    image: postgres
+    env_file: .env
+    restart: always
+    volumes:
+      - ./api/product/src/db:/docker-entrypoint-initdb.d
+      - ./api/product/src/db:/docker-entrypoint-initdb.d/product.csv
+    ports:
+      - 5435:5432
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}']
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  adminer:
+    image: adminer
+    ports:
+      - 8080:8080
+    container_name: adminer
+    restart: always
+    depends_on:
+      db:
+        condition: service_healthy

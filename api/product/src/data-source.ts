@@ -2,13 +2,11 @@ import { DataSource } from 'typeorm';
 import { Product } from './entity/product.entities';
 import { Category } from './entity/category.entities';
 import { Characteristic } from './entity/characteristic.entities';
-import * as dotenv from 'dotenv';
 import { Image } from './entity/image.entities';
 import { Tag } from './entity/tag.entities';
 import { Brand } from './entity/brand.entities';
 import { ProductCharacteristic } from './entity/productCharacteristic.entities';
 
-dotenv.config();
 const { POSTGRES_PASSWORD, POSTGRES_DB, POSTGRES_USER, POSTGRES_HOST } =
   process.env;
 
@@ -28,5 +26,6 @@ export const AppDataSource = new DataSource({
     Brand,
     ProductCharacteristic
   ],
-  synchronize: true
+  synchronize: false,
+  migrations: ['src/migrations/*.ts']
 });

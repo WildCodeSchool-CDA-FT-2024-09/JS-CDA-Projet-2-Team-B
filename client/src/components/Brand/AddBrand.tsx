@@ -2,6 +2,7 @@ import { Box, Button, TextField, Typography } from '@mui/material';
 import React, { useState } from 'react';
 import { useCreateBrandMutation } from '../../generated/graphql-types';
 import AddBrandImage from './AddBrandImage';
+import { useOutletContext } from 'react-router-dom';
 
 interface BrandReq {
   name: string;
@@ -17,6 +18,8 @@ export default function AddBrand() {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [imageSelection, setImageSelection] = useState(false);
   const [brandId, setBrandId] = useState<number | null>(null);
+
+  const { triggerRefresh } = useOutletContext<{ triggerRefresh: () => void }>();
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -54,6 +57,8 @@ export default function AddBrand() {
         setImageSelection(true);
         setBrandId(data.createBrand.id);
       }
+
+      triggerRefresh();
     } catch (err) {
       setSuccessMessage(null);
       console.error('Erreur lors de la création de la marque :', err);
@@ -76,6 +81,7 @@ export default function AddBrand() {
         sx={{
           m: 1,
           width: '60ch',
+          height: 'fit-content',
           fontWeight: 'bold',
           display: 'flex',
           flexDirection: 'column',
