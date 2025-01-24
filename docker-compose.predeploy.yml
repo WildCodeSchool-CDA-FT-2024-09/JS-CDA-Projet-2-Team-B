@@ -71,6 +71,7 @@ services:
     restart: always
     environment:
       - VITE_API_URI=/graph
+      - VITE_BASE_URL=/upload
 
   predeploy-gateway:
     image: nginx
