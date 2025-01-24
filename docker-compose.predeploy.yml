@@ -4,8 +4,7 @@ services:
     env_file: .env
     restart: always
     volumes:
-      - ./api/product/src/db:/docker-entrypoint-initdb.d
-      - ./api/product/src/db:/docker-entrypoint-initdb.d/product.csv
+      - ./api/auth/src/database:/docker-entrypoint-initdb.d
     healthcheck:
       test: ['CMD-SHELL', 'pg_isready -d ${POSTGRES_DB} -U ${POSTGRES_USER}']
       interval: 5s
@@ -71,6 +70,7 @@ services:
     restart: always
     environment:
       - VITE_API_URI=/graph
+      - VITE_BASE_URL=/upload
 
   predeploy-gateway:
     image: nginx
