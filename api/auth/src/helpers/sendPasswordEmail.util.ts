@@ -4,13 +4,15 @@ interface Response {
   success: boolean;
 }
 
+const { MAIL_HOST, MAIL_PORT } = process.env;
+
 export const sendPasswordEmail = async (
   email: string,
   password: string
 ): Promise<Response> => {
   try {
     const response = await axios.post(
-      'http://email:8000/email/send',
+      `http://${MAIL_HOST}:${MAIL_PORT}/email/send`,
       {
         receiver: email,
         subject: 'Pimp My Product - Bienvenue !',
