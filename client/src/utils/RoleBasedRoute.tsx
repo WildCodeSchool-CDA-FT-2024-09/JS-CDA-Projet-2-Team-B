@@ -11,7 +11,11 @@ export const RoleBasedRoute = ({
   allowedRole,
   element
 }: RoleBasedRouteProps) => {
-  const { user, isLoggedIn } = useAuth();
+  const { user, isLoggedIn, isInitializing } = useAuth();
+
+  if (isInitializing) {
+    return null;
+  }
 
   if (!isLoggedIn) {
     return <Navigate to="/portal" replace />;

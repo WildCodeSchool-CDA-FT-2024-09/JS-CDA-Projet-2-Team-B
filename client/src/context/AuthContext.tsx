@@ -1,4 +1,10 @@
-import React, { createContext, ReactNode, useContext, useState } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState
+} from 'react';
 import axios from 'axios';
 import { createAxiosInstance } from '../services/axios.instance';
 
@@ -17,6 +23,7 @@ interface AuthContextType {
   login: (email: string, password: string) => Promise<boolean>;
   logout: () => void;
   error: string | null;
+  isInitializing: boolean;
 }
 
 interface AuthProviderProps {
@@ -30,9 +37,19 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  useEffect(() => {
+    const savedUser = localStorage.getItem('user');
+    if (savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
+    setIsInitializing(false);
+  }, []);
 
   const logout = async () => {
     setUser(null);
+    localStorage.removeItem('user');
   };
 
   const axiosInstance = createAxiosInstance(logout);
@@ -55,14 +72,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       const { user: userData } = response.data;
 
-      setUser({
+      const loggedUser: User = {
         id: userData.id,
         first_name: userData.first_name,
         last_name: userData.last_name,
         role: userData.role,
         email: userData.email,
         phone: userData.phone
-      });
+      };
+
+      setUser(loggedUser);
+
+      localStorage.setItem('user', JSON.stringify(loggedUser));
 
       setError(null);
       return true;
@@ -86,7 +107,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const isLoggedIn = !!user;
 
   return (
-    <AuthContext.Provider value={{ user, logout, isLoggedIn, login, error }}>
+    <AuthContext.Provider
+      value={{ user, logout, isLoggedIn, login, error, isInitializing }}
+    >
       {children}
     </AuthContext.Provider>
   );
