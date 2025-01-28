@@ -14,24 +14,23 @@ export default function Portal() {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
-  const { login, user, error: loginError } = useAuth();
+  const { login, user, error: loginError, isInitializing } = useAuth();
 
   useEffect(() => {
-    if (user) {
+    if (!isInitializing && user) {
       if (user.role === 'admin') {
         navigate('/users');
       } else {
-        // user.role === 'user'
         navigate('/product/view');
       }
     }
-  }, [user, navigate]);
+  }, [isInitializing, user, navigate]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     try {
-      login(credentials.email, credentials.password);
+      await login(credentials.email, credentials.password);
     } catch (err: unknown) {
       if (err instanceof Error) {
         setError(err.message);

@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
-import { Link as RouterLink } from 'react-router-dom';
 import logo from '../../assets/logopmp.png';
 import { useAuth } from '../../context/AuthContext';
 import LogoutIcon from '@mui/icons-material/Logout';
@@ -22,8 +21,6 @@ export default function NavBAr() {
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Box
-            component={RouterLink}
-            to="/product/view"
             sx={{
               display: 'flex',
               alignItems: 'center',
